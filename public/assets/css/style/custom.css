@@ -1,0 +1,44 @@
+.avatar-upload-wrapper {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.avatar-upload-wrapper .avatar {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.avatar-upload-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-upload-icon:hover {
+    background-color: #0056b3;
+}
+
+.form-control::placeholder, 
+textarea::placeholder, 
+input::placeholder {
+    color: #000000 !important;
+}
+
+.form-control:focus::placeholder, 
+textarea:focus::placeholder, 
+input:focus::placeholder {
+    color: #000000 !important; 
+}
