@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BookController as AdminBookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,12 +44,11 @@ Route::get('/wishlist', [PageController::class, 'show'])->defaults('page', 'wish
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/authors', [AdminController::class, 'authors'])->name('authors');
-    Route::get('/books', [AdminController::class, 'books'])->name('books');
     Route::get('/categories', [AdminController::class, 'categories'])->name('categories');
     Route::get('/exchanges', [AdminController::class, 'exchanges'])->name('exchanges');
     Route::get('/authors/add', [AdminController::class, 'addAuthor'])->name('add-author');
-    Route::get('/books/add', [AdminController::class, 'addBook'])->name('add-book');
     Route::get('/categories/add', [AdminController::class, 'addCategory'])->name('add-category');
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::resource('books', AdminBookController::class);
 });

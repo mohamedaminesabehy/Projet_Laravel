@@ -41,7 +41,7 @@
                 <div class="menu-divider"></div>
                 <p class="menu-title">Gestion Catalogue</p>
                 
-                <a href="{{ route('admin.books') }}" class="menu-item {{ request()->routeIs('admin.books') ? 'active' : '' }}">
+                <a href="{{ route('admin.books.index') }}" class="menu-item {{ request()->routeIs('admin.books.index') ? 'active' : '' }}">
                     <i class="fas fa-book"></i>
                     <span>Livres</span>
                 </a>
@@ -119,6 +119,14 @@
     <!-- Base Scripts from app.blade.php -->
     <script src="{{ asset('assets/js/vendor/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/wow.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/js/gsap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/gsap-scroll-to-plugin.js') }}"></script>
+    <script src="{{ asset('assets/js/ScrollTrigger.min.js') }}"></script>
+    <script src="{{ asset('assets/js/SplitText.js') }}"></script>
+    <script src="{{ asset('assets/js/lenis.min.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
     
     <!-- Admin Specific Scripts -->
@@ -152,21 +160,16 @@
         };
         
         // Flash Messages
-        @if(session('success'))
-            toastr.success("{{ session('success') }}");
-        @endif
+        var successMsg = "{{ session('success') }}";
+        var errorMsg = "{{ session('error') }}";
+        var infoMsg = "{{ session('info') }}";
+        var warningMsg = "{{ session('warning') }}";
         
-        @if(session('error'))
-            toastr.error("{{ session('error') }}");
-        @endif
-        
-        @if(session('info'))
-            toastr.info("{{ session('info') }}");
-        @endif
-        
-        @if(session('warning'))
-            toastr.warning("{{ session('warning') }}");
-        @endif
+        // Afficher les messages s'ils existent
+        if (successMsg) toastr.success(successMsg);
+        if (errorMsg) toastr.error(errorMsg);
+        if (infoMsg) toastr.info(infoMsg);
+        if (warningMsg) toastr.warning(warningMsg);
     </script>
     
     <!-- Admin Scripts -->

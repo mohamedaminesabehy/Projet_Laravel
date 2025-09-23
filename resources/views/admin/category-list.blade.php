@@ -346,7 +346,9 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <div class="d-flex align-items-center">
-                                            <div class="category-icon" style="background-color: {{ $cat['color'] }}">
+                                            <div class="category-icon" @style([
+                                                'background-color' => $cat['color']
+                                            ])>
                                                 <i class="{{ $cat['icon'] }} text-white"></i>
                                             </div>
                                             <div>
