@@ -154,16 +154,29 @@
                         <div class="user-login">
                             <div class="dropdown">
                                 <a href="#" class="d-inline-flex align-items-center" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
-                                    <i class="fa-solid fa-user"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                                    <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-regular fa-id-badge me-2"></i>Profile</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('wishlist') }}"><i class="fa-regular fa-heart me-2"></i>Favorites</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
-                                </ul>
+                                     <i class="fa-solid fa-user"></i>
+                                     @auth
+                                         <span class="ms-2">{{ Auth::user()->first_name }}</span>
+                                     @endauth
+                                 </a>
+                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                     @auth
+                                         <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-regular fa-id-badge me-2"></i>Profile</a></li>
+                                         <li><a class="dropdown-item" href="{{ route('wishlist') }}"><i class="fa-regular fa-heart me-2"></i>Favorites</a></li>
+                                         <li>
+                                             <hr class="dropdown-divider">
+                                         </li>
+                                         <li>
+                                             <form action="{{ route('logout') }}" method="POST" style="display: none;" id="logout-form">
+                                                 @csrf
+                                             </form>
+                                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa-regular fa-right-from-bracket me-2"></i>Sign out</a>
+                                         </li>
+                                     @else
+                                         <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
+                                         <li><a class="dropdown-item" href="{{ route('signup') }}"><i class="fa-regular fa-user-plus me-2"></i>Sign up</a></li>
+                                     @endauth
+                                 </ul>
                             </div>
                         </div>
                     </div>
@@ -382,4 +395,4 @@
             </div>
         </div>
     </div>
-</header> 
+</header>

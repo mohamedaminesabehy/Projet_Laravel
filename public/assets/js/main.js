@@ -831,11 +831,14 @@
   const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
   // Set initial styles for the circle
-  progressCircle.style.strokeDasharray = CIRCUMFERENCE;
-  progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
+  if (progressCircle) {
+    progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+    progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
+  }
 
   // Update progress based on scroll position
   const updateProgress = () => {
+    if (!progressCircle || !progressPercentage) return;
     const scrollPosition = window.scrollY;
     const totalHeight =
       document.documentElement.scrollHeight - window.innerHeight;
@@ -852,7 +855,11 @@
 
   // Scroll to top using smooth animation
   const scrollToTop = () => {
-    gsap.to(window, { duration: 1, scrollTo: 0 });
+    if (typeof gsap !== 'undefined') {
+      gsap.to(window, { duration: 1, scrollTo: 0 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   // Throttle function to limit function execution frequency
@@ -876,12 +883,16 @@
     };
   };
 
-  // Attach event listeners
-  window.addEventListener('scroll', throttle(updateProgress, 50));
-  backToTopBtn.addEventListener('click', scrollToTop);
-
-  // Initial update to set the correct progress on page load
-  updateProgress();
+  // Only bind events if elements exist
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', scrollToTop);
+  }
+  if (progressCircle && progressPercentage) {
+    window.addEventListener('scroll', throttle(updateProgress, 100));
+    window.addEventListener('resize', throttle(updateProgress, 100));
+    // Initialize on load
+    updateProgress();
+  }
 
 
 

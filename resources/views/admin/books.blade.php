@@ -263,6 +263,12 @@
         background-color: #b35244; /* A slightly darker shade for hover effect */
         color: white; /* Keep text white on hover */
     }
+    .table tbody tr {
+        border-bottom: 1px solid #e9ecef; /* Subtle gray line to separate rows */
+    }
+    .table tbody tr:last-child {
+        border-bottom: none; /* No border for the last row */
+    }
 </style>
 @endpush
 
@@ -357,13 +363,6 @@
                                             <div>
                                                 <div class="book-title text-dark">{{ $book->title }}</div>
                                                 <div class="book-author text-dark">{{ $book->author }}</div>
-                                                <div class="mt-1">
-                                                    @if($book->status == 'published')
-                                                        <span class="book-badge badge-bestseller">Publié</span>
-                                                    @else
-                                                        <span class="book-badge badge-new">Brouillon</span>
-                                                    @endif
-                                                </div>
                                             </div>
                                         </div>
                                     </td>

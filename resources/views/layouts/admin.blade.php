@@ -57,6 +57,12 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span>Commandes</span>
                 </a>
+                
+                <a href="{{ route('admin.events.index') }}" class="menu-item {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Événements</span>
+                </a>
+
                 <a href="{{ route('admin.exchanges') }}" class="menu-item {{ request()->routeIs('admin.exchanges') ? 'active' : '' }}">
                     <i class="fas fa-exchange-alt"></i>
                     <span>Échanges</span>
@@ -90,12 +96,20 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </div>
-                    <div class="user-dropdown">
+                    <div class="user-dropdown" id="user-dropdown-toggle">
                         <div class="user-avatar">
-                            <span>{{ Auth::user()->name[0] ?? 'A' }}</span>
+                            <span>{{ Auth::user()->first_name[0] ?? 'A' }}</span>
                         </div>
                         <div class="user-name">
-                            {{ Auth::user()->name ?? 'Admin' }}
+                            {{ Auth::user()->first_name . ' ' . Auth::user()->last_name ?? 'Admin' }}
+                        </div>
+                        <div class="user-menu" id="user-menu-dropdown">
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -175,8 +189,30 @@
     <!-- Admin Scripts -->
     <script src="{{ asset('js/admin-scripts.js') }}"></script>
     
+    <!-- CKEDITOR Script -->
+    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+
     <!-- Page Specific Scripts -->
     @yield('scripts')
     @stack('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userDropdownToggle = document.getElementById('user-dropdown-toggle');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+            if (userDropdownToggle && userMenuDropdown) {
+                userDropdownToggle.addEventListener('click', function() {
+                    userMenuDropdown.classList.toggle('show');
+                });
+
+                // Close the dropdown if the user clicks outside of it
+                window.addEventListener('click', function(event) {
+                    if (!userDropdownToggle.contains(event.target) && !userMenuDropdown.contains(event.target)) {
+                        userMenuDropdown.classList.remove('show');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
