@@ -3,7 +3,7 @@
 @section('content')
 
 <main>
-    <section class="cartoon-hero py-80">
+    <section class="cartoon-hero">
         <div class="container position-relative">
             <div class="row justify-content-center align-items-center g-4">
                 <div class="col-lg-6 d-none d-lg-block">

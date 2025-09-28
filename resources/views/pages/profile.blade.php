@@ -53,6 +53,9 @@
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="review-history-tab" data-bs-toggle="tab" data-bs-target="#review-history" type="button" role="tab" aria-controls="review-history" aria-selected="false"><i class="fa-regular fa-comment me-1"></i>Review History</button>
                                 </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="my-books-tab" data-bs-toggle="tab" data-bs-target="#my-books" type="button" role="tab" aria-controls="my-books" aria-selected="false"><i class="fa-solid fa-book me-1"></i>My Books</button>
+                                </li>
                             </ul>
                             <div class="tab-content pt-4" id="profileTabsContent">
                                 <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
@@ -155,44 +158,53 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="review-history" role="tabpanel" aria-labelledby="review-history-tab">
-                                    <h5 class="mb-3">Your Review History</h5>
-                                    <div class="review-item card mb-3 p-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6>Great Book!</h6>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="fa-regular fa-trash-can me-1"></i>Delete</button>
-                                        </div>
-                                        <p class="text-muted small mb-2">"A truly captivating read. Highly recommend it!"</p>
-                                        <div class="d-flex align-items-center">
-                                            <div class="text-warning me-2">
-                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+                                    @include('pages.profile.review-history')
+                                </div>
+                                <div class="tab-pane fade" id="my-books" role="tabpanel" aria-labelledby="my-books-tab">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card shadow-sm">
+                                                <div class="card-header bg-white border-0">
+                                                    <h5 class="mb-0">My Books</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    @if ($user->books->count() > 0)
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Title</th>
+                                                                    <th>Category</th>
+                                                                    <th>Price</th>
+                                                                    <th>Stock</th>
+                                                                    <th>Status</th>
+                                                                    <th>Actions</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($user->books as $book)
+                                                                    <tr>
+                                                                        <td>{{ $book->title }}</td>
+                                                                        <td>{{ $book->category->name ?? 'N/A' }}</td>
+                                                                        <td>{{ $book->price }}</td>
+                                                                        <td>{{ $book->stock }}</td>
+                                                                        <td>{{ $book->status }}</td>
+                                                                        <td>
+                                                                            <a href="{{ route('admin.books.edit', $book->id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                                                            <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST" class="d-inline">
+                                                                                @csrf
+                                                                                @method('DELETE')
+                                                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</button>
+                                                                            </form>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    @else
+                                                        <p>You have not added any books yet.</p>
+                                                    @endif
+                                                </div>
                                             </div>
-                                            <span class="text-muted small">Reviewed on: 2025-09-10</span>
-                                        </div>
-                                    </div>
-                                    <div class="review-item card mb-3 p-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6>Insightful and Engaging</h6>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="fa-regular fa-trash-can me-1"></i>Delete</button>
-                                        </div>
-                                        <p class="text-muted small mb-2">"The author did an amazing job. Couldn't put it down."</p>
-                                        <div class="d-flex align-items-center">
-                                            <div class="text-warning me-2">
-                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                                            </div>
-                                            <span class="text-muted small">Reviewed on: 2025-08-25</span>
-                                        </div>
-                                    </div>
-                                    <div class="review-item card p-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6>A Bit Slow at First</h6>
-                                            <button class="btn btn-sm btn-outline-danger"><i class="fa-regular fa-trash-can me-1"></i>Delete</button>
-                                        </div>
-                                        <p class="text-muted small mb-2">"Took a while to get into it, but it picked up towards the end."</p>
-                                        <div class="d-flex align-items-center">
-                                            <div class="text-warning me-2">
-                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
-                                            </div>
-                                            <span class="text-muted small">Reviewed on: 2025-07-15</span>
                                         </div>
                                     </div>
                                 </div>
@@ -203,4 +215,4 @@
             </div>
         </section>
     </main>
-@endsection 
+@endsection

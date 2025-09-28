@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
@@ -16,6 +17,10 @@ class PageController extends Controller
     {
         $viewName = 'pages.' . $page;
         if (View::exists($viewName)) {
+            if ($page === 'profile') {
+                $user = Auth::user();
+                return view($viewName, compact('user'));
+            }
             return view($viewName);
         }
 
@@ -25,4 +30,4 @@ class PageController extends Controller
 
         abort(404);
     }
-} 
+}

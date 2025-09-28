@@ -305,9 +305,9 @@
                         <div class="col-md-3">
                             <select class="form-select border-0 bg-light text-dark filter-input" id="category" name="category">
                                 <option value="">Toutes les catégories</option>
-                                <option value="Romans">Romans</option>
-                                <option value="Science Fiction">Science Fiction</option>
-                                <option value="Histoire">Histoire</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -344,6 +344,7 @@
                                     <th width="15%" class="text-dark">Catégorie</th>
                                     <th width="10%" class="text-dark">Prix</th>
                                     <th width="10%" class="text-dark">Stock</th>
+                                    <th width="10%" class="text-dark">Utilisateur</th>
                                     <th width="10%" class="text-dark">Statut</th>
                                     <th width="15%" class="text-dark">Actions</th>
                                 </tr>
@@ -366,7 +367,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-dark">{{ $book->category }}</td>
+                                    <td class="text-dark">{{ $book->category->name }}</td>
                                     <td><span class="book-price text-dark">{{ number_format($book->price, 2, ',', ' ') }} €</span></td>
                                     <td>
                                         @if($book->stock > 20)
@@ -452,7 +453,12 @@
                             </div>
                             <div class="mb-3">
                                 <label for="editBookCategory" class="form-label modal-body-text">Catégorie</label>
-                                <input type="text" class="form-control modal-body-text" id="editBookCategory" name="category" required>
+                                <select class="form-select modal-body-text" id="editBookCategory" name="category_id" required>
+                                    <option value="">Sélectionner une catégorie</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="editBookIsbn" class="form-label modal-body-text">ISBN</label>
@@ -525,12 +531,12 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="category" class="form-label modal-body-text">Catégorie</label>
-                                        <select class="form-select modal-body-text" id="category" name="category">
+                                        <label for="addBookCategory" class="form-label modal-body-text">Catégorie</label>
+                                        <select class="form-select modal-body-text" id="addBookCategory" name="category_id" required>
                                             <option value="">Sélectionner une catégorie</option>
-                                            <option value="Romans">Romans</option>
-                                            <option value="Science Fiction">Science Fiction</option>
-                                            <option value="Histoire">Histoire</option>
+                                            @foreach($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -757,7 +763,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Remplir les détails du livre dans la modal
                 document.getElementById('bookTitle').textContent = book.title;
                 document.getElementById('bookAuthor').textContent = book.author;
-                document.getElementById('bookCategory').textContent = book.category;
+                document.getElementById('bookCategory').textContent = book.category ? book.category.name : 'Non disponible';
                 document.getElementById('bookIsbn').textContent = book.isbn || 'Non disponible';
                 document.getElementById('bookPrice').textContent = book.price + ' €';
                 
@@ -819,33 +825,37 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var editBookModal = document.getElementById('editBookModal');
-        editBookModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var book = JSON.parse(button.getAttribute('data-book'));
+        if (editBookModal) {
+            editBookModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var book = JSON.parse(button.getAttribute('data-book'));
 
-            var modalTitle = editBookModal.querySelector('.modal-title');
-            var editBookForm = document.getElementById('editBookForm');
-            var currentCoverImage = document.getElementById('currentCoverImage');
+                var modalTitle = editBookModal.querySelector('.modal-title');
+                var editBookForm = document.getElementById('editBookForm');
+                var currentCoverImage = document.getElementById('currentCoverImage');
 
-            modalTitle.textContent = 'Modifier le Livre: ' + book.title;
-            editBookForm.action = '/admin/books/' + book.id;
+                if (modalTitle) modalTitle.textContent = 'Modifier le Livre: ' + book.title;
+                if (editBookForm) editBookForm.action = '/admin/books/' + book.id;
 
-            editBookForm.querySelector('#editBookTitle').value = book.title;
-            editBookForm.querySelector('#editBookAuthor').value = book.author;
-            editBookForm.querySelector('#editBookCategory').value = book.category;
-            editBookForm.querySelector('#editBookIsbn').value = book.isbn;
-            editBookForm.querySelector('#editBookPrice').value = book.price;
-            editBookForm.querySelector('#editBookStock').value = book.stock;
-            editBookForm.querySelector('#editBookDescription').value = book.description;
-            editBookForm.querySelector('#editBookStatus').value = book.status;
-
-            if (book.cover_image) {
-                currentCoverImage.src = '/' + book.cover_image;
-                currentCoverImage.style.display = 'block';
-            } else {
-                currentCoverImage.style.display = 'none';
-            }
-        });
+                // Fill form fields safely
+                if (editBookForm.querySelector('#editBookTitle')) editBookForm.querySelector('#editBookTitle').value = book.title || '';
+                if (editBookForm.querySelector('#editBookAuthor')) editBookForm.querySelector('#editBookAuthor').value = book.author || '';
+                if (editBookForm.querySelector('#editBookCategory')) editBookForm.querySelector('#editBookCategory').value = book.category_id || '';
+                if (editBookForm.querySelector('#editBookIsbn')) editBookForm.querySelector('#editBookIsbn').value = book.isbn || '';
+                if (editBookForm.querySelector('#editBookPrice')) editBookForm.querySelector('#editBookPrice').value = book.price || '';
+                if (editBookForm.querySelector('#editBookStock')) editBookForm.querySelector('#editBookStock').value = book.stock || '';
+                if (editBookForm.querySelector('#editBookDescription')) editBookForm.querySelector('#editBookDescription').value = book.description || '';
+                if (editBookForm.querySelector('#editBookStatus')) editBookForm.querySelector('#editBookStatus').value = book.status || '';
+                
+                // Set current cover image if exists
+                if (currentCoverImage && book.cover_image) {
+                    currentCoverImage.src = '/' + book.cover_image;
+                    currentCoverImage.style.display = 'block';
+                } else if (currentCoverImage) {
+                    currentCoverImage.style.display = 'none';
+                }
+            });
+        }
     });
 </script>
 @endpush

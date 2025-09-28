@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -13,8 +15,9 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::all();
-        return view('admin.books', compact('books'));
+        $books = Book::with('user')->get();
+        $categories = Category::all();
+        return view('admin.books', compact('books', 'categories'));
     }
 
     /**
@@ -33,7 +36,7 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'isbn' => 'nullable|string|unique:book|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
@@ -42,7 +45,9 @@ class BookController extends Controller
             'status' => 'required|string|in:published,draft',
         ]);
 
-        $book = Book::create($request->except('cover_image'));
+        $book = new Book($request->except('cover_image'));
+        $book->user_id = Auth::id();
+        $book->save();
 
         if ($request->hasFile('cover_image')) {
             $imageName = time().'.'.$request->cover_image->extension();
@@ -59,7 +64,7 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        return response()->json($book);
+        return response()->json($book->load('category'));
     }
 
     /**
@@ -78,7 +83,7 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'isbn' => 'nullable|string|unique:book,isbn,'.$book->id.'|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
@@ -87,7 +92,9 @@ class BookController extends Controller
             'status' => 'required|string|in:published,draft',
         ]);
 
-        $book->update($request->except('cover_image'));
+        $book->fill($request->except('cover_image'));
+        $book->user_id = Auth::id();
+        $book->save();
 
         if ($request->hasFile('cover_image')) {
             // Delete old image if exists

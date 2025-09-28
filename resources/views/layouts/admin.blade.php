@@ -201,7 +201,8 @@
             const userMenuDropdown = document.getElementById('user-menu-dropdown');
 
             if (userDropdownToggle && userMenuDropdown) {
-                userDropdownToggle.addEventListener('click', function() {
+                userDropdownToggle.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Prevent the click from immediately closing the dropdown
                     userMenuDropdown.classList.toggle('show');
                 });
 

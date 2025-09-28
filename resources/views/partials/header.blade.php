@@ -153,13 +153,13 @@
                         </div>
                         <div class="user-login">
                             <div class="dropdown">
-                                <a href="#" class="d-inline-flex align-items-center" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
+                                <a href="#" class="d-inline-flex align-items-center" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu" style="background-color: #D16655;">
                                      <i class="fa-solid fa-user"></i>
                                      @auth
                                          <span class="ms-2">{{ Auth::user()->first_name }}</span>
                                      @endauth
                                  </a>
-                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu" style="background-color: rgb(255, 255, 255);transform: translate(-120px, 38.75px);margin: 22px;position: absolute;inset: 0px auto auto 0px;">
                                      @auth
                                          <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-regular fa-id-badge me-2"></i>Profile</a></li>
                                          <li><a class="dropdown-item" href="{{ route('wishlist') }}"><i class="fa-regular fa-heart me-2"></i>Favorites</a></li>

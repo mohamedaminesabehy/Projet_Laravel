@@ -14,12 +14,23 @@ class Book extends Model
     protected $fillable = [
         'title',
         'author',
-        'category',
+        'category_id',
         'isbn',
         'price',
         'stock',
         'description',
         'cover_image',
         'status',
+        'user_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
