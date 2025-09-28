@@ -69,26 +69,14 @@
                                 <h1 class="h3 mt-3 mb-1">Sign in</h1>
                                 <p class="text-muted mb-0">Welcome back! Please enter your details.</p>
                             </div>
-                            <form>
-                                <div class="mb-3">
-                                    <label for="signinEmail" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="signinEmail" placeholder="name@example.com" required>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <label for="signinPassword" class="form-label mb-0">Password</label>
-                                        <a href="#" class="text-decoration-none small">Forgot password?</a>
-                                    </div>
-                                    <input type="password" class="form-control" id="signinPassword" placeholder="Your password" required>
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" value="" id="rememberMe">
-                                    <label class="form-check-label" for="rememberMe">
-                                        Remember me
-                                    </label>
-                                </div>
-                                <button type="submit" class="vs-btn w-100">Sign in</button>
+                            <form action="{{ route('signin.post') }}" method="POST">
+                                @csrf
+                                <input type="email" name="email" required>
+                                <input type="password" name="password" required>
+                                <input type="checkbox" name="remember">
+                                <button type="submit">Sign in</button>
                             </form>
+
                             <div class="text-center mt-4">
                                 <p class="mb-2 text-muted">Or continue with</p>
                                 <div class="d-flex gap-2 justify-content-center">

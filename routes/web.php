@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,8 +38,22 @@ Route::get('/favorites', [PageController::class, 'show'])->defaults('page', 'fav
 Route::get('/profile', [PageController::class, 'show'])->defaults('page', 'profile')->name('profile');
 Route::get('/shop-details', [PageController::class, 'show'])->defaults('page', 'shop-details')->name('shop-details');
 Route::get('/shop-sidebar', [PageController::class, 'show'])->defaults('page', 'shop-sidebar')->name('shop-sidebar');
-Route::get('/signin', [PageController::class, 'show'])->defaults('page', 'signin')->name('signin');
-Route::get('/signup', [PageController::class, 'show'])->defaults('page', 'signup')->name('signup');
+// Route::get('/signin', [PageController::class, 'show'])->defaults('page', 'signin')->name('signin');
+// Route::get('/signup', [PageController::class, 'show'])->defaults('page', 'signup')->name('signup');
+
+
+Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
+Route::post('/signup', [AuthController::class, 'signup'])->name('signup.post');
+
+Route::get('/signin', [AuthController::class, 'showSignin'])->name('signin');
+Route::post('/signin', [AuthController::class, 'signin'])->name('signin.post');
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+
+
+
 Route::get('/vendor-details', [PageController::class, 'show'])->defaults('page', 'vendor-details')->name('vendor-details');
 Route::get('/vendor', [PageController::class, 'show'])->defaults('page', 'vendor')->name('vendor');
 Route::get('/wishlist', [PageController::class, 'show'])->defaults('page', 'wishlist')->name('wishlist');
@@ -52,3 +69,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::resource('books', AdminBookController::class);
 });
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+
+    Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+});
+
+
+// CRUD Messages
+Route::middleware('auth')->prefix('messages')->group(function () {
+    Route::get('/', [MessageController::class, 'index'])->name('pages.messages');
+    Route::post('/', [MessageController::class, 'store'])->name('messages.store');
+    Route::delete('/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+});
+
+

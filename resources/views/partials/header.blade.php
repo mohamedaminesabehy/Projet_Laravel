@@ -103,6 +103,9 @@
                 <li>
                     <a href="{{ route('contact') }}">Contact</a>
                 </li>
+                <li>
+                    <a href="{{ route('pages.messages') }}">messages</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -162,10 +165,22 @@
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
+                                    @auth
+                                        <li>
+                                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                                                </button>
+                                            </form>
+                                        </li>
+                                    @else
+                                        <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
+                                    @endauth
                                 </ul>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -321,6 +336,9 @@
                                             </li>
                                             <li>
                                                 <a href="{{ route('contact') }}">Contact</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('pages.messages') }}">messages</a>
                                             </li>
                                         </ul>
                                     </nav>
