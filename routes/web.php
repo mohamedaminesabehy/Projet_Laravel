@@ -89,3 +89,8 @@ Route::middleware('auth')->prefix('messages')->group(function () {
 });
 
 
+// Route::middleware(['auth', 'admin'])->group(function () {
+//     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+//     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+//     Route::delete('/messages/{id}', [MessageController::class, 'destroy'])->name('messages.destroy');
+// });

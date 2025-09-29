@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
 <style>
     body {
-        background-color: #f8f9fa; /* Light gray background for a modern feel */
+        background-color: #f8f9fa;
     }
     .stat-card {
         border-radius: 10px;
@@ -54,17 +54,15 @@
         color: #6c757d;
     }
     select, .form-control, .form-select, textarea, input {
-    height: 50px;
-    padding: 0 30px 0 28px;
-    padding-right: 45px;
-    border: 1px solid var(--border-color);
-    color: #000000;
-    background-color: var(--white-color);
-    border-radius: 9999px;
-    border-radius: 0;
-    font-size: 14px;
-    width: 100%;
-}
+        height: 50px;
+        padding: 0 30px 0 28px;
+        border: 1px solid var(--border-color);
+        color: #000000;
+        background-color: var(--white-color);
+        border-radius: 0;
+        font-size: 14px;
+        width: 100%;
+    }
 </style>
 @endpush
 
@@ -72,6 +70,7 @@
 <div class="container-fluid p-4">
     <!-- Statistiques principales -->
     <div class="row mb-4">
+        <!-- Catégories -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="stat-card bg-white p-4">
                 <div class="d-flex justify-content-between align-items-center">
@@ -86,6 +85,7 @@
                 </div>
             </div>
         </div>
+        <!-- Livres échangés -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="stat-card bg-white p-4">
                 <div class="d-flex justify-content-between align-items-center">
@@ -100,6 +100,7 @@
                 </div>
             </div>
         </div>
+        <!-- Livres disponibles -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="stat-card bg-white p-4">
                 <div class="d-flex justify-content-between align-items-center">
@@ -114,6 +115,7 @@
                 </div>
             </div>
         </div>
+        <!-- Utilisateurs actifs -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="stat-card bg-white p-4">
                 <div class="d-flex justify-content-between align-items-center">
@@ -129,6 +131,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Sidebar avec bouton Messages -->
+    <!-- <div class="row mb-4">
+        <div class="col-12">
+            <a href="{{ route('messages.admin') }}" class="btn btn-primary mb-3">
+                <i class="fas fa-envelope me-2"></i>Messages
+            </a>
+        </div>
+    </div> -->
 
     <!-- Graphiques -->
     <div class="row mb-4">
@@ -200,6 +211,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-xl-6 mb-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
@@ -268,80 +280,24 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
-    // Graphique des échanges de livres
     const exchangeCtx = document.getElementById('exchangeChart').getContext('2d');
     const exchangeChart = new Chart(exchangeCtx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
-            datasets: [{
-                label: 'Livres échangés 2023',
-                data: [28, 35, 42, 51, 48, 55, 62, 68, 72, 75, 82, 88],
-                borderColor: '#4e73df',
-                backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                tension: 0.3,
-                fill: true
-            }, {
-                label: 'Nouveaux livres ajoutés 2023',
-                data: [45, 52, 38, 65, 72, 58, 80, 85, 92, 105, 112, 98],
-                borderColor: '#1cc88a',
-                backgroundColor: 'rgba(28, 200, 138, 0.05)',
-                tension: 0.3,
-                fill: true
-            }]
+            labels: ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'],
+            datasets: [
+                { label:'Livres échangés 2023', data:[28,35,42,51,48,55,62,68,72,75,82,88], borderColor:'#4e73df', backgroundColor:'rgba(78,115,223,0.05)', tension:0.3, fill:true },
+                { label:'Nouveaux livres ajoutés 2023', data:[45,52,38,65,72,58,80,85,92,105,112,98], borderColor:'#1cc88a', backgroundColor:'rgba(28,200,138,0.05)', tension:0.3, fill:true }
+            ]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        drawBorder: false
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}}, scales:{y:{beginAtZero:true, grid:{drawBorder:false}}, x:{grid:{display:false}}} }
     });
 
-    // Graphique de répartition des catégories
     const categoryCtx = document.getElementById('categoryChart').getContext('2d');
     const categoryChart = new Chart(categoryCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Fiction', 'Non-fiction', 'Jeunesse', 'Scolaire', 'Professionnel'],
-            datasets: [{
-                data: [35, 25, 20, 10, 10],
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                }
-            },
-            cutout: '70%'
-        }
+        type:'doughnut',
+        data:{ labels:['Fiction','Non-fiction','Jeunesse','Scolaire','Professionnel'], datasets:[{ data:[35,25,20,10,10], backgroundColor:['#4e73df','#1cc88a','#36b9cc','#f6c23e','#e74a3b'], borderWidth:0 }]},
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}, cutout:'70%' }
     });
 </script>
 @endpush
