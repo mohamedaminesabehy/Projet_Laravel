@@ -38,7 +38,7 @@
                     <ul class="sub-menu">
                         <li><a href="{{ route('shop') }}">Shop</a></li>
                         <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                        <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+                        <li><a href="{{ route('shop') }}">Shop Details</a></li>
                     </ul>
                 </li>
                 <li class="menu-item-has-children">
@@ -74,7 +74,7 @@
                                 <li><a href="{{ route('cart') }}">Cart</a></li>
                                 <li><a href="{{ route('shop') }}">Shop</a></li>
                                 <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                                <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+                                <li><a href="{{ route('shop') }}">Shop Details</a></li>
                                 <li><a href="{{ route('404') }}">Error Page</a></li>
                             </ul>
                         </li>
@@ -270,7 +270,7 @@
                                                 <ul class="sub-menu">
                                                     <li><a href="{{ route('shop') }}">Shop</a></li>
                                                     <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                                                    <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+
                                                 </ul>
                                             </li>
                                             <li class="menu-item-has-children">
@@ -306,7 +306,7 @@
                                                             <li><a href="{{ route('cart') }}">Cart</a></li>
                                                             <li><a href="{{ route('shop') }}">Shop</a></li>
                                                             <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                                                            <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+                                                            <li><a href="{{ route('shop') }}">Shop Details</a></li>
                                                             <li><a href="{{ route('404') }}">Error Page</a></li>
                                                         </ul>
                                                     </li>
@@ -343,14 +343,14 @@
                         </div>
                         <div class="col-auto d-xl-block d-none">
                             <div class="header-cart">
-                                <a href="{{ route('cart') }}" class="vs-icon has-badge"><i class="fa-solid fa-basket-shopping"></i><span class="badge">0</span></a>
+                                <a href="{{ route('cart') }}" class="vs-icon cart"><i class="fal fa-shopping-bag"></i><span class="badge">{{ $cartCount }}</span></a>
                                 <div class="woocommerce widget_shopping_cart">
                                     <div class="widget_shopping_cart_content">
                                         <ul class="cart_list">
                                             <li class="mini_cart_item">
                                                 <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop-details') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-1.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop-details') }}" class="product-title">Smart Watch</a>
+                                                <a href="{{ route('shop') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-1.jpg') }}" alt="Cart Image"></a>
+                                                <a href="{{ route('shop') }}" class="product-title">Smart Watch</a>
                                                 <span class="amount">$99.00</span>
                                                 <div class="quantity">
                                                     <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>
@@ -364,8 +364,8 @@
                                             </li>
                                             <li class="mini_cart_item">
                                                 <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop-details') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-2.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop-details') }}" class="product-title">Boss Chair</a>
+                                                <a href="{{ route('shop') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-2.jpg') }}" alt="Cart Image"></a>
+                                                <a href="{{ route('shop') }}" class="product-title">Boss Chair</a>
                                                 <span class="amount">$80.00</span>
                                                 <div class="quantity">
                                                     <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>

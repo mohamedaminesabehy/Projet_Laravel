@@ -502,7 +502,7 @@
                                     </div>
                                     <div class="media-body">
                                         <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                        <h4 class="post-title"><a class="text-inherit" href="{{ route('shop-details') }}">Rat Phnory Mttke Srial Tofairle</a></h4>
+                                        <h4 class="post-title"><a class="text-inherit" href="{{ route('shop') }}">Rat Phnory Mttke Srial Tofairle</a></h4>
                                         <ul class="price-list">
                                             <li><del>$39.99</del></li>
                                             <li>$30.00</li>
@@ -515,7 +515,7 @@
                                     </div>
                                     <div class="media-body">
                                         <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                        <h4 class="post-title"><a class="text-inherit" href="{{ route('shop-details') }}">Amazona Book Cover</a></h4>
+                                        <h4 class="post-title"><a class="text-inherit" href="{{ route('shop') }}">Amazona Book Cover</a></h4>
                                         <ul class="price-list">
                                             <li><del>$39.99</del></li>
                                             <li>$30.00</li>
@@ -528,7 +528,7 @@
                                     </div>
                                     <div class="media-body">
                                         <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                        <h4 class="post-title"><a class="text-inherit" href="{{ route('shop-details') }}">Quantum Entanglement</a></h4>
+                                        <h4 class="post-title"><a class="text-inherit" href="{{ route('shop') }}">Quantum Entanglement</a></h4>
                                         <ul class="price-list">
                                             <li><del>$39.99</del></li>
                                             <li>$30.00</li>
@@ -552,4 +552,4 @@
             </div>
         </div>
     </section>
-@endsection 
+@endsection

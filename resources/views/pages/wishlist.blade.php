@@ -51,10 +51,10 @@
                                     </button>
                                 </td>
                                 <td class="product-thumbnail">
-                                    <a href="{{ route('shop-details') }}"><img src="{{ asset('assets/img/product/p-thumb-1.jpg') }}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="image"></a>
+                                    <a href="{{ route('shop') }}"><img src="{{ asset('assets/img/product/p-thumb-1.jpg') }}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="image"></a>
                                 </td>
                                 <td class="product-name">
-                                    <a href="{{ route('shop-details') }}">Vqirk Teur Mocgkcup</a>
+                                    <a href="{{ route('shop') }}">Vqirk Teur Mocgkcup</a>
                                 </td>
                                 <td class="product-price">
                                     <span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>45.00</bdi></span>
@@ -82,10 +82,10 @@
                                     </button>
                                 </td>
                                 <td class="product-thumbnail">
-                                    <a href="{{ route('shop-details') }}"><img src="{{ asset('assets/img/product/p-thumb-2.jpg') }}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="image"></a>
+                                    <a href="{{ route('shop') }}"><img src="{{ asset('assets/img/product/p-thumb-2.jpg') }}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="image"></a>
                                 </td>
                                 <td class="product-name">
-                                    <a href="{{ route('shop-details') }}">Hd Pry Balir Ptonnrnle</a>
+                                    <a href="{{ route('shop') }}">Hd Pry Balir Ptonnrnle</a>
                                 </td>
                                 <td class="product-price">
                                     <ins><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>18.00</bdi></span></ins>
@@ -112,10 +112,10 @@
                                     </button>
                                 </td>
                                 <td class="product-thumbnail">
-                                    <a href="{{ route('shop-details') }}"><img src="{{ asset('assets/img/product/p-thumb-3.jpg') }}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="image"></a>
+                                    <a href="{{ route('shop') }}"><img src="{{ asset('assets/img/product/p-thumb-3.jpg') }}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="image"></a>
                                 </td>
                                 <td class="product-name">
-                                    <a href="{{ route('shop-details') }}">Beuto minimal Cork</a>
+                                    <a href="{{ route('shop') }}">Beuto minimal Cork</a>
                                 </td>
                                 <td class="product-price">
                                     <ins><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>18.00</bdi></span></ins>
@@ -151,4 +151,4 @@
             </div>
         </div>
     </div>
-@endsection 
+@endsection

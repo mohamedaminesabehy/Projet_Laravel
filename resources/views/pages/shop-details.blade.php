@@ -23,7 +23,7 @@
             <div class="row gx-60">
                 <div class="col-lg-6">
                     <div class="product-slide-row wow animate__fadeInUp" data-wow-delay="0.30s">
-                        <div class="img"><img src="{{ asset('assets/img/shop/product-d-1.jpg') }}" alt="Product Image"></div>
+                        <div class="img"><img src="{{ asset($book->cover_image) }}" alt="Product Image"></div>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -34,34 +34,37 @@
                             </div>
                             <span class="product-rating__total">Review (03)</span>
                         </div>
-                        <h2 class="product-title">Neglected Solitary Life</h2>
-                        <span class="product-author"><strong>By:</strong> <a href="#">Fahim Al Bashar</a></span>
-                        <p class="product-price">$155.00 <del>$23.85</del></p>
-                        <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit purus vel, of a viveirra facilisi neque
-                            quisque. Phasellus aliquam ut id rhoncus. In viverra sed vitae vivamus amet, nuncg vivamus. </p>
+                        <h2 class="product-title">{{ $book->title }}</h2>
+                        <span class="product-author"><strong>By:</strong> <a href="#">{{ $book->author }}</a></span>
+                        <p class="product-price">${{ $book->price }}</p>
+                        <p class="text">{{ $book->description }}</p>
                         <span class="product-instock">
                             <p>Availability:</p><span><i class="fas fa-check-square"></i>In Stock</span>
                         </span>
                         <div class="actions">
-                            <div class="quantity">
-                                <div class="quantity__field quantity-container">
-                                    <div class="quantity__buttons">
-                                        <button class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
-                                        <input type="number" id="quantity" class="qty-input" step="1" min="1" max="100" name="quantity" value="01" title="Qty">
-                                        <button class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
+                            <form action="{{ route('cart.add') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="book_id" value="{{ $book->id }}">
+                                <div class="quantity">
+                                    <div class="quantity__field quantity-container">
+                                        <div class="quantity__buttons">
+                                            <button class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
+                                            <input type="number" id="quantity" class="qty-input" step="1" min="1" max="100" name="quantity" value="1" title="Qty">
+                                            <button class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <a href="{{ route('cart') }}" class="vs-btn"><i class="fa-solid fa-basket-shopping"></i>Add to Cart</a>
+                                <button type="submit" class="vs-btn"><i class="fa-solid fa-basket-shopping"></i>Add to Cart</button>
+                            </form>
                             <a href="{{ route('wishlist') }}" class="icon-btn"><i class="far fa-heart"></i></a>
                         </div>
                         <div class="product_meta">
                             <h4 class="h5">Information:</h4>
                             <span class="sku_wrapper">
-                                <p>SKU:</p> <span class="sku">03</span>
+                                <p>SKU:</p> <span class="sku">{{ $book->id }}</span>
                             </span>
                             <span class="posted_in">
-                                <p>Category:</p> <a href="#" rel="tag">Thriller</a>
+                                <p>Category:</p> <a href="#" rel="tag">{{ $book->category->name }}</a>
                             </span>
                             <span>
                                 <p>Tags:</p> <a href="#" rel="tag">Kids</a><a href="#" rel="tag">Popular</a><a href="#" rel="tag">Gost</a>
@@ -84,19 +87,10 @@
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                         <div class="description">
-                            <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod
-                                orci.
-                                Cum
-                                sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultricies
-                                aliquam. Cum sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus mus sit am.</p>
-                            <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod
-                                orci.
-                                Cum
-                                sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultricies
-                                aliquam. Done ultricies nec, pellent, consectetur adipiscing elit. Ieuismod orci.</p>
+                            <p class="text">{{ $book->description }}</p>
                             <div class="product_meta">
                                 <span class="sku_wrapper">
-                                    <p>Categoris</p> <span class="sku">Thriller</span>
+                                    <p>Categoris</p> <span class="sku">{{ $book->category->name }}</span>
                                 </span>
                                 <span class="posted_in">
                                     <p>Color</p> <span>Lilac Purple</span>
@@ -111,13 +105,7 @@
                                     <p>Paper</p> <span>White Paper</span>
                                 </span>
                             </div>
-                            <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod
-                                orci.
-                                Cum
-                                sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultricies
-                                aliquam. Done ultricies nec, pellent, consectetur adipiscing elit. Ieuismod orci. Cum sociis natoque
-                                penatibus et magnis dis parturient montes
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod orci</p>
+                            <p class="text">{{ $book->description }}</p>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
@@ -474,4 +462,47 @@
         </div>
     </section>
     <!-- Book Of The Month End -->
-@endsection 
+@endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cartAddRoute = "{{ route('cart.add') }}";
+        const addToCartForm = document.querySelector(`form[action="${cartAddRoute}"]`);
+
+        if (addToCartForm) {
+            addToCartForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.status === 401) {
+                        alert(data.body.message);
+                        setTimeout(() => {
+                            window.location.href = data.body.redirect;
+                        }, 5000);
+                    } else {
+                        // Redirect to cart page on successful addition
+                        window.location.href = '/cart';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Une erreur est survenue lors de l'ajout au panier.");
+                });
+            });
+        }
+    });
+</script>
+@endpush

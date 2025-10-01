@@ -36,60 +36,38 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="cart_item">
-                        <td data-title="Product"><a class="cart-productimage" href="{{ route('shop') }}"><img width="100" height="95" src="{{ asset('assets/img/shop/product-1-1.jpg') }}" alt="Image"></a></td>
-                        <td data-title="Name"><a class="cart-productname" href="{{ route('shop') }}">The Muke Guy</a></td>
-                        <td data-title="Price"><span class="amount"><bdi><span>$</span>200.00</bdi></span></td>
-                        <td data-title="Quantity">
-                            <div class="quantity style2">
-                                <div class="quantity__field quantity-container">
-                                    <div class="quantity__buttons">
-                                        <button class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
-                                        <input type="number" id="quantity" class="qty-input" step="1" min="1" max="100" name="quantity" value="01" title="Qty">
-                                        <button class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
+                    @php $total = 0; @endphp
+                    @foreach($cartItems as $item)
+                        <tr class="cart_item">
+                            <td data-title="Product"><a class="cart-productimage" href="{{ route('shop-details', $item->book->id) }}"><img width="100" height="95" src="{{ asset('' . $item->book->cover_image) }}" alt="Image"></a></td>
+                            <td data-title="Name"><a class="cart-productname" href="{{ route('shop-details', $item->book->id) }}">{{ $item->book->title }}</a></td>
+                            <td data-title="Price"><span class="amount"><bdi><span>$</span>{{ number_format($item->price, 2) }}</bdi></span></td>
+                            <td data-title="Quantity">
+                                <form action="{{ route('cart.update', $item->id) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <div class="quantity style2">
+                                        <div class="quantity__field quantity-container">
+                                            <div class="quantity__buttons">
+                                                <button type="button" class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
+                                                <input type="number" id="quantity-{{ $item->id }}" class="qty-input" step="1" min="1" max="100" name="quantity" value="{{ $item->quantity }}" title="Qty" onchange="this.form.submit()">
+                                                <button type="button" class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td data-title="Total"><span class="amount"><bdi><span>$</span>200.00</bdi></span></td>
-                        <td data-title="Remove"><a href="#" class="remove"><i class="fal fa-trash-alt"></i></a></td>
-                    </tr>
-                    <tr class="cart_item">
-                        <td data-title="Product"><a class="cart-productimage" href="{{ route('shop') }}"><img width="100" height="95" src="{{ asset('assets/img/shop/product-1-2.jpg') }}" alt="Image"></a></td>
-                        <td data-title="Name"><a class="cart-productname" href="{{ route('shop') }}">Neglected Solitary Life</a></td>
-                        <td data-title="Price"><span class="amount"><bdi><span>$</span>200.00</bdi></span></td>
-                        <td data-title="Quantity">
-                            <div class="quantity style2">
-                                <div class="quantity__field quantity-container">
-                                    <div class="quantity__buttons">
-                                        <button class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
-                                        <input type="number" id="quantity" class="qty-input" step="1" min="1" max="100" name="quantity" value="01" title="Qty">
-                                        <button class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td data-title="Total"><span class="amount"><bdi><span>$</span>200.00</bdi></span></td>
-                        <td data-title="Remove"><a href="#" class="remove"><i class="fal fa-trash-alt"></i></a></td>
-                    </tr>
-                    <tr class="cart_item">
-                        <td data-title="Product"><a class="cart-productimage" href="{{ route('shop') }}"><img width="100" height="95" src="{{ asset('assets/img/shop/product-1-3.jpg') }}" alt="Image"></a></td>
-                        <td data-title="Name"><a class="cart-productname" href="{{ route('shop') }}">Green Journey</a></td>
-                        <td data-title="Price"><span class="amount"><bdi><span>$</span>200.00</bdi></span></td>
-                        <td data-title="Quantity">
-                            <div class="quantity style2">
-                                <div class="quantity__field quantity-container">
-                                    <div class="quantity__buttons">
-                                        <button class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
-                                        <input type="number" id="quantity" class="qty-input" step="1" min="1" max="100" name="quantity" value="01" title="Qty">
-                                        <button class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                        <td data-title="Total"><span class="amount"><bdi><span>$</span>200.00</bdi></span></td>
-                        <td data-title="Remove"><a href="#" class="remove"><i class="fal fa-trash-alt"></i></a></td>
-                    </tr>
+                                </form>
+                            </td>
+                            <td data-title="Total"><span class="amount"><bdi><span>$</span>{{ number_format($item->price * $item->quantity, 2) }}</bdi></span></td>
+                            <td data-title="Remove">
+                                <form action="{{ route('cart.remove', $item->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="remove"><i class="fal fa-trash-alt"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        @php $total += $item->price * $item->quantity; @endphp
+                    @endforeach
                     <tr>
                         <td colspan="6" class="actions">
                             <div class="vs-cart-coupon">
@@ -110,7 +88,7 @@
                         <tbody>
                         <tr>
                             <td>Cart Subtotal</td>
-                            <td data-title="Cart Subtotal"><span class="amount"><bdi><span>$</span>600.00</bdi></span>
+                            <td data-title="Cart Subtotal"><span class="amount"><bdi><span>$</span>{{ number_format($total, 2) }}</bdi></span>
                             </td>
                         </tr>
                         <tr class="shipping">
@@ -152,14 +130,36 @@
                         <tfoot>
                         <tr class="order-total">
                             <td>Order Total</td>
-                            <td data-title="Total"><strong><span class="amount"><bdi><span>$</span>600.00</bdi></span></strong></td>
+                            <td data-title="Total"><strong><span class="amount"><bdi><span>$</span>{{ number_format($total, 2) }}</bdi></span></strong></td>
                         </tr>
                         </tfoot>
                     </table>
+                    <div class="wc-proceed-to-checkout">
+                        <form action="{{ route('paypal.process') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="vs-btn">Proceed to checkout with PayPal</button>
+                        </form>
+                    </div>
+                    
+                    <!-- PayPal SDK Integration -->
+                    <script>
+                        // Afficher le Client ID pour débogage
+                        console.log('Client ID utilisé:', '{{ config('paypal.sandbox.client_id') }}');
+                    </script>
+                    <script 
+                        src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.sandbox.client_id') }}" 
+                        data-namespace="paypal_sdk">
+                    </script>
+                    <script>
+                        // Simple initialization to confirm SDK loading
+                        document.addEventListener('DOMContentLoaded', function() {
+                            console.log('PayPal SDK initialized');
+                        });
+                    </script>
                 </div>
             </div>
         </div>
     </div>
     <!-- Cart Area End-->
     <!-- Cta Area End -->
-@endsection 
+@endsection
