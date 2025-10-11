@@ -27,6 +27,176 @@
         <span class="shape-mockup element2 z-index1  d-xxl-block d-none" data-wow-delay="0.80s" style="left: 0px; bottom: -10px;"><img src="{{ asset('assets/img/shapes/hero-shape3.svg') }}" alt="Hero shape"></span>
         <span class="shape-mockup z-index1 wow animate__fadeInLeft d-xxl-block d-none" data-wow-delay="0.80s" style="left: 0px; top: 0px;"><img src="{{ asset('assets/img/shapes/hero-shape1.svg') }}" alt="Hero shape"></span>
     </section>
+    
+    <!-- AI Book Insights Widget -->
+    @if(isset($topBooksWithInsights) && $topBooksWithInsights->count() > 0)
+    <section class="ai-insights-widget space" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden;">
+        <div class="container">
+            <div class="title-area text-center animation-style1 title-anime mb-50">
+                <span class="sec-subtitle text-white wow animate__fadeInUp" data-wow-delay="0.20s" style="display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 30px; backdrop-filter: blur(10px);">
+                    <i class="fas fa-brain" style="color: #FFD700;"></i>
+                    Powered by AI
+                </span>
+                <h2 class="sec-title title-anime__title text-white wow animate__fadeInUp" data-wow-delay="0.30s" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                    📚 Les Livres les Plus Appréciés - Analyses AI
+                </h2>
+                <p class="text-white wow animate__fadeInUp" data-wow-delay="0.40s" style="font-size: 16px; max-width: 700px; margin: 15px auto 0; opacity: 0.95;">
+                    Découvrez ce que les lecteurs pensent vraiment grâce à notre intelligence artificielle qui analyse tous les avis
+                </p>
+            </div>
+
+            <div class="row g-4">
+                @foreach($topBooksWithInsights as $index => $book)
+                <div class="col-xl-4 col-md-6">
+                    <div class="ai-insight-card wow animate__fadeInUp" data-wow-delay="{{ 0.30 + ($index * 0.1) }}s" style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: all 0.3s ease; height: 100%;">
+                        <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; position: relative;">
+                            <div style="display: flex; gap: 15px; align-items: start;">
+                                @if($book->image)
+                                <img src="{{ asset('storage/' . $book->image) }}" alt="{{ $book->title }}" style="width: 80px; height: 110px; object-fit: cover; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                                @else
+                                <div style="width: 80px; height: 110px; background: rgba(255,255,255,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-book" style="font-size: 30px; color: white;"></i>
+                                </div>
+                                @endif
+                                <div style="flex: 1;">
+                                    <h3 style="color: white; font-size: 18px; font-weight: bold; margin: 0 0 8px 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
+                                        {{ Str::limit($book->title, 40) }}
+                                    </h3>
+                                    <p style="color: rgba(255,255,255,0.9); font-size: 13px; margin: 0 0 8px 0;">
+                                        <i class="fas fa-user"></i> {{ $book->author }}
+                                    </p>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <span style="background: rgba(255,255,255,0.3); color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; backdrop-filter: blur(5px);">
+                                            <i class="fas fa-comments"></i> {{ $book->reviews_count }} avis
+                                        </span>
+                                        @if($book->insight)
+                                        @php
+                                            $dominantSentiment = $book->insight->getDominantSentiment();
+                                        @endphp
+                                        <span style="background: rgba(255,215,0,0.9); color: #333; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">
+                                            <i class="fas fa-star"></i> {{ ucfirst($dominantSentiment['sentiment']) }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body" style="padding: 20px;">
+                            @if($book->insight)
+                            <!-- Résumé AI -->
+                            <div style="margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                    <i class="fas fa-magic" style="color: #667eea; font-size: 18px;"></i>
+                                    <h4 style="margin: 0; font-size: 15px; font-weight: bold; color: #333;">Résumé des Lecteurs</h4>
+                                </div>
+                                <p style="color: #555; font-size: 14px; line-height: 1.6; margin: 0; text-align: justify;">
+                                    {{ Str::limit($book->insight->reviews_summary, 200) }}
+                                </p>
+                            </div>
+
+                            <!-- Points Positifs -->
+                            @if($book->insight->positive_points && count($book->insight->positive_points) > 0)
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                    <i class="fas fa-thumbs-up" style="color: #10b981; font-size: 16px;"></i>
+                                    <h5 style="margin: 0; font-size: 13px; font-weight: bold; color: #10b981;">Points Forts</h5>
+                                </div>
+                                <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 13px;">
+                                    @foreach(array_slice($book->insight->positive_points, 0, 2) as $point)
+                                    <li style="margin-bottom: 5px;">{{ $point }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif
+
+                            <!-- Points Négatifs -->
+                            @if($book->insight->negative_points && count($book->insight->negative_points) > 0)
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                    <i class="fas fa-exclamation-circle" style="color: #f59e0b; font-size: 16px;"></i>
+                                    <h5 style="margin: 0; font-size: 13px; font-weight: bold; color: #f59e0b;">Points d'Amélioration</h5>
+                                </div>
+                                <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 13px;">
+                                    @foreach(array_slice($book->insight->negative_points, 0, 1) as $point)
+                                    <li>{{ $point }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif
+
+                            <!-- Thèmes Principaux -->
+                            @if($book->insight->top_themes && count($book->insight->top_themes) > 0)
+                            <div style="margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                    <i class="fas fa-tags" style="color: #8b5cf6; font-size: 16px;"></i>
+                                    <h5 style="margin: 0; font-size: 13px; font-weight: bold; color: #8b5cf6;">Thèmes Abordés</h5>
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                    @foreach(array_slice($book->insight->top_themes, 0, 4) as $theme)
+                                    <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: 500;">
+                                        {{ $theme }}
+                                    </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+
+                            <!-- Statistiques -->
+                            <div style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); padding: 12px; border-radius: 10px; margin-bottom: 15px;">
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                                    @if($book->insight->sentiment_distribution)
+                                    <div>
+                                        <div style="font-size: 20px; font-weight: bold; color: #10b981;">
+                                            {{ $book->insight->sentiment_distribution['positive'] ?? 0 }}%
+                                        </div>
+                                        <div style="font-size: 10px; color: #666; text-transform: uppercase;">Positif</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 20px; font-weight: bold; color: #6b7280;">
+                                            {{ $book->insight->sentiment_distribution['neutral'] ?? 0 }}%
+                                        </div>
+                                        <div style="font-size: 10px; color: #666; text-transform: uppercase;">Neutre</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 20px; font-weight: bold; color: #ef4444;">
+                                            {{ $book->insight->sentiment_distribution['negative'] ?? 0 }}%
+                                        </div>
+                                        <div style="font-size: 10px; color: #666; text-transform: uppercase;">Négatif</div>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+
+                            <!-- Bouton -->
+                            <a href="{{ route('shop') }}" class="vs-btn" style="display: block; text-align: center; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; text-decoration: none; font-weight: bold; transition: all 0.3s ease;">
+                                <i class="fas fa-eye"></i> Voir les Détails
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            <div class="text-center mt-40 wow animate__fadeInUp" data-wow-delay="0.80s">
+                <a href="{{ route('shop') }}" class="vs-btn" style="background: white; color: #667eea; padding: 15px 40px; font-size: 16px; font-weight: bold; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <i class="fas fa-book-open"></i> Découvrir Tous les Livres
+                </a>
+            </div>
+        </div>
+
+        <!-- Shapes decoratives -->
+        <span class="shape-mockup" style="position: absolute; top: 50px; right: 50px; opacity: 0.1;">
+            <i class="fas fa-brain" style="font-size: 150px; color: white;"></i>
+        </span>
+        <span class="shape-mockup" style="position: absolute; bottom: 50px; left: 50px; opacity: 0.1;">
+            <i class="fas fa-robot" style="font-size: 120px; color: white;"></i>
+        </span>
+    </section>
+    @endif
+    <!-- End AI Book Insights Widget -->
+
     <!-- Trending Product Start -->
     <section class="trending-layout1 space">
         <div class="container">

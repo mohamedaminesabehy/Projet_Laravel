@@ -1,5 +1,16 @@
 <div class="preloader">
-    <button class="vs-btn preloaderCls">Cancel Preloader </button>
+    <button class="vs-btn pre                        <li><a href="#">Page List 1</a>
+                            <ul>
+                                <li><a href="{{ route('home') }}">Home 1</a></li>
+                                <li><a href="#">Home 2</a></li>
+                                <li><a href="#">Home 3</a></li>
+                                <li><a href="{{ route('about') }}">About</a></li>
+                                <li><a href="{{ route('reviews.index') }}">Reviews</a></li>
+                                <li><a href="{{ route('ai-insights.index') }}"><i class="fas fa-brain"></i> AI Insights</a></li>
+                                <li><a href="{{ route('categories.index') }}"><i class="fas fa-heart"></i> Favorite Categories</a></li>
+                                <li><a href="{{ route('contact') }}">Contact</a></li>
+                            </ul>
+                        </li>Cancel Preloader </button>
     <div class="preloader-inner">
         <img src="{{ asset('assets/img/dark-logo.svg') }}" alt="logo">
         <span class="loader"></span>
@@ -25,13 +36,8 @@
         </div>
         <div class="vs-mobile-menu">
             <ul>
-                <li class="menu-item-has-children">
+                <li>
                     <a href="{{ route('home') }}">Home</a>
-                    <ul class="sub-menu">
-                        <li><a href="{{ route('home') }}">Home 1</a></li>
-                        <li><a href="#">Home 2</a></li>
-                        <li><a href="#">Home 3</a></li>
-                    </ul>
                 </li>
                 <li class="menu-item-has-children">
                     <a href="{{ route('shop') }}">Shop</a>
@@ -42,63 +48,35 @@
                     </ul>
                 </li>
                 <li class="menu-item-has-children">
-                    <a href="{{ route('vendor') }}">Vendor</a>
-                    <ul class="sub-menu">
-                        <li><a href="{{ route('vendor') }}">Vendor</a></li>
-                        <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
-                    </ul>
-                </li>
-                <li class="menu-item-has-children mega-menu-wrap">
                     <a href="#">Pages</a>
-                    <ul class="mega-menu">
-                        <li><a href="{{ route('shop') }}">Page List 1</a>
-                            <ul>
-                                <li><a href="{{ route('home') }}">Home 1</a></li>
-                                <li><a href="#">Home 2</a></li>
-                                <li><a href="#">Home 3</a></li>
-                                <li><a href="{{ route('about') }}">About</a></li>
-                                <li><a href="{{ route('contact') }}">Contact</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Page List 2</a>
-                            <ul>
-                                <li><a href="{{ route('blog') }}">Blog</a></li>
-                                <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
-                                <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
-                                <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
-                                <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Page List 3</a>
-                            <ul>
-                                <li><a href="{{ route('cart') }}">Cart</a></li>
-                                <li><a href="{{ route('shop') }}">Shop</a></li>
-                                <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                                <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
-                                <li><a href="{{ route('404') }}">Error Page</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">Page List 4</a>
-                            <ul>
-                                <li><a href="{{ route('wishlist') }}">wishlist</a></li>
-                                <li><a href="{{ route('checkout') }}">checkout</a></li>
-                                <li><a href="{{ route('author') }}">All Authors</a></li>
-                                <li><a href="{{ route('author-details') }}">Author Details</a></li>
-                                <li><a href="{{ route('vendor') }}">Vendor</a></li>
-                                <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
-                            </ul>
-                        </li>
+                    <ul class="sub-menu">
+                        <li><a href="{{ route('about') }}">About</a></li>
+                        <li><a href="{{ route('cart') }}">Cart</a></li>
+                        <li><a href="{{ route('checkout') }}">Checkout</a></li>
+                        <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
+                        <li><a href="{{ route('author') }}">Authors</a></li>
                     </ul>
                 </li>
-                <li class="menu-item-has-children">
-                    <a href="{{ route('blog') }}">Blog</a>
-                    <ul class="sub-menu">
-                        <li><a href="{{ route('blog') }}">Blog</a></li>
-                        <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
-                        <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
-                        <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
-                        <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
-                    </ul>
+                <li>
+                    <a href="{{ route('reviews.index') }}">Reviews</a>
+                </li>
+                <li>
+                    <a href="{{ route('ai-insights.index') }}">
+                        <i class="fas fa-brain"></i> AI Insights
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('categories.index') }}" class="favorite-categories-link">
+                        <i class="fas fa-heart"></i> Favorites
+                        @auth
+                            @php
+                                $favCount = auth()->user()->categoryFavorites()->count();
+                            @endphp
+                            @if($favCount > 0)
+                                <span class="favorite-count-badge">{{ $favCount }}</span>
+                            @endif
+                        @endauth
+                    </a>
                 </li>
                 <li>
                     <a href="{{ route('contact') }}">Contact</a>
@@ -153,30 +131,28 @@
                         </div>
                         <div class="user-login">
                             <div class="dropdown">
-                                <a href="#" class="d-inline-flex align-items-center" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu" style="background-color: #D16655;">
-                                     <i class="fa-solid fa-user"></i>
-                                     @auth
-                                         <span class="ms-2">{{ Auth::user()->first_name }}</span>
-                                     @endauth
-                                 </a>
-                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu" style="background-color: rgb(255, 255, 255);transform: translate(-120px, 38.75px);margin: 22px;position: absolute;inset: 0px auto auto 0px;">
-                                     @auth
-                                         <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-regular fa-id-badge me-2"></i>Profile</a></li>
-                                         <li><a class="dropdown-item" href="{{ route('wishlist') }}"><i class="fa-regular fa-heart me-2"></i>Favorites</a></li>
-                                         <li>
-                                             <hr class="dropdown-divider">
-                                         </li>
-                                         <li>
-                                             <form action="{{ route('logout') }}" method="POST" style="display: none;" id="logout-form">
-                                                 @csrf
-                                             </form>
-                                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa-regular fa-right-from-bracket me-2"></i>Sign out</a>
-                                         </li>
-                                     @else
-                                         <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
-                                         <li><a class="dropdown-item" href="{{ route('signup') }}"><i class="fa-regular fa-user-plus me-2"></i>Sign up</a></li>
-                                     @endauth
-                                 </ul>
+                                <a href="#" class="d-inline-flex align-items-center" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
+                                    <i class="fa-solid fa-user"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                    <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-regular fa-id-badge me-2"></i>Profile</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('wishlist') }}"><i class="fa-regular fa-heart me-2"></i>Wishlist</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('category-favorites.index') }}">
+                                        <i class="fas fa-heart me-2" style="color: #ff6b6b;"></i>My Favorite Categories
+                                        @auth
+                                            @php
+                                                $favCount = auth()->user()->categoryFavorites()->count();
+                                            @endphp
+                                            @if($favCount > 0)
+                                                <span class="badge bg-danger ms-2">{{ $favCount }}</span>
+                                            @endif
+                                        @endauth
+                                    </a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -257,13 +233,8 @@
                                 <div class="menu-area">
                                     <nav class="main-menu menu-style1 d-none d-lg-block">
                                         <ul>
-                                            <li class="menu-item-has-children">
+                                            <li>
                                                 <a href="{{ route('home') }}">Home</a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="{{ route('home') }}">Home 1</a></li>
-                                                    <li><a href="#">Home 2</a></li>
-                                                    <li><a href="#">Home 3</a></li>
-                                                </ul>
                                             </li>
                                             <li class="menu-item-has-children">
                                                 <a href="{{ route('shop') }}">Shop</a>
@@ -274,63 +245,39 @@
                                                 </ul>
                                             </li>
                                             <li class="menu-item-has-children">
-                                                <a href="{{ route('vendor') }}">Vendor</a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="{{ route('vendor') }}">Vendor</a></li>
-                                                    <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="menu-item-has-children mega-menu-wrap">
                                                 <a href="#">Pages</a>
-                                                <ul class="mega-menu">
-                                                    <li><a href="{{ route('shop') }}">Page List 1</a>
-                                                        <ul>
-                                                            <li><a href="{{ route('home') }}">Home 1</a></li>
-                                                            <li><a href="#">Home 2</a></li>
-                                                            <li><a href="#">Home 3</a></li>
-                                                            <li><a href="{{ route('about') }}">About</a></li>
-                                                            <li><a href="{{ route('contact') }}">Contact</a></li>
-                                                        </ul>
-                                                    </li>
-                                                    <li><a href="#">Page List 2</a>
-                                                        <ul>
-                                                            <li><a href="{{ route('blog') }}">Blog</a></li>
-                                                            <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
-                                                            <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
-                                                            <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
-                                                            <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
-                                                        </ul>
-                                                    </li>
-                                                    <li><a href="#">Page List 3</a>
-                                                        <ul>
-                                                            <li><a href="{{ route('cart') }}">Cart</a></li>
-                                                            <li><a href="{{ route('shop') }}">Shop</a></li>
-                                                            <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                                                            <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
-                                                            <li><a href="{{ route('404') }}">Error Page</a></li>
-                                                        </ul>
-                                                    </li>
-                                                    <li><a href="#">Page List 4</a>
-                                                        <ul>
-                                                            <li><a href="{{ route('wishlist') }}">wishlist</a></li>
-                                                            <li><a href="{{ route('checkout') }}">checkout</a></li>
-                                                            <li><a href="{{ route('author') }}">All Authors</a></li>
-                                                            <li><a href="{{ route('author-details') }}">Author Details</a></li>
-                                                            <li><a href="{{ route('vendor') }}">Vendor</a></li>
-                                                            <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
-                                                        </ul>
-                                                    </li>
+                                                <ul class="sub-menu">
+                                                    <li><a href="{{ route('about') }}">About</a></li>
+                                                    <li><a href="{{ route('cart') }}">Cart</a></li>
+                                                    <li><a href="{{ route('checkout') }}">Checkout</a></li>
+                                                    <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
+                                                    <li><a href="{{ route('author') }}">Authors</a></li>
                                                 </ul>
                                             </li>
-                                            <li class="menu-item-has-children">
-                                                <a href="{{ route('blog') }}">Blog</a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="{{ route('blog') }}">Blog</a></li>
-                                                    <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
-                                                    <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
-                                                    <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
-                                                    <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
-                                                </ul>
+                                            <li>
+                                                <a href="{{ route('reviews.index') }}">Reviews</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('ai-insights.index') }}">
+                                                    <span style="display: inline-flex; align-items: center; gap: 5px;">
+                                                        <i class="fas fa-brain"></i> AI Insights
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('categories.index') }}" class="favorite-categories-link">
+                                                    <span style="display: inline-flex; align-items: center; gap: 5px;">
+                                                        <i class="fas fa-heart"></i> Favorites
+                                                    </span>
+                                                    @auth
+                                                        @php
+                                                            $favCount = auth()->user()->categoryFavorites()->count();
+                                                        @endphp
+                                                        @if($favCount > 0)
+                                                            <span class="favorite-count-badge">{{ $favCount }}</span>
+                                                        @endif
+                                                    @endauth
+                                                </a>
                                             </li>
                                             <li>
                                                 <a href="{{ route('contact') }}">Contact</a>
@@ -395,4 +342,4 @@
             </div>
         </div>
     </div>
-</header>
+</header> 

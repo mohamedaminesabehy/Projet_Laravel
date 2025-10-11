@@ -387,48 +387,8 @@ body {
     border: none;
 }
 
-.user-dropdown {
-    position: relative; /* To position the dropdown menu relative to this */
-}
-
-.user-menu {
-    position: absolute;
-    top: 140%; 
-    
-    right: -23px;
-    background-color: white;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    z-index: 1;
-    min-width: 160px;
-    border-radius: 5px;
-    overflow: hidden;
-    display: none; /* Hidden by default */
-}
-
-.user-menu.show {
-    display: block; /* Show when 'show' class is present */
-}
-
-.user-menu a {
-    color: var(--dark);
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-}
-
-.user-menu a:hover {
-    background-color: #f1f1f1;
-}
-
-.user-menu a i {
-    margin-right: 10px;
-    color: var(--gray);
-}
-
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     background: var(--primary-dark);
     color: white !important;
     border: none;
-}
+} 

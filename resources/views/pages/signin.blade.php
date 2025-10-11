@@ -3,7 +3,7 @@
 @section('content')
 
     <main>
-        <section class="cartoon-hero">
+        <section class="cartoon-hero py-80">
             <div class="container position-relative">
                 <div class="row justify-content-center align-items-center g-4">
                     <div class="col-lg-6 d-none d-lg-block">
@@ -62,32 +62,25 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-8 col-12 mx-auto">
+                    <div class="col-lg-6 col-md-10">
                         <div class="p-4 p-md-5 auth-card">
                             <div class="text-center mb-4">
                                 <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo" class="logo-hero">
                                 <h1 class="h3 mt-3 mb-1">Sign in</h1>
                                 <p class="text-muted mb-0">Welcome back! Please enter your details.</p>
                             </div>
-                            <form action="{{ route('signin') }}" method="POST">
-                                @csrf
+                            <form>
                                 <div class="mb-3">
-                                     <label for="signinEmail" class="form-label">Email address</label>
-                                     <input type="email" class="form-control @error('signinEmail') is-invalid @enderror" id="signinEmail" name="signinEmail" placeholder="name@example.com" value="{{ old('signinEmail') }}" required>
-                                     @error('signinEmail')
-                                         <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                                 <div class="mb-3">
-                                     <div class="d-flex justify-content-between align-items-center">
-                                         <label for="signinPassword" class="form-label mb-0">Password</label>
-                                         <a href="#" class="text-decoration-none small">Forgot password?</a>
-                                     </div>
-                                     <input type="password" class="form-control @error('signinPassword') is-invalid @enderror" id="signinPassword" name="signinPassword" placeholder="Your password" required>
-                                     @error('signinPassword')
-                                         <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
-                                 </div>
+                                    <label for="signinEmail" class="form-label">Email address</label>
+                                    <input type="email" class="form-control" id="signinEmail" placeholder="name@example.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label for="signinPassword" class="form-label mb-0">Password</label>
+                                        <a href="#" class="text-decoration-none small">Forgot password?</a>
+                                    </div>
+                                    <input type="password" class="form-control" id="signinPassword" placeholder="Your password" required>
+                                </div>
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" value="" id="rememberMe">
                                     <label class="form-check-label" for="rememberMe">
@@ -114,4 +107,4 @@
         </section>
     </main>
 
-@endsection
+@endsection 

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview - Review Statistics Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .stats-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .preview-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-banner">
+        <div class="container">
+            <h1><i class="fas fa-chart-line me-3"></i>Review Statistics Dashboard</h1>
+            <p class="mb-0">Système de statistiques avancées pour BookShare</p>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <!-- KPI Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted mb-1 small">Total Reviews</p>
+                                <h2 class="mb-0">1,234</h2>
+                                <small class="text-success">
+                                    <i class="fas fa-arrow-up me-1"></i>12.5% vs last month
+                                </small>
+                            </div>
+                            <div class="stats-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted mb-1 small">Average Rating</p>
+                                <h2 class="mb-0">4.3</h2>
+                                <small class="text-muted">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half text-warning"></i>
+                                </small>
+                            </div>
+                            <div class="stats-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted mb-1 small">Approved Reviews</p>
+                                <h2 class="mb-0">987</h2>
+                                <small class="text-muted">
+                                    80% approval rate
+                                </small>
+                            </div>
+                            <div class="stats-icon bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="text-muted mb-1 small">Pending Reviews</p>
+                                <h2 class="mb-0">247</h2>
+                                <small class="text-muted">
+                                    Awaiting moderation
+                                </small>
+                            </div>
+                            <div class="stats-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features List -->
+        <div class="row mb-4">
+            <div class="col-lg-6">
+                <div class="card stats-card">
+                    <div class="card-header bg-transparent">
+                        <h5><i class="fas fa-trophy text-success me-2"></i>Fonctionnalités Clés</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>Dashboard Interactif</strong> - KPIs en temps réel
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>Graphiques Dynamiques</strong> - Chart.js integration
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>Filtres Temporels</strong> - Périodes personnalisables
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>Top Livres</strong> - Meilleurs par note/popularité
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>Reviewers Actifs</strong> - Top contributeurs
+                            </li>
+                            <li class="mb-0">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>Export de Données</strong> - CSV/JSON
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card stats-card">
+                    <div class="card-header bg-transparent">
+                        <h5><i class="fas fa-code text-primary me-2"></i>Technologies Utilisées</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span class="badge bg-primary me-2">Laravel 12</span>
+                            <span class="badge bg-info me-2">PHP 8.2+</span>
+                            <span class="badge bg-success me-2">MySQL</span>
+                        </div>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-dark me-2">Chart.js</span>
+                            <span class="badge bg-secondary me-2">Bootstrap 5</span>
+                            <span class="badge bg-danger me-2">Font Awesome</span>
+                        </div>
+                        <div>
+                            <span class="badge bg-dark me-2">Carbon</span>
+                            <span class="badge bg-info me-2">Eloquent ORM</span>
+                            <span class="badge bg-primary me-2">Blade Templates</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Methods -->
+        <div class="card stats-card mb-4">
+            <div class="card-header bg-transparent">
+                <h5><i class="fas fa-cogs text-warning me-2"></i>Méthodes Analytics Disponibles</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">📊 Statistiques</h6>
+                        <ul class="small">
+                            <li><code>getStatisticsByPeriod()</code></li>
+                            <li><code>getRatingTrend()</code></li>
+                            <li><code>getSentimentAnalysis()</code></li>
+                            <li><code>getCompletionRate()</code></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">🏆 Classements</h6>
+                        <ul class="small">
+                            <li><code>getTopContributors()</code></li>
+                            <li><code>getAverageRatingByCategory()</code></li>
+                            <li><code>getReviewVelocity()</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation Status -->
+        <div class="alert alert-info">
+            <h5 class="alert-heading">
+                <i class="fas fa-info-circle me-2"></i>État de l'Installation
+            </h5>
+            <hr>
+            <p class="mb-2"><strong>⚠️ Action Requise :</strong> Mettre à jour PHP vers la version 8.2 ou supérieure</p>
+            <p class="mb-0">
+                <strong>Version actuelle :</strong> PHP 8.1.12<br>
+                <strong>Version requise :</strong> PHP 8.2.0+
+            </p>
+            <hr>
+            <p class="mb-0">
+                <strong>📖 Documentation :</strong> 
+                <a href="#" class="alert-link">INSTALLATION_GUIDE.md</a> | 
+                <a href="#" class="alert-link">REVIEW_STATISTICS_README.md</a>
+            </p>
+        </div>
+
+        <!-- Quick Start -->
+        <div class="card stats-card">
+            <div class="card-header bg-transparent">
+                <h5><i class="fas fa-rocket text-danger me-2"></i>Quick Start</h5>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li class="mb-2">Mettre à jour PHP vers 8.2+</li>
+                    <li class="mb-2">Exécuter <code class="bg-light px-2 py-1">php artisan migrate</code></li>
+                    <li class="mb-2">Vider le cache <code class="bg-light px-2 py-1">php artisan cache:clear</code></li>
+                    <li class="mb-2">Accéder à <code class="bg-light px-2 py-1">/admin/statistics/reviews</code></li>
+                    <li class="mb-0">Profiter des statistiques ! 🎉</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5 bg-white">
+        <p class="text-muted mb-0">
+            <strong>BookShare Review Statistics System</strong> v1.0.0 - Octobre 2025
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -673,7 +673,26 @@
     "show"
   );
 
-  
+  /*---------- 15. Lenis Library Support ----------*/
+   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText);
+
+   const lenis = new Lenis({
+     lerp: 0.1,
+     touchMultiplier: 0,
+     smoothWheel: true, 
+     smoothTouch: false,
+     mouseWheel: false, 
+     autoResize: true,
+     smooth: true,
+     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+     syncTouch: true,
+   });
+ 
+   lenis.on('scroll', ScrollTrigger.update);
+ 
+   gsap.ticker.add((time) => {
+     lenis.raf(time * 1200);
+   });
 
 
 
@@ -812,14 +831,11 @@
   const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
   // Set initial styles for the circle
-  if (progressCircle) {
-    progressCircle.style.strokeDasharray = CIRCUMFERENCE;
-    progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
-  }
+  progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+  progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
 
   // Update progress based on scroll position
   const updateProgress = () => {
-    if (!progressCircle || !progressPercentage) return;
     const scrollPosition = window.scrollY;
     const totalHeight =
       document.documentElement.scrollHeight - window.innerHeight;
@@ -836,11 +852,7 @@
 
   // Scroll to top using smooth animation
   const scrollToTop = () => {
-    if (typeof gsap !== 'undefined') {
-      gsap.to(window, { duration: 1, scrollTo: 0 });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    gsap.to(window, { duration: 1, scrollTo: 0 });
   };
 
   // Throttle function to limit function execution frequency
@@ -864,16 +876,12 @@
     };
   };
 
-  // Only bind events if elements exist
-  if (backToTopBtn) {
-    backToTopBtn.addEventListener('click', scrollToTop);
-  }
-  if (progressCircle && progressPercentage) {
-    window.addEventListener('scroll', throttle(updateProgress, 100));
-    window.addEventListener('resize', throttle(updateProgress, 100));
-    // Initialize on load
-    updateProgress();
-  }
+  // Attach event listeners
+  window.addEventListener('scroll', throttle(updateProgress, 50));
+  backToTopBtn.addEventListener('click', scrollToTop);
+
+  // Initial update to set the correct progress on page load
+  updateProgress();
 
 
 
@@ -1082,7 +1090,53 @@ $('.cart-button').on('click', function (e) {
 
 })(jQuery);
 
+// Enforce 80% UI scale across browsers without affecting layout breakpoints
+(function enforceEightyPercentScale() {
+  var desiredZoom = 0.9;
+  var d = document;
 
+  function applyScale() {
+    try {
+      var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+      if (!isFirefox) {
+        d.documentElement.style.zoom = desiredZoom;
+        d.body && (d.body.style.zoom = desiredZoom);
+        return;
+      }
+      // Firefox fallback: wrap body content and apply transform scale
+      var existing = d.getElementById('global-zoom-wrapper');
+      if (!existing) {
+        var wrapper = d.createElement('div');
+        wrapper.id = 'global-zoom-wrapper';
+        // Move all body children into the wrapper
+        while (d.body.firstChild) {
+          wrapper.appendChild(d.body.firstChild);
+        }
+        d.body.appendChild(wrapper);
+        // Keep body scrollbars working
+        d.body.style.overflowX = 'hidden';
+      }
+      var target = existing || d.getElementById('global-zoom-wrapper');
+      var scale = desiredZoom;
+      var inverse = 1 / scale;
+      target.style.transformOrigin = '0 0';
+      target.style.transform = 'scale(' + scale + ')';
+      target.style.width = (inverse * 100) + 'vw';
+      target.style.height = (inverse * 100) + 'vh';
+    } catch (e) {
+      // no-op
+    }
+  }
+
+  if (d.readyState === 'loading') {
+    d.addEventListener('DOMContentLoaded', applyScale);
+  } else {
+    applyScale();
+  }
+
+  // Re-apply on resize/orientation to keep width/height in sync for Firefox fallback
+  window.addEventListener('resize', function () { applyScale(); });
+})();
 
 
 
