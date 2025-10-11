@@ -2,25 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
+use App\Models\BookInsight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
     public function home()
     {
-        return view('pages.index');
+        // Récupérer les meilleurs livres avec insights AI (basé sur le nombre de reviews)
+        $topBooksWithInsights = Book::with(['insight', 'reviews'])
+            ->whereHas('insight') // Seulement les livres qui ont un insight
+            ->withCount('reviews')
+            ->orderBy('reviews_count', 'desc')
+            ->take(6)
+            ->get();
+
+        return view('pages.index', compact('topBooksWithInsights'));
     }
 
     public function show(string $page)
     {
         $viewName = 'pages.' . $page;
         if (View::exists($viewName)) {
-            if ($page === 'profile') {
-                $user = Auth::user();
-                return view($viewName, compact('user'));
-            }
             return view($viewName);
         }
 
@@ -30,4 +35,4 @@ class PageController extends Controller
 
         abort(404);
     }
-}
+} 

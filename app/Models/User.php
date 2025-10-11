@@ -4,14 +4,13 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    const ROLE_ADMIN = 'admin';
-    const ROLE_USER = 'user';
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -21,11 +20,9 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'email',
         'password',
-        'role',
     ];
 
     /**
@@ -51,8 +48,68 @@ class User extends Authenticatable
         ];
     }
 
-    public function books()
+    /**
+     * Get the reviews for the user.
+     */
+    public function reviews(): HasMany
     {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the review reactions for the user.
+     */
+    public function reviewReactions(): HasMany
+    {
+        return $this->hasMany(ReviewReaction::class);
+    }
+
+    /**
+     * Get the category favorites for the user.
+     */
+    public function categoryFavorites(): HasMany
+    {
+        return $this->hasMany(CategoryFavorite::class);
+    }
+
+    /**
+     * Get favorite categories (many-to-many relationship)
+     */
+    public function favoriteCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'category_favorites')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Check if user has favorited a specific category
+     */
+    public function hasFavorited(int $categoryId): bool
+    {
+        return $this->categoryFavorites()->where('category_id', $categoryId)->exists();
+    }
+
+    /**
+     * Get count of favorite categories
+     */
+    public function getFavoriteCategoriesCountAttribute(): int
+    {
+        return $this->categoryFavorites()->count();
+    }
+
+    /**
+     * Get the total likes given by the user.
+     */
+    public function getLikesGivenCountAttribute(): int
+    {
+        return $this->reviewReactions()->where('reaction_type', 'like')->count();
+    }
+
+    /**
+     * Get the total dislikes given by the user.
+     */
+    public function getDislikesGivenCountAttribute(): int
+    {
+        return $this->reviewReactions()->where('reaction_type', 'dislike')->count();
     }
 }

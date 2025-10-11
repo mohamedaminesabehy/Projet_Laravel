@@ -170,40 +170,79 @@
                             </div>
                             <div class="vs-comment-form review-form">
                                 <div id="respond" class="comment-respond">
-                                    <div class="form-title">
-                                        <h3 class="blog-inner-title">Add A Review</h3>
-                                        <div class="rating-select">
-                                            <label>Your Rating</label>
-                                            <p class="stars">
-                                                <span>
-                                                    <a class="star-1" href="#">1</a>
-                                                    <a class="star-2" href="#">2</a>
-                                                    <a class="star-3" href="#">3</a>
-                                                    <a class="star-4" href="#">4</a>
-                                                    <a class="star-5" href="#">5</a>
-                                                </span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 form-group">
-                                            <input type="text" class="form-control" placeholder="Complete Name">
-                                        </div>
-                                        <div class="col-md-6 form-group">
-                                            <input type="email" class="form-control" placeholder="Email Address">
-                                        </div>
-                                        <div class="col-12 form-group">
-                                            <textarea class="form-control" placeholder="Review"></textarea>
-                                        </div>
-                                        <div class="col-12 form-group mb-0">
-                                            <div class="custom-checkbox notice">
-                                                <input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes">
-                                                <label for="wp-comment-cookies-consent"> Save my name, email, and website in this browser for
-                                                    the next time I comment.</label>
+                                    @auth
+                                        <form action="{{ route('reviews.store') }}" method="POST" id="review-form">
+                                            @csrf
+                                            <div class="form-title">
+                                                <h3 class="blog-inner-title">Add A Review</h3>
+                                                @if($errors->any())
+                                                    <div class="alert alert-danger">
+                                                        <ul class="mb-0">
+                                                            @foreach($errors->all() as $error)
+                                                                <li>{{ $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                @endif
+                                                @if(session('success'))
+                                                    <div class="alert alert-success">{{ session('success') }}</div>
+                                                @endif
+                                                <div class="rating-select">
+                                                    <label>Your Rating</label>
+                                                    <p class="stars">
+                                                        <span id="star-rating" data-rating="0">
+                                                            <a class="star-1" href="#" data-value="1">1</a>
+                                                            <a class="star-2" href="#" data-value="2">2</a>
+                                                            <a class="star-3" href="#" data-value="3">3</a>
+                                                            <a class="star-4" href="#" data-value="4">4</a>
+                                                            <a class="star-5" href="#" data-value="5">5</a>
+                                                        </span>
+                                                    </p>
+                                                    <input type="hidden" name="rating" id="rating-input" value="" required>
+                                                </div>
                                             </div>
-                                            <button class="vs-btn"> <span class="vs-btn__bar"></span>Submit</button>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-12 form-group">
+                                                <label>Livre</label>
+                                                <select name="book_id" class="form-control" required>
+                                                    <option value="">Sélectionnez un livre</option>
+                                                    @foreach(App\Models\Book::all() as $book)
+                                                        <option value="{{ $book->id }}">{{ $book->title }} - {{ $book->author }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <input type="text" name="user_name" class="form-control" placeholder="Votre nom" value="{{ auth()->user()->name ?? '' }}">
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <input type="email" name="user_email" class="form-control" placeholder="Email Address" value="{{ auth()->user()->email ?? '' }}">
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <textarea name="comment" class="form-control" placeholder="Votre avis sur ce livre..." required minlength="10" maxlength="1000"></textarea>
+                                                <small class="text-muted">Minimum 10 caractères, maximum 1000</small>
+                                            </div>
+                                            <div class="col-12 form-group mb-0">
+                                                <div class="custom-checkbox notice">
+                                                    <input id="wp-comment-cookies-consent" name="save_info" type="checkbox" value="yes">
+                                                    <label for="wp-comment-cookies-consent">Sauvegarder mes informations pour la prochaine fois</label>
+                                                </div>
+                                                <button type="submit" class="vs-btn"> <span class="vs-btn__bar"></span>Soumettre l'avis</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
+                                    @else
+                                        <div class="text-center p-4">
+                                            <h3 class="blog-inner-title">Add A Review</h3>
+                                            <div class="alert alert-info">
+                                                <h5><i class="fas fa-info-circle"></i> Connexion requise</h5>
+                                                <p>Vous devez être connecté pour laisser un avis sur ce livre.</p>
+                                                <a href="{{ route('login') }}" class="vs-btn">
+                                                    <span class="vs-btn__bar"></span>Se connecter
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
@@ -474,4 +513,70 @@
         </div>
     </section>
     <!-- Book Of The Month End -->
+
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion du système d'étoiles
+        const stars = document.querySelectorAll('#star-rating a');
+        const ratingInput = document.getElementById('rating-input');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function(e) {
+                e.preventDefault();
+                const rating = parseInt(this.dataset.value);
+                ratingInput.value = rating;
+                
+                // Mettre à jour l'affichage des étoiles
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.style.color = '#ffc107';
+                        s.style.textDecoration = 'none';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+            
+            // Effet hover
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.dataset.value);
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.style.color = '#ffc107';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        });
+        
+        // Validation du formulaire
+        const form = document.getElementById('review-form');
+        form.addEventListener('submit', function(e) {
+            const rating = ratingInput.value;
+            const comment = document.querySelector('textarea[name="comment"]').value;
+            const bookId = document.querySelector('select[name="book_id"]').value;
+            
+            if (!rating) {
+                e.preventDefault();
+                alert('Veuillez sélectionner une note en étoiles');
+                return false;
+            }
+            
+            if (!bookId) {
+                e.preventDefault();
+                alert('Veuillez sélectionner un livre');
+                return false;
+            }
+            
+            if (comment.length < 10) {
+                e.preventDefault();
+                alert('Le commentaire doit contenir au moins 10 caractères');
+                return false;
+            }
+        });
+    });
+    </script>
+    @endpush
 @endsection 

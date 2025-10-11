@@ -50,7 +50,7 @@
     <script src="{{ asset('assets/js/ScrollTrigger.min.js') }}"></script>
     <script src="{{ asset('assets/js/gsap-scroll-to-plugin.js') }}"></script>
     <script src="{{ asset('assets/js/SplitText.js') }}"></script>
-
+    <script src="{{ asset('assets/js/lenis.min.js') }}"></script>
     <script src="{{ asset('assets/js/wow.min.js') }}"></script>
     <script src="{{ asset('assets/js/jquery.nice-select.min.js') }}"></script>
     <script src="{{ asset('assets/js/nouislider.min.js') }}"></script>
@@ -59,4 +59,4 @@
     <!-- Page Specific Scripts -->
     @stack('scripts')
 </body>
-</html>
+</html> 

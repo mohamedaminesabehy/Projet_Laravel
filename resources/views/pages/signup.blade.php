@@ -3,7 +3,7 @@
 @section('content')
 
 <main>
-    <section class="cartoon-hero">
+    <section class="cartoon-hero py-80">
         <div class="container position-relative">
             <div class="row justify-content-center align-items-center g-4">
                 <div class="col-lg-6 d-none d-lg-block">
@@ -69,58 +69,42 @@
                         </svg>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-8 col-12 mx-auto">
+                <div class="col-lg-6 col-md-10">
                     <div class="p-4 p-md-5 auth-card">
                         <div class="text-center mb-4">
                             <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo" class="logo-hero">
                             <h1 class="h3 mt-3 mb-1">Create account</h1>
                             <p class="text-muted mb-0">Join us and explore the best books.</p>
                         </div>
-                        <form action="{{ route('signup') }}" method="POST">
-                            @csrf
+                        <form>
                             <div class="row g-3">
                                 <div class="col-sm-6">
-                                     <label for="firstName" class="form-label">First name</label>
-                                     <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName" name="firstName" placeholder="John"
-                                         value="{{ old('firstName') }}" required>
-                                     @error('firstName')
-                                         <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                                 <div class="col-sm-6">
-                                     <label for="lastName" class="form-label">Last name</label>
-                                     <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName" name="lastName" placeholder="Doe"
-                                         value="{{ old('lastName') }}" required>
-                                     @error('lastName')
-                                         <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                             </div>
-                             <div class="mt-3">
-                                 <label for="signupEmail" class="form-label">Email address</label>
-                                 <input type="email" class="form-control @error('signupEmail') is-invalid @enderror" id="signupEmail" name="signupEmail"
-                                     placeholder="name@example.com" value="{{ old('signupEmail') }}" required>
-                                 @error('signupEmail')
-                                     <div class="invalid-feedback">{{ $message }}</div>
-                                 @enderror
-                             </div>
-                             <div class="row g-3 mt-1">
-                                 <div class="col-sm-6">
-                                     <label for="signupPassword" class="form-label">Password</label>
-                                     <input type="password" class="form-control @error('signupPassword') is-invalid @enderror" id="signupPassword" name="signupPassword"
-                                         placeholder="Create a password" required>
-                                     @error('signupPassword')
-                                         <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                                 <div class="col-sm-6">
-                                     <label for="confirmPassword" class="form-label">Confirm password</label>
-                                     <input type="password" class="form-control @error('signupPassword') is-invalid @enderror" id="confirmPassword" name="signupPassword_confirmation"
-                                         placeholder="Repeat password" required>
-                                     @error('signupPassword')
-                                         <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
-                                 </div>
+                                    <label for="firstName" class="form-label">First name</label>
+                                    <input type="text" class="form-control" id="firstName" placeholder="John"
+                                        required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="lastName" class="form-label">Last name</label>
+                                    <input type="text" class="form-control" id="lastName" placeholder="Doe"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label for="signupEmail" class="form-label">Email address</label>
+                                <input type="email" class="form-control" id="signupEmail"
+                                    placeholder="name@example.com" required>
+                            </div>
+                            <div class="row g-3 mt-1">
+                                <div class="col-sm-6">
+                                    <label for="signupPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="signupPassword"
+                                        placeholder="Create a password" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="confirmPassword" class="form-label">Confirm password</label>
+                                    <input type="password" class="form-control" id="confirmPassword"
+                                        placeholder="Repeat password" required>
+                                </div>
                             </div>
                             <div class="form-check mt-3">
                                 <input class="form-check-input" type="checkbox" value="" id="terms">
@@ -150,4 +134,4 @@
     </section>
 </main>
 
-@endsection
+@endsection 
