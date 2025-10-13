@@ -9,22 +9,21 @@ return new class extends Migration
     /** 
      * Run the migrations. 
      */ 
-    public function up(): void 
-    { 
-        Schema::create('categories', function (Blueprint $table) { 
-            $table->id(); 
-            $table->string('name'); 
-            $table->string('slug')->unique(); 
-            $table->text('description')->nullable(); 
-            $table->string('color', 7)->default('#000000'); 
-            $table->string('icon')->default('fas fa-book'); 
-            $table->boolean('is_active')->default(true); 
-            $table->timestamps(); 
- 
-            $table->index(['is_active']); 
-            $table->index(['slug']); 
-        }); 
-    } 
+public function up(): void
+{
+    if (!Schema::hasTable('categories')) {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->text('description')->nullable();
+            $table->string('color', 7)->default('#000000');
+            $table->string('icon')->default('fas fa-book');
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+    }
+}
  
     /** 
      * Reverse the migrations. 

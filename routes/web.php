@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,3 +72,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 Route::post('/paypal/process', [App\Http\Controllers\PayPalController::class, 'processPayment'])->name('paypal.process');
 Route::get('/paypal/success', [App\Http\Controllers\PayPalController::class, 'success'])->name('paypal.success');
 Route::get('/paypal/cancel', [App\Http\Controllers\PayPalController::class, 'cancel'])->name('paypal.cancel');
+
+
+
+// CRUD Messages
+Route::middleware('auth')->prefix('messages')->group(function () {
+    Route::get('/', [MessageController::class, 'index'])->name('pages.messages');
+    Route::post('/', [MessageController::class, 'store'])->name('messages.store');
+    Route::put('/{message}', [MessageController::class, 'update'])->name('messages.update');
+    Route::delete('/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+});

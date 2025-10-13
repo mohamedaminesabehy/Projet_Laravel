@@ -103,6 +103,12 @@
                 <li>
                     <a href="{{ route('contact') }}">Contact</a>
                 </li>
+
+                                <li>
+                    <a href="{{ route('pages.messages') }}">messages</a>
+                </li>
+
+
             </ul>
         </div>
     </div>
@@ -335,6 +341,12 @@
                                             <li>
                                                 <a href="{{ route('contact') }}">Contact</a>
                                             </li>
+
+                                                                                        <li>
+                                                <a href="{{ route('pages.messages') }}">messages</a>
+                                            </li>
+
+                                            
                                         </ul>
                                     </nav>
                                     <button class="vs-menu-toggle d-inline-block d-lg-none"><i class="fal fa-bars"></i></button>
