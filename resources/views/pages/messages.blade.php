@@ -92,14 +92,14 @@
     }
     
     .conversation-item.active {
-        background: #e7f3ff;
+        background: #e8f5e9;
     }
     
     .user-avatar {
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #0084ff, #00c6ff);
+        background: linear-gradient(135deg, #c9848f, #c9848f);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -148,7 +148,7 @@
     .unread-indicator {
         width: 12px;
         height: 12px;
-        background: #0084ff;
+        background: #c9848f;
         border-radius: 50%;
         flex-shrink: 0;
     }
@@ -166,6 +166,7 @@
         border-bottom: 1px solid #e4e6eb;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         background: #ffffff;
     }
     
@@ -175,11 +176,198 @@
         gap: 12px;
     }
     
+    .chat-header-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .btn-meeting {
+        padding: 8px 16px;
+        background: #c9848f;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .btn-meeting:hover {
+        background: #b67680;
+    }
+    
+    .btn-meeting i {
+        font-size: 14px;
+    }
+    
+    .btn-view-meetings {
+        padding: 8px 16px;
+        background: #f0f2f5;
+        color: #050505;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .btn-view-meetings:hover {
+        background: #e4e6eb;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-overlay.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+    
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e4e6eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #050505;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #65676b;
+        padding: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-close:hover {
+        background: #f0f2f5;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 16px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #050505;
+        font-size: 14px;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccd0d5;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #c9848f;
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+        min-height: 60px;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    
+    .btn-submit {
+        flex: 1;
+        padding: 12px;
+        background: #c9848f;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 15px;
+    }
+    
+    .btn-submit:hover {
+        background: #b67680;
+    }
+    
+    .btn-cancel {
+        flex: 1;
+        padding: 12px;
+        background: #f0f2f5;
+        color: #050505;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 15px;
+    }
+    
+    .btn-cancel:hover {
+        background: #e4e6eb;
+    }
+    
     .chat-header-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #0084ff, #00c6ff);
+        background: linear-gradient(135deg, #c9848f, #c9848f);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -192,10 +380,6 @@
         font-size: 15px;
         font-weight: 600;
         color: #050505;
-    }
-    
-    .chat-header-actions {
-        display: none; /* Hidden - user requested removal */
     }
     
     /* Messages */
@@ -256,7 +440,7 @@
     }
     
     .message-group.sent .message-bubble {
-        background: #0084ff;
+        background: #c9848f;
         color: white;
         cursor: pointer;
     }
@@ -300,7 +484,7 @@
     
     .message-action-btn.edit:hover {
         background: #e7f3ff;
-        color: #0084ff;
+        color: #c9848f;
     }
     
     .message-action-btn.delete:hover {
@@ -341,7 +525,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: #0084ff;
+        background: #c9848f;
         color: white;
         display: flex;
         align-items: center;
@@ -352,7 +536,7 @@
     }
     
     .send-btn:hover {
-        background: #0073e6;
+        background: #b67680;
     }
     
     .cancel-edit-btn {
@@ -450,6 +634,16 @@
                         <div class="chat-header-name" id="conversationTitle">Sélectionnez une conversation</div>
                     </div>
                 </div>
+                <div class="chat-header-actions">
+                    <a href="{{ route('meetings.index') }}" class="btn-view-meetings">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Mes Rendez-vous</span>
+                    </a>
+                    <button id="proposeRdvBtn" class="btn-meeting" style="display: none;" onclick="proposeRendezVous()">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Proposer Rendez-vous</span>
+                    </button>
+                </div>
             </div>
 
             <div class="messages-container" id="conversationMessages">
@@ -478,6 +672,57 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal Proposer Rendez-vous -->
+    <div class="modal-overlay" id="meetingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-plus"></i> Proposer un Rendez-vous</h2>
+                <button class="modal-close" onclick="closeMeetingModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="meetingForm" action="{{ route('meetings.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="message_id" id="modal_message_id">
+                    <input type="hidden" name="user2_id" id="modal_user2_id">
+                    
+                    <div class="form-group">
+                        <label for="meeting_date"><i class="fas fa-calendar"></i> Date du rendez-vous *</label>
+                        <input type="date" id="meeting_date" name="meeting_date" min="{{ now()->toDateString() }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="meeting_time"><i class="fas fa-clock"></i> Heure *</label>
+                        <input type="time" id="meeting_time" name="meeting_time" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="meeting_place"><i class="fas fa-map-marker-alt"></i> Lieu *</label>
+                        <input type="text" id="meeting_place" name="meeting_place" placeholder="Ex: Café Central, Place de la République" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="meeting_address"><i class="fas fa-location-arrow"></i> Adresse complète (optionnel)</label>
+                        <textarea id="meeting_address" name="meeting_address" rows="2" placeholder="Ex: 123 Rue de la Paix, 75001 Paris"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes"><i class="fas fa-sticky-note"></i> Notes (optionnel)</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Ex: Je serai en pull rouge, j'arriverai avec mon vélo..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeMeetingModal()">Annuler</button>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Proposer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -491,10 +736,12 @@ const formContenu = document.getElementById('formContenu');
 const sendBtn = document.getElementById('sendBtn');
 const cancelEditBtn = document.getElementById('cancelEditBtn');
 const conversationForm = document.getElementById('conversationForm');
+const proposeRdvBtn = document.getElementById('proposeRdvBtn');
 
 let messages = @json($messages);
 const authId = @json(auth()->id());
 let currentReceiverId = null;
+let currentMessageId = null; // Pour stocker l'ID du dernier message de la conversation
 
 function getInitials(name, lastname) {
     const n = (name || 'U').charAt(0).toUpperCase();
@@ -652,6 +899,19 @@ conversationItems.forEach(item => {
             (msg.receiver_id == userId && msg.sender_id == authId)
         );
 
+        // Store the last message ID for the meeting proposal
+        if (conversation.length > 0) {
+            currentMessageId = conversation[conversation.length - 1].id;
+        } else {
+            // If no messages yet, we'll use the first message that will be sent
+            currentMessageId = null;
+        }
+
+        // Show "Proposer Rendez-vous" button when a conversation is selected
+        if (proposeRdvBtn) {
+            proposeRdvBtn.style.display = 'flex';
+        }
+
         renderMessages(conversation, userName, userLastName);
         
         // Reset edit mode
@@ -672,6 +932,39 @@ cancelEditBtn.addEventListener('click', () => {
     cancelEditBtn.style.display = 'none';
     sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
     formContenu.focus();
+});
+
+// Function to propose a rendez-vous
+function proposeRendezVous() {
+    if (!currentReceiverId) {
+        alert('Veuillez sélectionner une conversation.');
+        return;
+    }
+    
+    if (!currentMessageId) {
+        alert('Veuillez envoyer au moins un message avant de proposer un rendez-vous.');
+        return;
+    }
+    
+    // Fill modal form with data
+    document.getElementById('modal_message_id').value = currentMessageId;
+    document.getElementById('modal_user2_id').value = currentReceiverId;
+    
+    // Open modal
+    document.getElementById('meetingModal').classList.add('active');
+}
+
+// Function to close modal
+function closeMeetingModal() {
+    document.getElementById('meetingModal').classList.remove('active');
+    document.getElementById('meetingForm').reset();
+}
+
+// Close modal when clicking outside
+document.getElementById('meetingModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeMeetingModal();
+    }
 });
 
 // Auto-scroll on page load

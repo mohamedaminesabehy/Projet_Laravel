@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin - @yield('title', 'Dashboard')</title>
 
     <!-- Favicon -->
@@ -61,6 +62,11 @@
                 <a href="{{ route('admin.events.index') }}" class="menu-item {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Événements</span>
+                </a>
+
+                <a href="{{ route('admin.meetings.dashboard') }}" class="menu-item {{ request()->routeIs('admin.meetings.*') ? 'active' : '' }}">
+                    <i class="fas fa-handshake"></i>
+                    <span>Meetings</span>
                 </a>
 
                 <a href="{{ route('admin.exchanges') }}" class="menu-item {{ request()->routeIs('admin.exchanges') ? 'active' : '' }}">
