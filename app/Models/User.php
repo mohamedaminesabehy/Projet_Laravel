@@ -9,9 +9,6 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    const ROLE_ADMIN = 'admin';
-    const ROLE_USER = 'user';
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -21,11 +18,9 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'email',
         'password',
-        'role',
     ];
 
     /**
@@ -49,10 +44,5 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function books()
-    {
-        return $this->hasMany(Book::class);
     }
 }

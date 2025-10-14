@@ -10,23 +10,3 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
-
-.wc-proceed-to-checkout {
-    text-align: right;
-    margin-top: 20px;
-}
-
-.wc-proceed-to-checkout .vs-btn {
-    padding: 12px 30px;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 5px;
-    background-color: #ff6a00;
-    color: #fff;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.wc-proceed-to-checkout .vs-btn:hover {
-    background-color: #e65c00;
-}
