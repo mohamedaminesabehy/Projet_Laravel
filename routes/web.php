@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AiSummaryController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
@@ -36,6 +37,7 @@ Route::get('/checkout', [PageController::class, 'show'])->defaults('page', 'chec
 Route::get('/favorites', [PageController::class, 'show'])->defaults('page', 'favorites')->name('favorites');
 Route::get('/profile', [PageController::class, 'show'])->defaults('page', 'profile')->name('profile');
 Route::get('/shop-details/{id}', [PageController::class, 'bookDetails'])->name('shop-details');
+Route::get('/api/ai-summary/{id}', [AiSummaryController::class, 'getSummary'])->name('api.ai-summary');
 Route::get('/shop-sidebar', [PageController::class, 'show'])->defaults('page', 'shop-sidebar')->name('shop-sidebar');
 Route::get('/signin', [AuthController::class, 'showSigninForm'])->name('signin');
 Route::post('/signin', [AuthController::class, 'signin'])->name('signin.post');
@@ -48,6 +50,7 @@ Route::get('/wishlist', [PageController::class, 'show'])->defaults('page', 'wish
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update', [CartController::class, 'bulkUpdate'])->name('cart.bulkUpdate');
     Route::patch('/cart/update/{cartItem}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
 });

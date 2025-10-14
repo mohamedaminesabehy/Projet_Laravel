@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\CartHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PayPalController extends Controller
@@ -14,18 +17,18 @@ class PayPalController extends Controller
             $provider = new PayPalClient;
             $provider->setApiCredentials(config('paypal'));
             
-            \Log::info('PayPalController: Attempting to get access token.');
+            Log::info('PayPalController: Attempting to get access token.');
             // Vérifier si l'accès à l'API PayPal est possible
             try {
                 $paypalToken = $provider->getAccessToken();
-                \Log::info('PayPalController: Access token obtained successfully.');
+                Log::info('PayPalController: Access token obtained successfully.');
             } catch (\Exception $e) {
-                \Log::error('PayPal API Error: ' . $e->getMessage());
+                Log::error('PayPal API Error: ' . $e->getMessage());
                 return redirect()->route('cart.index')->with('error', 'Impossible de se connecter à PayPal. Veuillez réessayer plus tard.');
             }
 
             $total = 0;
-            $cartItems = Cart::where('user_id', auth()->id())->with('book')->get();
+            $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
             
             if ($cartItems->isEmpty()) {
                 return redirect()->route('cart.index')->with('error', 'Votre panier est vide.');
@@ -39,12 +42,12 @@ class PayPalController extends Controller
                 return redirect()->route('cart.index')->with('error', 'Le montant total doit être supérieur à 0.');
             }
 
-            \Log::info('PayPal Order Creation Data', [
+            Log::info('PayPal Order Creation Data', [
                 'total' => number_format($total, 2, '.', ''),
                 'currency' => "USD"
             ]);
 
-            \Log::info('PayPalController: Attempting to create order.');
+            Log::info('PayPalController: Attempting to create order.');
             $response = $provider->createOrder([
                 "intent" => "CAPTURE",
                 "application_context" => [
@@ -63,10 +66,10 @@ class PayPalController extends Controller
                     ]
                 ]
             ]);
-            \Log::info('PayPalController: Order creation response received.', ['response' => $response]);
+            Log::info('PayPalController: Order creation response received.', ['response' => $response]);
 
             if (isset($response['id']) && $response['id'] != null) {
-                \Log::info('PayPalController: Order created, redirecting to PayPal.');
+                Log::info('PayPalController: Order created, redirecting to PayPal.');
                 // Redirect to PayPal
                 foreach ($response['links'] as $link) {
                     if ($link['rel'] === 'approve') {
@@ -74,16 +77,16 @@ class PayPalController extends Controller
                     }
                 }
                 
-                \Log::warning('PayPal redirect link not found', ['response' => $response]);
+                Log::warning('PayPal redirect link not found', ['response' => $response]);
                 return redirect()->route('cart.index')->with('error', 'Lien de redirection PayPal non trouvé. Veuillez réessayer.');
             } else {
-                \Log::error('PayPal Error Response', ['response' => $response]);
+                Log::error('PayPal Error Response', ['response' => $response]);
                 $errorMessage = isset($response['error']) ? 'Erreur PayPal: ' . $response['error']['message'] : 
                                (isset($response['message']) ? $response['message'] : 'Une erreur est survenue avec PayPal.');
                 return redirect()->route('cart.index')->with('error', $errorMessage);
             }
         } catch (\Exception $e) {
-            \Log::error('PayPal Exception: ' . $e->getMessage());
+            Log::error('PayPal Exception: ' . $e->getMessage());
             return redirect()->route('cart.index')->with('error', 'Une erreur est survenue lors du traitement de votre paiement. Veuillez réessayer plus tard.');
         }
     }
@@ -97,41 +100,51 @@ class PayPalController extends Controller
             try {
                 $paypalToken = $provider->getAccessToken();
             } catch (\Exception $e) {
-                \Log::error('PayPal API Error on success: ' . $e->getMessage());
+                Log::error('PayPal API Error on success: ' . $e->getMessage());
                 return redirect()->route('cart.index')->with('error', 'Impossible de se connecter à PayPal. Veuillez réessayer plus tard.');
             }
             
             if (!$request->has('token')) {
-                \Log::error('PayPal success callback missing token');
+                Log::error('PayPal success callback missing token');
                 return redirect()->route('cart.index')->with('error', 'Paramètre de paiement manquant.');
             }
             
             $response = $provider->capturePaymentOrder($request->token);
-            \Log::info('PayPal capture response', ['response' => $response]);
+            Log::info('PayPal capture response', ['response' => $response]);
 
             if (isset($response['status']) && $response['status'] == 'COMPLETED') {
-                // Clear the cart
-                Cart::where('user_id', auth()->id())->delete();
-                
-                // Dummy order data for demonstration
-                $orderSummary = [
-                    'order_number' => '#123456',
-                    'date' => date('d/m/Y'),
-                    'total' => '120.00 €',
-                    'items' => [
-                        ['name' => 'Livre A', 'quantity' => 1, 'price' => '25.00 €'],
-                        ['name' => 'Livre B', 'quantity' => 2, 'price' => '70.00 €'],
-                        ['name' => 'Frais de port', 'quantity' => 1, 'price' => '5.00 €'],
-                    ]
-                ];
+                // Get cart items before clearing
+                $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
 
-                return view('paypal.success', compact('orderSummary'));
+                // Save cart items to history and collect created IDs
+                $createdIds = [];
+                foreach ($cartItems as $item) {
+                    $history = CartHistory::create([
+                        'user_id' => Auth::id(),
+                        'book_id' => $item->book_id,
+                        'quantity' => $item->quantity,
+                        'price' => $item->price,
+                        'transaction_date' => now(),
+                        'payment_status' => 'completed',
+                    ]);
+                    $createdIds[] = $history->id;
+                }
+
+                // Clear the cart
+                Cart::where('user_id', Auth::id())->delete();
+
+                // Load cart history for this transaction with relations
+                $cart_historique = CartHistory::with(['user', 'book'])
+                    ->whereIn('id', $createdIds)
+                    ->get();
+
+                return view('paypal.success', compact('cart_historique'));
             } else {
                 $errorMessage = 'Le paiement a échoué.';
                 
                 if (isset($response['error'])) {
                     $errorMessage .= ' Erreur: ' . $response['error']['message'];
-                    \Log::error('PayPal capture error', ['error' => $response['error']]);
+                    Log::error('PayPal capture error', ['error' => $response['error']]);
                 } elseif (isset($response['message'])) {
                     $errorMessage .= ' Message: ' . $response['message'];
                 }
@@ -139,7 +152,7 @@ class PayPalController extends Controller
                 return redirect()->route('cart.index')->with('error', $errorMessage);
             }
         } catch (\Exception $e) {
-            \Log::error('PayPal Success Exception: ' . $e->getMessage());
+            Log::error('PayPal Success Exception: ' . $e->getMessage());
             return redirect()->route('cart.index')->with('error', 'Une erreur est survenue lors de la finalisation de votre paiement. Veuillez contacter notre service client.');
         }
     }
@@ -147,9 +160,9 @@ class PayPalController extends Controller
     public function cancel(Request $request)
     {
         // Enregistrer plus d'informations pour le débogage
-        \Log::info('PayPal payment cancelled', [
+        Log::info('PayPal payment cancelled', [
             'token' => $request->token ?? 'no-token',
-            'user_id' => auth()->id() ?? 'not-authenticated',
+            'user_id' => Auth::id() ?? 'not-authenticated',
             'user_agent' => $request->header('User-Agent'),
             'referrer' => $request->header('Referer')
         ]);

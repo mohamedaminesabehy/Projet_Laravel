@@ -344,48 +344,9 @@
                         <div class="col-auto d-xl-block d-none">
                             <div class="header-cart">
                                 <a href="{{ route('cart') }}" class="vs-icon cart"><i class="fal fa-shopping-bag"></i><span class="badge">{{ $cartCount }}</span></a>
-                                <div class="woocommerce widget_shopping_cart">
-                                    <div class="widget_shopping_cart_content">
-                                        <ul class="cart_list">
-                                            <li class="mini_cart_item">
-                                                <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-1.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop') }}" class="product-title">Smart Watch</a>
-                                                <span class="amount">$99.00</span>
-                                                <div class="quantity">
-                                                    <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>
-                                                    <input type="number" class="qty-input" value="1" min="1" max="99">
-                                                    <button class="quantity-plus qut-btn"><i class="far fa-plus"></i></button>
-                                                </div>
-                                                <div class="subtotal">
-                                                    <span>Subtotal:</span>
-                                                    <span class="amount">$99.00</span>
-                                                </div>
-                                            </li>
-                                            <li class="mini_cart_item">
-                                                <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-2.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop') }}" class="product-title">Boss Chair</a>
-                                                <span class="amount">$80.00</span>
-                                                <div class="quantity">
-                                                    <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>
-                                                    <input type="number" class="qty-input" value="2" min="1" max="99">
-                                                    <button class="quantity-plus qut-btn"><i class="far fa-plus"></i></button>
-                                                </div>
-                                                <div class="subtotal">
-                                                    <span>Subtotal:</span>
-                                                    <span class="amount">$160.00</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <p class="total">
-                                            <strong>Subtotal:</strong>
-                                            <span class="amount">$259.00</span>
-                                        </p>
-                                        <p class="buttons">
-                                            <a href="{{ route('cart') }}" class="vs-btn">View cart</a>
-                                            <a href="{{ route('checkout') }}" class="vs-btn checkout">Checkout</a>
-                                        </p>
+                                        
+                                        
+                            
                                     </div>
                                 </div>
                             </div>

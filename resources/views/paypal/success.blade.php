@@ -81,17 +81,37 @@
         <p>Merci pour votre achat et pour la confiance que vous nous accordez.</p>
 
         <div class="order-summary">
-            <h3>Récapitulatif de la commande</h3>
-            <p><strong>Numéro de commande:</strong> #123456</p>
-            <p><strong>Date:</strong> 23/07/2024</p>
-            <p><strong>Total:</strong> 120.00 €</p>
-            <p><strong>Articles:</strong></p>
-            <ul>
-                <li>Livre A (x1) - 25.00 €</li>
-                <li>Livre B (x2) - 70.00 €</li>
-                <li>Frais de port - 5.00 €</li>
-            </ul>
-            <p><em>Ceci est un exemple de récapitulatif. Le contenu réel sera généré dynamiquement.</em></p>
+            <h3>Détails de la transaction</h3>
+            @if(isset($cart_historique) && $cart_historique->count())
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Utilisateur</th>
+                                <th>Livre</th>
+                                <th>Quantité</th>
+                                <th>Prix</th>
+                                <th>Date de transaction</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($cart_historique as $item)
+                                <tr>
+                                    <td>{{ $item->user ? ($item->user->first_name . ' ' . $item->user->last_name) : 'Utilisateur inconnu' }}</td>
+                                    <td>{{ $item->book ? $item->book->title : 'Livre inconnu' }}</td>
+                                    <td>{{ $item->quantity }}</td>
+                                    <td>{{ number_format($item->price, 2, ',', ' ') }} €</td>
+                                    <td>{{ $item->transaction_date ? $item->transaction_date->format('d/m/Y H:i') : '' }}</td>
+                                    <td>{{ ucfirst($item->payment_status) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <p>Aucune transaction à afficher.</p>
+            @endif
         </div>
 
         <a href="/" class="btn btn-home">Retour à l'accueil</a>

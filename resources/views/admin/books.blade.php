@@ -344,14 +344,12 @@
                                     <th width="15%" class="text-dark">Catégorie</th>
                                     <th width="10%" class="text-dark">Prix</th>
                                     <th width="10%" class="text-dark">Stock</th>
-                                    <th width="10%" class="text-dark">Utilisateur</th>
-                                    <th width="10%" class="text-dark">Statut</th>
                                     <th width="15%" class="text-dark">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($books as $book)
-                                <tr>
+                                <tr data-category-id="{{ $book->category->id }}">
                                     <td>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox">
@@ -378,13 +376,7 @@
                                             <span class="book-stock stock-low text-dark">Stock faible ({{ $book->stock }})</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        @if($book->status == 'published')
-                                            <span class="badge bg-success text-dark">Publié</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">Brouillon</span>
-                                        @endif
-                                    </td>
+                                   
                                     <td>
                                         <button type="button" class="action-btn btn-light view-book" title="Voir" data-id="{{ $book->id }}">
                                             <i class="fas fa-eye text-primary"></i>
@@ -521,12 +513,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="author" class="form-label modal-body-text">Auteur</label>
-                                <select class="form-select modal-body-text" id="author" name="author">
-                                    <option value="">Sélectionner un auteur</option>
-                                    <option value="Victor Hugo">Victor Hugo</option>
-                                    <option value="J.K. Rowling">J.K. Rowling</option>
-                                    <option value="Albert Camus">Albert Camus</option>
-                                </select>
+                                <input type="text" class="form-control modal-body-text" id="author" name="author" placeholder="Saisir le nom de l'auteur">
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
@@ -679,18 +666,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction de filtrage
     function applyFilters() {
         const searchValue = document.getElementById('search').value.toLowerCase();
-        const categoryValue = document.getElementById('category').value.toLowerCase();
+        const categoryValue = document.getElementById('category').value; // category ID
         const minPrice = parseFloat(document.getElementById('min_price').value) || 0;
         const maxPrice = parseFloat(document.getElementById('max_price').value) || Infinity;
 
         tableRows.forEach(row => {
             const title = row.querySelector('.book-title').textContent.toLowerCase();
-            const category = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const rowCategoryId = row.getAttribute('data-category-id');
             const priceText = row.querySelector('.book-price').textContent.replace('€', '').replace(',', '.').trim();
             const price = parseFloat(priceText);
 
             const matchesSearch = !searchValue || title.includes(searchValue);
-            const matchesCategory = !categoryValue || category.includes(categoryValue);
+            const matchesCategory = !categoryValue || rowCategoryId === categoryValue;
             const matchesPrice = price >= minPrice && price <= maxPrice;
 
             if (matchesSearch && matchesCategory && matchesPrice) {
@@ -705,15 +692,22 @@ document.addEventListener('DOMContentLoaded', function() {
     filterInputs.forEach(input => {
         input.addEventListener('input', applyFilters);
     });
+    // Assurer le déclenchement sur changement de la catégorie
+    const categorySelect = document.getElementById('category');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', applyFilters);
+    }
 
     // Réinitialiser les filtres
     resetFiltersBtn.addEventListener('click', function() {
         filterInputs.forEach(input => {
             input.value = '';
         });
+        if (categorySelect) categorySelect.value = '';
         tableRows.forEach(row => {
             row.classList.remove('hidden');
         });
+        applyFilters();
     });
 
     // Gestion de la suppression avec confirmation
