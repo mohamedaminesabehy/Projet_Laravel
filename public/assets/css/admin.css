@@ -1,0 +1,434 @@
+/* Admin Styles */
+:root {
+    --primary: #D16655; /* Replaced with --theme-color from main app */
+    --primary-dark: #BD7579; /* Replaced with --secondary-color from main app for a dark variant */
+    --secondary: #BD7579; /* Matched with --secondary-color from main app */
+    --success: #28a745; /* Kept as a standard success color */
+    --info: #3b82f6; /* Kept as a standard info color */
+    --warning: #f59e0b; /* Kept as a standard warning color */
+    --danger: #ef4444; /* Kept as a standard danger color */
+    --dark: #2E4A5B; /* Replaced with --title-color from main app */
+    --light: #F8EBE5; /* Replaced with --body-color from main app */
+    --gray: #505050; /* Replaced with --text-color from main app */
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 70px;
+    --topbar-height: 70px;
+    --white-color: #ffffff; /* Added for consistency */
+}
+
+body {
+    font-family: "Poppins", sans-serif; /* Matched with --body-font from main app */
+    background-color: var(--light); /* Using the new light variable */
+    overflow-x: hidden;
+    color: var(--dark); /* Using the new dark variable */
+}
+
+/* Sidebar Styles */
+.admin-wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); /* Using new primary colors */
+    color: var(--white-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header img {
+    max-width: 150px;
+    transition: all 0.3s;
+}
+
+.sidebar.collapsed .sidebar-header img {
+    max-width: 40px;
+}
+
+.sidebar-menu {
+    padding: 20px 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 100px);
+}
+
+.sidebar-menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+.menu-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s;
+    border-left: 3px solid transparent;
+    margin-bottom: 5px;
+}
+
+.menu-item:hover, .menu-item.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left-color: white;
+}
+
+.menu-item i {
+    margin-right: 15px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+.menu-item span {
+    transition: all 0.3s;
+}
+
+.sidebar.collapsed .menu-item span {
+    display: none;
+}
+
+.menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 15px 20px;
+}
+
+.menu-title {
+    padding: 10px 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar.collapsed .menu-title {
+    display: none;
+}
+
+/* Main Content Styles */
+.main-content {
+    width: calc(100% - var(--sidebar-width));
+    margin-left: var(--sidebar-width);
+    transition: all 0.3s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content.expanded {
+    width: calc(100% - var(--sidebar-collapsed-width));
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+/* Topbar Styles */
+.topbar {
+    height: var(--topbar-height);
+    background: white;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.toggle-sidebar {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.toggle-sidebar:hover {
+    background: #f3f4f6;
+    color: var(--primary);
+}
+
+.topbar-title {
+    margin-left: 20px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-top: 12px;
+}
+
+.topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.notification-bell {
+    position: relative;
+    margin-right: 20px;
+    color: var(--gray);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--danger);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-dropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.user-name {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+/* Content Area Styles */
+.content-area {
+    padding: 30px;
+    flex: 1;
+}
+
+.page-title {
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: none;
+    margin-bottom: 30px;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 20px;
+    font-weight: 600;
+    color: var(--dark);
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Footer Styles */
+.footer {
+    background: white;
+    padding: 20px 30px;
+    text-align: center;
+    color: var(--gray);
+    border-top: 1px solid #e5e7eb;
+}
+
+.footer p {
+    color: #343a40; /* Updated copyright text color */
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .sidebar {
+        width: var(--sidebar-collapsed-width);
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.collapsed {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .main-content.expanded {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+}
+
+/* Utility Classes */
+.badge-status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.badge-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.badge-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+.badge-info {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--info);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0;
+}
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 20px;
+}
+
+.dataTables_wrapper .dataTables_info, 
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 20px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary);
+    color: white !important;
+    border: none;
+}
+
+.user-dropdown {
+    position: relative; /* To position the dropdown menu relative to this */
+}
+
+.user-menu {
+    position: absolute;
+    top: 140%; 
+    
+    right: -23px;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    min-width: 160px;
+    border-radius: 5px;
+    overflow: hidden;
+    display: none; /* Hidden by default */
+}
+
+.user-menu.show {
+    display: block; /* Show when 'show' class is present */
+}
+
+.user-menu a {
+    color: var(--dark);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.user-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.user-menu a i {
+    margin-right: 10px;
+    color: var(--gray);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--primary-dark);
+    color: white !important;
+    border: none;
+}
