@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Models\User;
+use App\Services\TrustScoreAutoUpdateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
+    protected $trustScoreAutoUpdate;
+
+    public function __construct(TrustScoreAutoUpdateService $trustScoreAutoUpdate)
+    {
+        $this->trustScoreAutoUpdate = $trustScoreAutoUpdate;
+    }
     public function index()
     {
         $users = User::where('id', '!=', Auth::id())->get();
@@ -52,6 +59,10 @@ class MessageController extends Controller
                 'lu' => false,
                 'date_envoi' => now(),
             ]);
+            
+            // 🔥 AUTO-UPDATE: Mettre à jour le score de confiance après envoi de message
+            $this->trustScoreAutoUpdate->handleMessageSent(Auth::user());
+            
             return redirect()->back()->with('success', 'Message envoyé avec succès !');
         }
     }

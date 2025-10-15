@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
+use App\Services\TrustScoreAutoUpdateService;
 use Illuminate\Http\Request;
 
 class MeetingController extends Controller
 {
+    protected $trustScoreAutoUpdate;
+
+    public function __construct(TrustScoreAutoUpdateService $trustScoreAutoUpdate)
+    {
+        $this->trustScoreAutoUpdate = $trustScoreAutoUpdate;
+    }
     /**
      * Afficher la liste de tous les rendez-vous (Admin)
      */
@@ -93,6 +100,9 @@ class MeetingController extends Controller
             'cancelled_at' => now(),
             'cancellation_reason' => 'Admin: ' . $validated['cancellation_reason'],
         ]);
+
+        // 🔥 AUTO-UPDATE: Mettre à jour les scores après annulation par admin
+        $this->trustScoreAutoUpdate->handleMeetingCancelled($meeting->user1, $meeting->user2);
 
         return response()->json([
             'success' => true,
