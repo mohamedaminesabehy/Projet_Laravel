@@ -37,11 +37,10 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'isbn' => 'nullable|string|unique:book|max:255',
+            'isbn' => 'nullable|string|unique:books|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'required|string|in:published,draft',
         ]);
 
@@ -56,6 +55,13 @@ class BookController extends Controller
             $book->save();
         }
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Livre ajouté avec succès!',
+                'book' => $book
+            ], 201);
+        }
         return redirect()->route('admin.books.index')->with('success', 'Livre ajouté avec succès!');
     }
 
@@ -84,11 +90,10 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'isbn' => 'nullable|string|unique:book,isbn,'.$book->id.'|max:255',
+            'isbn' => 'nullable|string|unique:books,isbn,'.$book->id.'|max:255',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'required|string|in:published,draft',
         ]);
 

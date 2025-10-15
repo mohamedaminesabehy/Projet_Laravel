@@ -44,17 +44,49 @@
                     <ul class="sub-menu">
                         <li><a href="{{ route('shop') }}">Shop</a></li>
                         <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                        <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+                        <li><a href="{{ route('shop') }}">Shop Details</a></li>
                     </ul>
                 </li>
                 <li class="menu-item-has-children">
                     <a href="#">Pages</a>
-                    <ul class="sub-menu">
-                        <li><a href="{{ route('about') }}">About</a></li>
-                        <li><a href="{{ route('cart') }}">Cart</a></li>
-                        <li><a href="{{ route('checkout') }}">Checkout</a></li>
-                        <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
-                        <li><a href="{{ route('author') }}">Authors</a></li>
+                    <ul class="mega-menu">
+                        <li><a href="{{ route('shop') }}">Page List 1</a>
+                            <ul>
+                                <li><a href="{{ route('home') }}">Home 1</a></li>
+                                <li><a href="#">Home 2</a></li>
+                                <li><a href="#">Home 3</a></li>
+                                <li><a href="{{ route('about') }}">About</a></li>
+                                <li><a href="{{ route('contact') }}">Contact</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Page List 2</a>
+                            <ul>
+                                <li><a href="{{ route('blog') }}">Blog</a></li>
+                                <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
+                                <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
+                                <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
+                                <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Page List 3</a>
+                            <ul>
+                                <li><a href="{{ route('cart') }}">Cart</a></li>
+                                <li><a href="{{ route('shop') }}">Shop</a></li>
+                                <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
+                                <li><a href="{{ route('shop') }}">Shop Details</a></li>
+                                <li><a href="{{ route('404') }}">Error Page</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Page List 4</a>
+                            <ul>
+                                <li><a href="{{ route('wishlist') }}">wishlist</a></li>
+                                <li><a href="{{ route('checkout') }}">checkout</a></li>
+                                <li><a href="{{ route('author') }}">All Authors</a></li>
+                                <li><a href="{{ route('author-details') }}">Author Details</a></li>
+                                <li><a href="{{ route('vendor') }}">Vendor</a></li>
+                                <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li>
@@ -241,17 +273,49 @@
                                                 <ul class="sub-menu">
                                                     <li><a href="{{ route('shop') }}">Shop</a></li>
                                                     <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                                                    <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+
                                                 </ul>
                                             </li>
                                             <li class="menu-item-has-children">
                                                 <a href="#">Pages</a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="{{ route('about') }}">About</a></li>
-                                                    <li><a href="{{ route('cart') }}">Cart</a></li>
-                                                    <li><a href="{{ route('checkout') }}">Checkout</a></li>
-                                                    <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
-                                                    <li><a href="{{ route('author') }}">Authors</a></li>
+                                                <ul class="mega-menu">
+                                                    <li><a href="{{ route('shop') }}">Page List 1</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('home') }}">Home 1</a></li>
+                                                            <li><a href="#">Home 2</a></li>
+                                                            <li><a href="#">Home 3</a></li>
+                                                            <li><a href="{{ route('about') }}">About</a></li>
+                                                            <li><a href="{{ route('contact') }}">Contact</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="#">Page List 2</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('blog') }}">Blog</a></li>
+                                                            <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
+                                                            <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
+                                                            <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
+                                                            <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="#">Page List 3</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('cart') }}">Cart</a></li>
+                                                            <li><a href="{{ route('shop') }}">Shop</a></li>
+                                                            <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
+                                                            <li><a href="{{ route('shop') }}">Shop Details</a></li>
+                                                            <li><a href="{{ route('404') }}">Error Page</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="#">Page List 4</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('wishlist') }}">wishlist</a></li>
+                                                            <li><a href="{{ route('checkout') }}">checkout</a></li>
+                                                            <li><a href="{{ route('author') }}">All Authors</a></li>
+                                                            <li><a href="{{ route('author-details') }}">Author Details</a></li>
+                                                            <li><a href="{{ route('vendor') }}">Vendor</a></li>
+                                                            <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
+                                                        </ul>
+                                                    </li>
                                                 </ul>
                                             </li>
                                             <li>
@@ -290,49 +354,10 @@
                         </div>
                         <div class="col-auto d-xl-block d-none">
                             <div class="header-cart">
-                                <a href="{{ route('cart') }}" class="vs-icon has-badge"><i class="fa-solid fa-basket-shopping"></i><span class="badge">0</span></a>
-                                <div class="woocommerce widget_shopping_cart">
-                                    <div class="widget_shopping_cart_content">
-                                        <ul class="cart_list">
-                                            <li class="mini_cart_item">
-                                                <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop-details') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-1.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop-details') }}" class="product-title">Smart Watch</a>
-                                                <span class="amount">$99.00</span>
-                                                <div class="quantity">
-                                                    <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>
-                                                    <input type="number" class="qty-input" value="1" min="1" max="99">
-                                                    <button class="quantity-plus qut-btn"><i class="far fa-plus"></i></button>
-                                                </div>
-                                                <div class="subtotal">
-                                                    <span>Subtotal:</span>
-                                                    <span class="amount">$99.00</span>
-                                                </div>
-                                            </li>
-                                            <li class="mini_cart_item">
-                                                <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop-details') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-2.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop-details') }}" class="product-title">Boss Chair</a>
-                                                <span class="amount">$80.00</span>
-                                                <div class="quantity">
-                                                    <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>
-                                                    <input type="number" class="qty-input" value="2" min="1" max="99">
-                                                    <button class="quantity-plus qut-btn"><i class="far fa-plus"></i></button>
-                                                </div>
-                                                <div class="subtotal">
-                                                    <span>Subtotal:</span>
-                                                    <span class="amount">$160.00</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <p class="total">
-                                            <strong>Subtotal:</strong>
-                                            <span class="amount">$259.00</span>
-                                        </p>
-                                        <p class="buttons">
-                                            <a href="{{ route('cart') }}" class="vs-btn">View cart</a>
-                                            <a href="{{ route('checkout') }}" class="vs-btn checkout">Checkout</a>
-                                        </p>
+                                <a href="{{ route('cart') }}" class="vs-icon cart"><i class="fal fa-shopping-bag"></i><span class="badge">{{ $cartCount }}</span></a>
+                                        
+                                        
+                            
                                     </div>
                                 </div>
                             </div>
@@ -342,4 +367,4 @@
             </div>
         </div>
     </div>
-</header> 
+</header>

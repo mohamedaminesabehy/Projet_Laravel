@@ -40,7 +40,7 @@
                                         <h6 class="mb-1">The Great Adventure</h6>
                                         <p class="text-muted small mb-2">by Jane Writer</p>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ route('shop-details') }}" class="vs-btn">View</a>
+                                            <a href="{{ route('shop') }}" class="vs-btn">View</a>
                                             <button class="btn btn-outline-danger"><i class="fa-regular fa-heart"></i></button>
                                         </div>
                                     </div>
@@ -51,7 +51,7 @@
                                         <h6 class="mb-1">Designing Stories</h6>
                                         <p class="text-muted small mb-2">by Mark Pages</p>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ route('shop-details') }}" class="vs-btn">View</a>
+                                            <a href="{{ route('shop') }}" class="vs-btn">View</a>
                                             <button class="btn btn-outline-danger"><i class="fa-regular fa-heart"></i></button>
                                         </div>
                                     </div>
@@ -62,7 +62,7 @@
                                         <h6 class="mb-1">UX for Readers</h6>
                                         <p class="text-muted small mb-2">by Lina Type</p>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ route('shop-details') }}" class="vs-btn">View</a>
+                                            <a href="{{ route('shop') }}" class="vs-btn">View</a>
                                             <button class="btn btn-outline-danger"><i class="fa-regular fa-heart"></i></button>
                                         </div>
                                     </div>
@@ -73,7 +73,7 @@
                                         <h6 class="mb-1">Code & Chapters</h6>
                                         <p class="text-muted small mb-2">by Dev Script</p>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ route('shop-details') }}" class="vs-btn">View</a>
+                                            <a href="{{ route('shop') }}" class="vs-btn">View</a>
                                             <button class="btn btn-outline-danger"><i class="fa-regular fa-heart"></i></button>
                                         </div>
                                     </div>

@@ -76,35 +76,51 @@
                             <h1 class="h3 mt-3 mb-1">Create account</h1>
                             <p class="text-muted mb-0">Join us and explore the best books.</p>
                         </div>
-                        <form>
+                        <form action="{{ route('register') }}" method="POST">
+                            @csrf
                             <div class="row g-3">
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">First name</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="John"
-                                        required>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="lastName" class="form-label">Last name</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Doe"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <label for="signupEmail" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="signupEmail"
-                                    placeholder="name@example.com" required>
-                            </div>
-                            <div class="row g-3 mt-1">
-                                <div class="col-sm-6">
-                                    <label for="signupPassword" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="signupPassword"
-                                        placeholder="Create a password" required>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="confirmPassword" class="form-label">Confirm password</label>
-                                    <input type="password" class="form-control" id="confirmPassword"
-                                        placeholder="Repeat password" required>
-                                </div>
+                                     <label for="firstName" class="form-label">First name</label>
+                                     <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName" name="firstName" placeholder="John"
+                                         value="{{ old('firstName') }}" required>
+                                     @error('firstName')
+                                         <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <label for="lastName" class="form-label">Last name</label>
+                                     <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName" name="lastName" placeholder="Doe"
+                                         value="{{ old('lastName') }}" required>
+                                     @error('lastName')
+                                         <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                             </div>
+                             <div class="mt-3">
+                                 <label for="signupEmail" class="form-label">Email address</label>
+                                 <input type="email" class="form-control @error('email') is-invalid @enderror" id="signupEmail" name="email"
+                                     placeholder="name@example.com" value="{{ old('email') }}" required>
+                                 @error('email')
+                                     <div class="invalid-feedback">{{ $message }}</div>
+                                 @enderror
+                             </div>
+                             <div class="row g-3 mt-1">
+                                 <div class="col-sm-6">
+                                     <label for="signupPassword" class="form-label">Password</label>
+                                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="signupPassword" name="password"
+                                         placeholder="Create a password" required>
+                                     @error('password')
+                                         <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <label for="confirmPassword" class="form-label">Confirm password</label>
+                                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="confirmPassword" name="password_confirmation"
+                                         placeholder="Repeat password" required>
+                                     @error('password')
+                                         <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
                             </div>
                             <div class="form-check mt-3">
                                 <input class="form-check-input" type="checkbox" value="" id="terms">
