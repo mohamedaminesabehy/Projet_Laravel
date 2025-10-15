@@ -7,7 +7,7 @@ use App\Models\BookInsight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Book;
+ 
 
 class PageController extends Controller
 {
@@ -41,4 +41,4 @@ class PageController extends Controller
 
         abort(404);
     }
-} 
+}
