@@ -279,13 +279,20 @@
 
                                                 </ul>
                                             </li>
-                                            <li class="menu-item-has-children">
-                                                <a href="{{ route('vendor') }}">Vendor</a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="{{ route('vendor') }}">Vendor</a></li>
-                                                    <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
-                                                </ul>
+
+
+
+
+
+                                            <li class="{{ request()->routeIs('events.*') ? 'active' : '' }}">
+                                                <a href="{{ route('events.index') }}">Events</a>
                                             </li>
+
+
+
+
+
+                                            
                                             <li class="menu-item-has-children mega-menu-wrap">
                                                 <a href="#">Pages</a>
                                                 <ul class="mega-menu">

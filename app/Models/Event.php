@@ -15,4 +15,8 @@ class Event extends Model
         'image',
         'is_active'
     ];
+    public function participants()
+{
+    return $this->belongsToMany(\App\Models\User::class, 'event_user');
+}
 }

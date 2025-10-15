@@ -10,6 +10,9 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\Admin\MeetingController as AdminMeetingController;
 use App\Http\Controllers\TrustScoreController;
+use App\Http\Controllers\EventController as FrontEventController;
+use App\Http\Controllers\EventController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -64,7 +67,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/authors/add', [AdminController::class, 'addAuthor'])->name('add-author');
     Route::get('/categories/add', [AdminController::class, 'addCategory'])->name('add-category');
     
-    // Routes pour les événements
+    // Routes pour les événements pour admin 
     Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
@@ -80,6 +83,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::delete('/{id}', [AdminMeetingController::class, 'destroy'])->name('destroy');
         Route::get('/{id}', [AdminMeetingController::class, 'show'])->name('show');
     });
+
+    // route event for user  
+Route::middleware('auth')->prefix('events')->name('events.')->group(function () {
+    Route::get('/', [FrontEventController::class, 'index'])->name('index');     // /events
+    Route::get('/{event}', [FrontEventController::class, 'show'])->name('show'); // /events/{event}
+});
+
+    
     
     // Routes pour les Scores de Confiance IA (Trust Scores) - Admin
     Route::prefix('trust-scores')->name('trust-scores.')->group(function () {
@@ -99,6 +110,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 Route::post('/paypal/process', [App\Http\Controllers\PayPalController::class, 'processPayment'])->name('paypal.process');
 Route::get('/paypal/success', [App\Http\Controllers\PayPalController::class, 'success'])->name('paypal.success');
 Route::get('/paypal/cancel', [App\Http\Controllers\PayPalController::class, 'cancel'])->name('paypal.cancel');
+
+
+
+
+// User-facing Events
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+    Route::get('/events/{event}/join', [EventController::class, 'join'])->name('events.join');
+
+
 
 
 
@@ -135,4 +156,9 @@ Route::middleware('auth')->prefix('meetings')->name('meetings.')->group(function
     
     // Afficher les détails d'un rendez-vous (doit être en dernier)
     Route::get('/{id}', [MeetingController::class, 'show'])->name('show');
+
+
+
+    
+
 });
