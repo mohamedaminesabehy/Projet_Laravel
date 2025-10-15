@@ -121,6 +121,41 @@
         border-radius: 50%;
     }
     
+    .trust-badge {
+        position: absolute;
+        bottom: -4px;
+        right: -4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .trust-badge.verified {
+        background: #28a745;
+        color: white;
+    }
+    
+    .trust-badge.good {
+        background: #ffc107;
+        color: white;
+    }
+    
+    .trust-badge.low {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .trust-badge.medium {
+        background: #6c757d;
+        color: white;
+    }
+    
     .conversation-info {
         flex: 1;
         margin-left: 12px;
@@ -600,6 +635,30 @@
                         )->last();
                         $fullName = trim(($user->first_name ?? $user->name ?? '') . ' ' . ($user->last_name ?? $user->prenom ?? ''));
                         $initials = strtoupper(substr($user->first_name ?? $user->name ?? 'U', 0, 1)) . strtoupper(substr($user->last_name ?? $user->prenom ?? 'N', 0, 1));
+                        
+                        // Récupérer le score de confiance
+                        $trustScore = $user->trustScore;
+                        $score = $trustScore ? $trustScore->trust_score : 50;
+                        $isVerified = $trustScore ? $trustScore->is_verified : false;
+                        
+                        // Déterminer la classe CSS du badge
+                        if ($isVerified && $score >= 80) {
+                            $badgeClass = 'verified';
+                            $badgeIcon = '✓';
+                            $badgeTitle = 'Utilisateur Vérifié (' . $score . ')';
+                        } elseif ($score >= 60) {
+                            $badgeClass = 'good';
+                            $badgeIcon = $score;
+                            $badgeTitle = 'Score: ' . $score;
+                        } elseif ($score >= 40) {
+                            $badgeClass = 'medium';
+                            $badgeIcon = $score;
+                            $badgeTitle = 'Score: ' . $score;
+                        } else {
+                            $badgeClass = 'low';
+                            $badgeIcon = '!';
+                            $badgeTitle = 'Attention - Score: ' . $score;
+                        }
                     @endphp
                     <div class="conversation-item conversationItem"
                          data-id="{{ $user->id }}"
@@ -607,7 +666,7 @@
                          data-lastname="{{ $user->last_name ?? $user->prenom ?? '' }}">
                         <div class="user-avatar">
                             {{ $initials }}
-                            <span class="online-indicator"></span>
+                            <span class="trust-badge {{ $badgeClass }}" title="{{ $badgeTitle }}">{{ $badgeIcon }}</span>
                         </div>
                         <div class="conversation-info">
                             <div class="conversation-name">{{ $fullName }}</div>

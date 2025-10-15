@@ -69,6 +69,11 @@
                     <span>Meetings</span>
                 </a>
 
+                <a href="{{ route('admin.trust-scores.index') }}" class="menu-item {{ request()->routeIs('admin.trust-scores.*') ? 'active' : '' }}">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Scores de Confiance IA</span>
+                </a>
+
                 <a href="{{ route('admin.exchanges') }}" class="menu-item {{ request()->routeIs('admin.exchanges') ? 'active' : '' }}">
                     <i class="fas fa-exchange-alt"></i>
                     <span>Échanges</span>

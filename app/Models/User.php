@@ -55,4 +55,46 @@ class User extends Authenticatable
     {
         return $this->hasMany(Book::class);
     }
+
+    /**
+     * Relation : Un utilisateur a un score de confiance
+     */
+    public function trustScore()
+    {
+        return $this->hasOne(UserTrustScore::class);
+    }
+
+    /**
+     * Obtenir ou créer le score de confiance
+     */
+    public function getOrCreateTrustScore()
+    {
+        if (!$this->trustScore) {
+            $trustScore = UserTrustScore::create([
+                'user_id' => $this->id,
+                'account_age_days' => now()->diffInDays($this->created_at),
+            ]);
+            $trustScore->calculateTrustScore();
+            return $trustScore;
+        }
+        return $this->trustScore;
+    }
+
+    /**
+     * Vérifier si l'utilisateur est vérifié
+     */
+    public function isVerified()
+    {
+        $trustScore = $this->getOrCreateTrustScore();
+        return $trustScore->is_verified;
+    }
+
+    /**
+     * Obtenir le score de confiance (0-100)
+     */
+    public function getTrustScoreValue()
+    {
+        $trustScore = $this->getOrCreateTrustScore();
+        return $trustScore->trust_score;
+    }
 }

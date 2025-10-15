@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Meeting;
 use App\Models\Message;
 use App\Models\Book;
+use App\Services\TrustScoreAutoUpdateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MeetingController extends Controller
 {
+    protected $trustScoreAutoUpdate;
+
+    public function __construct(TrustScoreAutoUpdateService $trustScoreAutoUpdate)
+    {
+        $this->trustScoreAutoUpdate = $trustScoreAutoUpdate;
+    }
     /**
      * Afficher la liste des rendez-vous de l'utilisateur connecté
      */
@@ -203,6 +210,9 @@ class MeetingController extends Controller
             'confirmed_at' => now(),
         ]);
 
+        // 🔥 AUTO-UPDATE: Mettre à jour les scores après confirmation
+        $this->trustScoreAutoUpdate->handleMeetingConfirmed($meeting->user1, $meeting->user2);
+
         return response()->json([
             'success' => true,
             'message' => 'Rendez-vous confirmé avec succès !',
@@ -237,6 +247,9 @@ class MeetingController extends Controller
             'cancellation_reason' => $validated['cancellation_reason'] ?? null,
         ]);
 
+        // 🔥 AUTO-UPDATE: Mettre à jour les scores après annulation (pénalité)
+        $this->trustScoreAutoUpdate->handleMeetingCancelled($meeting->user1, $meeting->user2);
+
         return response()->json([
             'success' => true,
             'message' => 'Rendez-vous annulé.',
@@ -268,6 +281,9 @@ class MeetingController extends Controller
             'status' => 'completed',
             'completed_at' => now(),
         ]);
+
+        // 🔥 AUTO-UPDATE: Mettre à jour les scores après échange réussi (BONUS)
+        $this->trustScoreAutoUpdate->handleMeetingCompleted($meeting->user1, $meeting->user2);
 
         return response()->json([
             'success' => true,

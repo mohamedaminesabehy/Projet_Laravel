@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\Admin\MeetingController as AdminMeetingController;
+use App\Http\Controllers\TrustScoreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +79,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::post('/{id}/cancel', [AdminMeetingController::class, 'cancel'])->name('cancel');
         Route::delete('/{id}', [AdminMeetingController::class, 'destroy'])->name('destroy');
         Route::get('/{id}', [AdminMeetingController::class, 'show'])->name('show');
+    });
+    
+    // Routes pour les Scores de Confiance IA (Trust Scores) - Admin
+    Route::prefix('trust-scores')->name('trust-scores.')->group(function () {
+        Route::get('/', [TrustScoreController::class, 'index'])->name('index'); // Dashboard principal
+        Route::get('/users', [TrustScoreController::class, 'users'])->name('users'); // Liste complète des utilisateurs
+        Route::get('/users/{user}', [TrustScoreController::class, 'show'])->name('show'); // Détails d'un utilisateur
+        Route::post('/users/{user}/recalculate', [TrustScoreController::class, 'recalculate'])->name('recalculate'); // Recalculer un score
+        Route::post('/users/{user}/reset', [TrustScoreController::class, 'reset'])->name('reset'); // Réinitialiser un score
+        Route::post('/users/{user}/resolve-suspicious', [TrustScoreController::class, 'resolveSuspicious'])->name('resolve-suspicious'); // Résoudre une alerte
+        Route::post('/recalculate-all', [TrustScoreController::class, 'recalculateAll'])->name('recalculate-all'); // Recalculer tous les scores
+        Route::get('/stats-json', [TrustScoreController::class, 'statsJson'])->name('stats-json'); // API JSON pour graphiques
+        Route::get('/export-csv', [TrustScoreController::class, 'exportCsv'])->name('export-csv'); // Export CSV
     });
 });
 
