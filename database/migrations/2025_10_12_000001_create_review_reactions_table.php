@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Clean up in case the table was partially created by a previous failed migration run
+        Schema::dropIfExists('review_reactions');
+
         Schema::create('review_reactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('review_id')->constrained('reviews')->onDelete('cascade');
