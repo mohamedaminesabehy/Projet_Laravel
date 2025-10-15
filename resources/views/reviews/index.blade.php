@@ -677,9 +677,20 @@
         animation: spin 1s linear infinite;
     }
     
+    /* Success feedback */
+    .btn-reaction.success-feedback {
+        animation: success-pulse 0.6s ease-out;
+    }
+    
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes success-pulse {
+        0% { transform: scale(1); box-shadow: 0 4px 15px rgba(46, 74, 91, 0.4); }
+        50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(46, 74, 91, 0.6); }
+        100% { transform: scale(1); box-shadow: 0 4px 15px rgba(46, 74, 91, 0.4); }
     }
     
     /* Responsive */
@@ -1520,11 +1531,11 @@ async function handleReaction(reviewId, reactionType) {
             // Show success modal with animation
             showSuccessModal(data.action, data.reaction_type);
             
-            // Show success animation on button
-            currentBtn.style.animation = 'none';
+            // Add success feedback to button
+            currentBtn.classList.add('success-feedback');
             setTimeout(() => {
-                currentBtn.style.animation = '';
-            }, 10);
+                currentBtn.classList.remove('success-feedback');
+            }, 1000);
             
         } else {
             // Show error message
@@ -1543,19 +1554,35 @@ async function handleReaction(reviewId, reactionType) {
 // Update reaction buttons state
 function updateReactionButtons(reviewId, action, reactionType, counts) {
     const container = document.querySelector(`[data-review-id="${reviewId}"]`);
+    
+    if (!container) {
+        console.error(`Container not found for review ID: ${reviewId}`);
+        return;
+    }
+    
     const likeBtn = container.querySelector('.btn-like');
     const dislikeBtn = container.querySelector('.btn-dislike');
     
-    // Update counts
-    likeBtn.querySelector('.count').textContent = counts.likes;
-    dislikeBtn.querySelector('.count').textContent = counts.dislikes;
+    if (!likeBtn || !dislikeBtn) {
+        console.error('Reaction buttons not found in container');
+        return;
+    }
+    
+    // Update counts (handle undefined counts)
+    if (counts && typeof counts === 'object') {
+        const likeCountElement = likeBtn.querySelector('.count');
+        const dislikeCountElement = dislikeBtn.querySelector('.count');
+        
+        if (likeCountElement) likeCountElement.textContent = counts.likes || 0;
+        if (dislikeCountElement) dislikeCountElement.textContent = counts.dislikes || 0;
+    }
     
     // Update active states
     if (action === 'removed') {
         // Remove all active states
         likeBtn.classList.remove('active');
         dislikeBtn.classList.remove('active');
-    } else {
+    } else if (action === 'added' || action === 'updated') {
         // Set active state based on reaction type
         if (reactionType === 'like') {
             likeBtn.classList.add('active');
@@ -1568,16 +1595,25 @@ function updateReactionButtons(reviewId, action, reactionType, counts) {
     
     // Update score if visible
     const scoreElement = container.closest('.card-body').querySelector('.reaction-score');
-    if (scoreElement) {
-        const score = counts.likes - counts.dislikes;
+    if (scoreElement && counts && typeof counts === 'object') {
+        const score = (counts.likes || 0) - (counts.dislikes || 0);
         scoreElement.innerHTML = `<i class="fas fa-chart-line me-1"></i>Score: ${score}`;
         
         // Hide score if no reactions
-        if (counts.likes === 0 && counts.dislikes === 0) {
+        if ((counts.likes || 0) === 0 && (counts.dislikes || 0) === 0) {
             scoreElement.style.display = 'none';
         } else {
             scoreElement.style.display = 'block';
         }
+    }
+    
+    // Add visual feedback
+    const activeBtn = reactionType === 'like' ? likeBtn : dislikeBtn;
+    if (action !== 'removed' && activeBtn) {
+        activeBtn.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            activeBtn.style.transform = '';
+        }, 200);
     }
 }
 

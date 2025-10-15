@@ -114,23 +114,29 @@
                     </div>
                     
                     <!-- PayPal SDK Integration -->
-                    <div id="paypal-config" data-client-id="{{ config('paypal.sandbox.client_id') }}" style="display:none;"></div>
-                    <script>
-                        // Afficher le Client ID pour débogage sans insérer de Blade dans le JS
-                        var cfgEl = document.getElementById('paypal-config');
-                        var paypalClientId = cfgEl ? cfgEl.getAttribute('data-client-id') : '';
-                        console.log('Client ID utilisé:', paypalClientId);
-                    </script>
-                    <script 
-                        src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.sandbox.client_id') }}" 
-                        data-namespace="paypal_sdk">
-                    </script>
-                    <script>
-                        // Simple initialization to confirm SDK loading
-                        document.addEventListener('DOMContentLoaded', function() {
-                            console.log('PayPal SDK initialized');
-                        });
-                    </script>
+                    @if(config('paypal.sandbox.client_id'))
+                        <div id="paypal-config" data-client-id="{{ config('paypal.sandbox.client_id') }}" style="display:none;"></div>
+                        <script>
+                            // Afficher le Client ID pour débogage sans insérer de Blade dans le JS
+                            var cfgEl = document.getElementById('paypal-config');
+                            var paypalClientId = cfgEl ? cfgEl.getAttribute('data-client-id') : '';
+                            console.log('Client ID utilisé:', paypalClientId);
+                        </script>
+                        <script 
+                            src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.sandbox.client_id') }}" 
+                            data-namespace="paypal_sdk">
+                        </script>
+                        <script>
+                            // Simple initialization to confirm SDK loading
+                            document.addEventListener('DOMContentLoaded', function() {
+                                console.log('PayPal SDK initialized');
+                            });
+                        </script>
+                    @else
+                        <div class="alert alert-warning">
+                            PayPal configuration is missing. Please configure your PayPal credentials in the .env file.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

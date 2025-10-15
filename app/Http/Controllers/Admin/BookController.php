@@ -62,7 +62,7 @@ class BookController extends Controller
                 'book' => $book
             ], 201);
         }
-        return redirect()->route('admin.books.index')->with('success', 'Livre ajouté avec succès!');
+        return redirect()->route('admin.books')->with('success', 'Livre ajouté avec succès!');
     }
 
     /**
@@ -112,7 +112,7 @@ class BookController extends Controller
             $book->save();
         }
 
-        return redirect()->route('admin.books.index')->with('success', 'Livre mis à jour avec succès!');
+        return redirect()->route('admin.books')->with('success', 'Livre mis à jour avec succès!');
     }
 
     /**
@@ -124,6 +124,6 @@ class BookController extends Controller
             unlink(public_path($book->cover_image));
         }
         $book->delete();
-        return redirect()->route('admin.books.index')->with('success', 'Livre supprimé avec succès!');
+        return redirect()->route('admin.books')->with('success', 'Livre supprimé avec succès!');
     }
 }

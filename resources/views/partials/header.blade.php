@@ -1,3 +1,6 @@
+<!-- External CSS for Authentication Buttons -->
+<link rel="stylesheet" href="{{ asset('css/auth-buttons.css') }}">
+
 <div class="preloader">
     <button class="vs-btn pre                        <li><a href="#">Page List 1</a>
                             <ul>
@@ -7,7 +10,7 @@
                                 <li><a href="{{ route('about') }}">About</a></li>
                                 <li><a href="{{ route('reviews.index') }}">Reviews</a></li>
                                 <li><a href="{{ route('ai-insights.index') }}"><i class="fas fa-brain"></i> AI Insights</a></li>
-                                <li><a href="{{ route('categories.index') }}"><i class="fas fa-heart"></i> Favorite Categories</a></li>
+                                <li><a href="{{ route('favorites') }}"><i class="fas fa-heart"></i> Favorite Categories</a></li>
                                 <li><a href="{{ route('contact') }}">Contact</a></li>
                             </ul>
                         </li>Cancel Preloader </button>
@@ -98,7 +101,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('categories.index') }}" class="favorite-categories-link">
+                    <a href="{{ route('favorites') }}" class="favorite-categories-link">
                         <i class="fas fa-heart"></i> Favorites
                         @auth
                             @php
@@ -162,30 +165,59 @@
                             <a href="#"><i class="fab fa-youtube"></i></a>
                         </div>
                         <div class="user-login">
-                            <div class="dropdown">
-                                <a href="#" class="d-inline-flex align-items-center" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
-                                    <i class="fa-solid fa-user"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                                    <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-regular fa-id-badge me-2"></i>Profile</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('wishlist') }}"><i class="fa-regular fa-heart me-2"></i>Wishlist</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('category-favorites.index') }}">
-                                        <i class="fas fa-heart me-2" style="color: #ff6b6b;"></i>My Favorite Categories
-                                        @auth
+                            @auth
+                                <!-- User is logged in - Show dropdown with username -->
+                                <div class="dropdown">
+                                    <a href="#" class="d-inline-flex align-items-center user-menu-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
+                                        <i class="fa-solid fa-user me-2"></i>
+                                        <span class="username-display">{{ auth()->user()->name }}</span>
+                                        <i class="fa-solid fa-chevron-down ms-2"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userMenu">
+                                        <li class="dropdown-header">
+                                            <div class="user-info">
+                                                <strong>{{ auth()->user()->name }}</strong>
+                                                <small class="text-muted d-block">{{ auth()->user()->email }}</small>
+                                            </div>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ route('profile') }}">
+                                            <i class="fa-regular fa-id-badge me-2"></i>Profile
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="{{ route('wishlist') }}">
+                                            <i class="fa-regular fa-heart me-2"></i>Wishlist
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="{{ route('favorites') }}">
+                                            <i class="fas fa-heart me-2" style="color: #ff6b6b;"></i>My Favorite Categories
                                             @php
                                                 $favCount = auth()->user()->categoryFavorites()->count();
                                             @endphp
                                             @if($favCount > 0)
                                                 <span class="badge bg-danger ms-2">{{ $favCount }}</span>
                                             @endif
-                                        @endauth
-                                    </a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
-                                </ul>
-                            </div>
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="fa-regular fa-right-from-bracket me-2"></i>Logout
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @else
+                                <!-- User is not logged in - Show Sign In and Sign Up buttons -->
+                                <div class="auth-buttons d-flex align-items-center gap-2">
+                                    <a href="{{ route('signin') }}" class="btn btn-outline-primary btn-sm auth-btn signin-btn">
+                                        <i class="fa-regular fa-right-to-bracket me-1"></i>Sign In
+                                    </a>
+                                    <a href="{{ route('signup') }}" class="btn btn-primary btn-sm auth-btn signup-btn">
+                                        <i class="fa-regular fa-user-plus me-1"></i>Sign Up
+                                    </a>
+                                </div>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -329,7 +361,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="{{ route('categories.index') }}" class="favorite-categories-link">
+                                                <a href="{{ route('favorites') }}" class="favorite-categories-link">
                                                     <span style="display: inline-flex; align-items: center; gap: 5px;">
                                                         <i class="fas fa-heart"></i> Favorites
                                                     </span>
@@ -368,3 +400,121 @@
         </div>
     </div>
 </header>
+
+<style>
+/* Simplified User Menu Styles */
+.user-menu-toggle {
+    background: var(--theme-color);
+    color: var(--white-color);
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    font-family: var(--body-font);
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 6px rgba(209, 102, 85, 0.25);
+}
+
+.user-menu-toggle:hover {
+    background: var(--title-color);
+    color: var(--white-color);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(46, 74, 91, 0.3);
+}
+
+.username-display {
+    font-weight: 500;
+    font-family: var(--title-font);
+    margin: 0 8px;
+    font-size: 15px;
+}
+
+.user-dropdown-menu {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 8px 0;
+    min-width: 260px;
+    margin-top: 8px;
+}
+
+.user-dropdown-menu .dropdown-header {
+    background: var(--body-color);
+    color: var(--title-color);
+    padding: 12px 20px;
+    border-radius: 8px 8px 0 0;
+    margin: 0 0 8px 0;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-dropdown-menu .dropdown-item {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--title-color);
+    font-family: var(--body-font);
+    transition: all 0.3s ease;
+    border: none;
+    font-weight: 500;
+}
+
+.user-dropdown-menu .dropdown-item:hover {
+    background: var(--body-color);
+    color: var(--theme-color);
+}
+
+.user-dropdown-menu .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: var(--secondary-color);
+    margin-right: 8px;
+}
+
+.user-dropdown-menu .dropdown-item:hover i {
+    color: var(--theme-color);
+}
+
+.user-dropdown-menu .dropdown-divider {
+    margin: 8px 0;
+    border-color: var(--border-color);
+}
+
+.user-dropdown-menu .text-danger {
+    color: var(--error-color) !important;
+}
+
+.user-dropdown-menu .text-danger:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--error-color) !important;
+}
+
+/* Badge styling to match theme */
+.user-dropdown-menu .badge {
+    background-color: var(--theme-color) !important;
+    color: var(--white-color);
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .user-dropdown-menu {
+        min-width: 240px;
+    }
+    
+    .user-menu-toggle {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+    
+    .username-display {
+        font-size: 14px;
+    }
+}
+</style>

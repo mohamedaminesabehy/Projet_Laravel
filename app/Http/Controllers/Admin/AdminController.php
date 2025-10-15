@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CartHistory;
+use App\Models\Book;
+use App\Models\Category;
 use Illuminate\Support\Carbon;
 
 class AdminController extends Controller
@@ -23,7 +25,9 @@ class AdminController extends Controller
 
     public function books()
     {
-        return view('admin.books');
+        $books = Book::with('category')->get();
+        $categories = Category::all();
+        return view('admin.books', compact('books', 'categories'));
     }
 
     public function categories()

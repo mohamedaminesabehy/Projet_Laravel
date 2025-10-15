@@ -3,7 +3,7 @@
 @section('content')
 
     <main>
-        <section class="cartoon-hero py-80">
+        <section class="cartoon-hero">
             <div class="container position-relative">
                 <div class="row justify-content-center align-items-center g-4">
                     <div class="col-lg-6 d-none d-lg-block">
@@ -62,7 +62,7 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-10">
+                    <div class="col-lg-6 col-md-8 col-12 mx-auto">
                         <div class="p-4 p-md-5 auth-card">
                             <div class="text-center mb-4">
                                 <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo" class="logo-hero">
@@ -114,4 +114,4 @@
         </section>
     </main>
 
-@endsection 
+@endsection

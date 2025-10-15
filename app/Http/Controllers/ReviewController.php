@@ -260,4 +260,127 @@ class ReviewController extends Controller
 
         return view('reviews.partials.book-reviews', compact('reviews', 'book'));
     }
+
+    /**
+     * Add a reaction to a review.
+     */
+    public function addReaction(Request $request, Review $review)
+    {
+        $request->validate([
+            'reaction_type' => 'required|in:like,dislike'
+        ]);
+
+        $user = Auth::user();
+        
+        // Vérifier si l'utilisateur a déjà réagi à cet avis
+        $existingReaction = $review->reactions()
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($existingReaction) {
+            // Si la réaction est la même, la supprimer (toggle)
+            if ($existingReaction->reaction_type === $request->reaction_type) {
+                $existingReaction->delete();
+                
+                // Récupérer les compteurs mis à jour
+                $likesCount = $review->reactions()->where('reaction_type', 'like')->count();
+                $dislikesCount = $review->reactions()->where('reaction_type', 'dislike')->count();
+                
+                return response()->json([
+                    'success' => true,
+                    'action' => 'removed',
+                    'reaction_type' => $request->reaction_type,
+                    'message' => 'Réaction supprimée',
+                    'counts' => [
+                        'likes' => $likesCount,
+                        'dislikes' => $dislikesCount
+                    ]
+                ]);
+            } else {
+                // Sinon, mettre à jour la réaction
+                $existingReaction->update([
+                    'reaction_type' => $request->reaction_type
+                ]);
+                
+                // Récupérer les compteurs mis à jour
+                $likesCount = $review->reactions()->where('reaction_type', 'like')->count();
+                $dislikesCount = $review->reactions()->where('reaction_type', 'dislike')->count();
+                
+                return response()->json([
+                    'success' => true,
+                    'action' => 'updated',
+                    'reaction_type' => $request->reaction_type,
+                    'message' => 'Réaction mise à jour',
+                    'counts' => [
+                        'likes' => $likesCount,
+                        'dislikes' => $dislikesCount
+                    ]
+                ]);
+            }
+        } else {
+            // Créer une nouvelle réaction
+            $review->reactions()->create([
+                'user_id' => $user->id,
+                'reaction_type' => $request->reaction_type
+            ]);
+            
+            // Récupérer les compteurs mis à jour
+            $likesCount = $review->reactions()->where('reaction_type', 'like')->count();
+            $dislikesCount = $review->reactions()->where('reaction_type', 'dislike')->count();
+            
+            return response()->json([
+                'success' => true,
+                'action' => 'added',
+                'reaction_type' => $request->reaction_type,
+                'message' => 'Réaction ajoutée',
+                'counts' => [
+                    'likes' => $likesCount,
+                    'dislikes' => $dislikesCount
+                ]
+            ]);
+        }
+    }
+
+    /**
+     * Get reactions for a specific review.
+     */
+    public function getReactions(Review $review)
+    {
+        $reactions = $review->reactions()
+            ->with('user:id,name')
+            ->get()
+            ->groupBy('reaction_type');
+
+        $likesCount = $reactions->get('like', collect())->count();
+        $dislikesCount = $reactions->get('dislike', collect())->count();
+
+        $userReaction = null;
+        if (Auth::check()) {
+            $userReaction = $review->reactions()
+                ->where('user_id', Auth::id())
+                ->first();
+        }
+
+        return response()->json([
+            'likes_count' => $likesCount,
+            'dislikes_count' => $dislikesCount,
+            'user_reaction' => $userReaction ? $userReaction->reaction_type : null,
+            'reactions' => [
+                'like' => $reactions->get('like', collect())->map(function ($reaction) {
+                    return [
+                        'id' => $reaction->id,
+                        'user' => $reaction->user->name,
+                        'created_at' => $reaction->created_at->format('d/m/Y H:i')
+                    ];
+                }),
+                'dislike' => $reactions->get('dislike', collect())->map(function ($reaction) {
+                    return [
+                        'id' => $reaction->id,
+                        'user' => $reaction->user->name,
+                        'created_at' => $reaction->created_at->format('d/m/Y H:i')
+                    ];
+                })
+            ]
+        ]);
+    }
 }

@@ -1,0 +1,32 @@
+/* Authentication Buttons Styles */
+.signin-btn,
+.signup-btn {
+    padding: 8px 16px;
+    font-family: var(--body-font);
+    font-weight: 500;
+    font-size: 14px;
+    margin: 0 8px;
+    color: var(--white-color);
+    border: none;
+    background: transparent;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.signin-btn:hover,
+.signup-btn:hover {
+    color: var(--white-color);
+    opacity: 0.8;
+    text-decoration: none;
+}
+
+/* Responsive adjustments for auth buttons */
+@media (max-width: 768px) {
+    .signin-btn, .signup-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        margin: 0 4px;
+        min-width: 100px;
+    }
+}

@@ -9,6 +9,12 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Admin\AdminCategoryStatisticsController;
+use App\Http\Controllers\Admin\AdminReviewStatisticsController;
+use App\Http\Controllers\Admin\AdminReviewReactionController;
+use App\Http\Controllers\Admin\AdminSentimentController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +57,25 @@ Route::get('/shop-details/{id}', [PageController::class, 'bookDetails'])->name('
 Route::get('/api/ai-summary/{id}', [AiSummaryController::class, 'getSummary'])->name('api.ai-summary');
 Route::get('/shop-sidebar', [PageController::class, 'show'])->defaults('page', 'shop-sidebar')->name('shop-sidebar');
 
+// Pages publiques supplémentaires
+Route::get('/ai-insights', [BookInsightsController::class, 'index'])->name('ai-insights.index');
+Route::get('/ai-insights/{book}', [BookInsightsController::class, 'show'])->name('ai-insights.show');
+
+// Reviews (liste publique + CRUD basique)
+Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    
+    // Routes pour les réactions aux avis
+    Route::post('/reviews/{review}/reactions', [ReviewController::class, 'addReaction'])->name('reviews.reactions.store');
+    Route::get('/reviews/{review}/reactions/list', [ReviewController::class, 'getReactions'])->name('reviews.reactions.list');
+});
+Route::get('/reviews/{review}', [ReviewController::class, 'show'])->name('reviews.show');
+
 // Pages d'auth (GET) via Breeze, en conservant les vues thémées
 Route::get('/signin', [AuthenticatedSessionController::class, 'create'])->middleware('guest')->name('signin');
 Route::get('/signup', [RegisteredUserController::class, 'create'])->middleware('guest')->name('signup');
@@ -69,7 +94,16 @@ Route::middleware(['auth'])->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/authors', [AdminController::class, 'authors'])->name('authors');
-    Route::get('/books', [AdminController::class, 'books'])->name('books');
+    // Routes de gestion des livres (resource)
+    Route::resource('books', AdminBookController::class)->names([
+        'index' => 'books',
+        'create' => 'books.create',
+        'store' => 'books.store',
+        'show' => 'books.show',
+        'edit' => 'books.edit',
+        'update' => 'books.update',
+        'destroy' => 'books.destroy',
+    ]);
     
     // Routes pour la gestion des catégories
     // IMPORTANT: Routes spécifiques AVANT les routes avec paramètres
