@@ -17,6 +17,48 @@
             </div>
         </div>
     </div>
+    
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('assets/css/style/custom.css') }}">
+    <style>
+        /* Augmenter proportionnellement la taille de l'image du livre */
+        .vs-product-wrapper .product-slide-row .img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .vs-product-wrapper .product-slide-row .img img {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            max-height: 640px;
+            object-fit: contain;
+        }
+        @media (max-width: 767px) {
+            .vs-product-wrapper .product-slide-row .img img { max-height: 420px; }
+        }
+
+        /* Réorganisation harmonieuse des boutons et des champs de quantité */
+        .vs-product-wrapper .product-about .actions form {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .vs-product-wrapper .product-about .quantity { margin: 0; }
+        .vs-product-wrapper .product-about .qty-input { width: 88px; min-height: 44px; }
+        .vs-product-wrapper .product-about .buttons-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .vs-product-wrapper .product-about .buttons-row .vs-btn { padding: 12px 20px; }
+
+        /* Grille responsive pour les résultats IA dans le modal */
+        .ai-modal-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 992px) { .ai-modal-grid { grid-template-columns: 1fr 1fr; } }
+        .ai-section { min-height: 120px; }
+    </style>
+    @endpush
     <!-- Shop Details Area Start-->
     <div class="vs-product-wrapper space-top space-extra-bottom">
         <div class="container">
@@ -41,7 +83,6 @@
                         <span class="product-instock">
                             <p>Availability:</p><span><i class="fas fa-check-square"></i>In Stock</span>
                         </span>
-                        <button id="aiSummaryButton" class="vs-btn" data-book-id="{{ $book->id }}"><i class="fa-solid fa-brain"></i> Résumé et encouragement par l’IA</button>
                         <div class="actions">
                             <form action="{{ route('cart.add') }}" method="POST">
                                 @csrf
@@ -55,7 +96,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="vs-btn"><i class="fa-solid fa-basket-shopping"></i>Add to Cart</button>
+                                <div class="buttons-row">
+                                    <button type="submit" class="vs-btn"><i class="fa-solid fa-basket-shopping"></i>Add to Cart</button>
+                                    <button id="aiSummaryButton" type="button" class="vs-btn" data-book-id="{{ $book->id }}"><i class="fa-solid fa-brain"></i> Résumé et encouragement par l’IA</button>
+                                </div>
                             </form>
                         </div>
                         <div class="product_meta">
@@ -203,19 +247,27 @@
     <!-- Shop Details Area End -->
 
     <!-- AI Summary Modal -->
-    <div class="modal fade" id="aiSummaryModal" tabindex="-1" aria-labelledby="aiSummaryModalLabel" aria-hidden="true">
+    <div class="modal fade ai-modal" id="aiSummaryModal" tabindex="-1" aria-labelledby="aiSummaryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="aiSummaryModalLabel">Résumé et encouragement par l’IA</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header ai-modal__header">
+                    <div class="ai-modal__brand">
+                        <span class="ai-badge" aria-hidden="true"><i class="fa-solid fa-brain"></i></span>
+                        <div class="ai-title-wrap">
+                            <h4 class="ai-title" id="aiSummaryModalLabel">Assistant IA</h4>
+                            <p class="ai-subtitle">Résumé intelligent & encouragement personnalisé</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="aiSummaryContent">
-                        <p>Chargement du résumé...</p>
-                    </div>
-                    <div id="aiEncouragementContent" class="mt-3">
-                        <p>Chargement de l'encouragement...</p>
+                    <div class="ai-modal-grid">
+                        <div id="aiSummaryContent" class="ai-section">
+                            <p>Chargement du résumé...</p>
+                        </div>
+                        <div id="aiEncouragementContent" class="ai-section">
+                            <p>Chargement de l'encouragement...</p>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -13,19 +13,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Loading skeletons for a polished UX
-            aiSummaryContentDiv.innerHTML = `
+            // Loading skeletons for a polished UX (identical for both sections)
+            const skeleton = `
                 <div class="ai-skeleton">
                     <div class="ske-title"></div>
                     <div class="ske-line"></div>
                     <div class="ske-line"></div>
                     <div class="ske-tags"></div>
                 </div>`;
-            aiEncouragementContentDiv.innerHTML = `
-                <div class="ai-skeleton">
-                    <div class="ske-title"></div>
-                    <div class="ske-line"></div>
-                </div>`;
+            aiSummaryContentDiv.innerHTML = skeleton;
+            aiEncouragementContentDiv.innerHTML = skeleton;
 
             // Show the modal
             aiSummaryModal.show();
@@ -72,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.querySelectorAll('#aiSummaryContent .ai-card').forEach(el => el.classList.add('ai-show'));
                     });
 
-                    // Build Encouragement Card
+                    // Build Encouragement Card (identical style & display to Summary)
                     let encouragementHtml = `
                         <div class="ai-card ai-encouragement">
                             <div class="ai-card__header">
@@ -82,13 +79,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="ai-card__body">`;
                     const e = data.encouragement;
                     if (typeof e === 'string') {
-                        encouragementHtml += `<blockquote class="ai-quote">${e}</blockquote>`;
+                        encouragementHtml += `<p>${e}</p>`;
                     } else if (Array.isArray(e)) {
-                        encouragementHtml += `<ul class="ai-list ai-list--bullets">${e.map(it => `<li>${it}</li>`).join('')}</ul>`;
+                        encouragementHtml += `<ul class="ai-list">${e.map(it => `<li>${it}</li>`).join('')}</ul>`;
                     } else if (e && typeof e === 'object') {
-                        if (e.message) encouragementHtml += `<blockquote class="ai-quote">${e.message}</blockquote>`;
+                        if (e.message) encouragementHtml += `<p>${e.message}</p>`;
                         if (Array.isArray(e.bullets) && e.bullets.length) {
-                            encouragementHtml += `<ul class="ai-list ai-list--bullets">${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>`;
+                            encouragementHtml += `<ul class="ai-list">${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>`;
+                        }
+                        // Optional tags alignment if present (keywords, reasons, selling_points)
+                        const tags = e.tags || e.keywords || e.reasons || e.selling_points;
+                        if (Array.isArray(tags) && tags.length) {
+                            encouragementHtml += `<div class="ai-tags">${tags.map(t => `<span class=\"ai-tag\">${t}</span>`).join('')}</div>`;
                         }
                         const cta = e.call_to_action || e.cta;
                         if (cta) encouragementHtml += `<p class="ai-cta"><i class="fa-solid fa-hand-pointer"></i> ${cta}</p>`;

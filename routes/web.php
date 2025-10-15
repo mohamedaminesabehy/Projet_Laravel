@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,14 +37,23 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::get('/checkout', [PageController::class, 'show'])->defaults('page', 'checkout')->name('checkout');
 Route::get('/favorites', [PageController::class, 'show'])->defaults('page', 'favorites')->name('favorites');
 Route::get('/profile', [PageController::class, 'show'])->defaults('page', 'profile')->name('profile');
+// Breeze nav expects a 'dashboard' route; redirect to home to avoid 404
+Route::get('/dashboard', function () {
+    return redirect()->route('home');
+})->middleware(['auth', 'verified'])->name('dashboard');
+// Breeze nav expects 'profile.edit'; map to existing profile page
+Route::get('/profile/edit', [PageController::class, 'show'])
+    ->defaults('page', 'profile')
+    ->middleware(['auth'])
+    ->name('profile.edit');
 Route::get('/shop-details/{id}', [PageController::class, 'bookDetails'])->name('shop-details');
 Route::get('/api/ai-summary/{id}', [AiSummaryController::class, 'getSummary'])->name('api.ai-summary');
 Route::get('/shop-sidebar', [PageController::class, 'show'])->defaults('page', 'shop-sidebar')->name('shop-sidebar');
-Route::get('/signin', [AuthController::class, 'showSigninForm'])->name('signin');
-Route::post('/signin', [AuthController::class, 'signin'])->name('signin.post');
-Route::get('/signup', [AuthController::class, 'showSignupForm'])->name('signup');
-Route::post('/signup', [AuthController::class, 'signup'])->name('signup.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Pages d'auth (GET) via Breeze, en conservant les vues thémées
+Route::get('/signin', [AuthenticatedSessionController::class, 'create'])->middleware('guest')->name('signin');
+Route::get('/signup', [RegisteredUserController::class, 'create'])->middleware('guest')->name('signup');
+
 Route::get('/vendor-details', [PageController::class, 'show'])->defaults('page', 'vendor-details')->name('vendor-details');
 Route::get('/vendor', [PageController::class, 'show'])->defaults('page', 'vendor')->name('vendor');
 Route::get('/wishlist', [PageController::class, 'show'])->defaults('page', 'wishlist')->name('wishlist');
@@ -71,6 +81,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 });
 
 // Routes PayPal
-Route::post('/paypal/process', [App\Http\Controllers\PayPalController::class, 'processPayment'])->name('paypal.process');
-Route::get('/paypal/success', [App\Http\Controllers\PayPalController::class, 'success'])->name('paypal.success');
-Route::get('/paypal/cancel', [App\Http\Controllers\PayPalController::class, 'cancel'])->name('paypal.cancel');
+Route::post('/paypal/process', [\App\Http\Controllers\PayPalController::class, 'processPayment'])->name('paypal.process');
+Route::get('/paypal/success', [\App\Http\Controllers\PayPalController::class, 'success'])->name('paypal.success');
+Route::get('/paypal/cancel', [\App\Http\Controllers\PayPalController::class, 'cancel'])->name('paypal.cancel');
+
+// Routes Breeze (login, register, logout, etc.)
+require __DIR__.'/auth.php';
