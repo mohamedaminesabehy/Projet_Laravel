@@ -12,38 +12,44 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        $query = Event::query();
-        
-        // Recherche
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('location', 'like', "%{$search}%");
-            });
-        }
-        
-        // Filtrage par statut
-        if ($request->has('status') && $request->status != 'all') {
-            $query->where('is_active', $request->status == 'active' ? 1 : 0);
-        }
-        
-        // Filtrage par date
-        if ($request->has('date_from')) {
-            $query->where('start_date', '>=', $request->date_from);
-        }
-        
-        if ($request->has('date_to')) {
-            $query->where('start_date', '<=', $request->date_to);
-        }
-        
-        $events = $query->orderBy('start_date', 'desc')->paginate(10);
-        
-        return view('admin.events', compact('events'));
+    public function index(\Illuminate\Http\Request $request)
+{
+    $query = \App\Models\Event::query();
+
+    // Search across title, description, location
+    if ($request->filled('search')) {
+        $search = trim($request->input('search', ''));
+        $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+              ->orWhere('description', 'like', "%{$search}%")
+              ->orWhere('location', 'like', "%{$search}%");
+        });
     }
+
+    // Status filter (ignore "all")
+    if ($request->filled('status') && $request->status !== 'all') {
+        $query->where('is_active', $request->status === 'active' ? 1 : 0);
+    }
+
+    // Date range by start_date
+    if ($request->filled('date_from')) {
+        $query->whereDate('start_date', '>=', $request->date_from);
+    }
+    if ($request->filled('date_to')) {
+        $query->whereDate('start_date', '<=', $request->date_to);
+    }
+
+    // With pagination; keep query params
+    $events = $query
+        ->orderBy('start_date', 'desc')
+        ->paginate(10)
+        ->appends($request->query());
+
+    // Render the full page (no AJAX)
+    return view('admin.events', compact('events'));
+}
+
+
 
     /**
      * Show the form for creating a new resource.
