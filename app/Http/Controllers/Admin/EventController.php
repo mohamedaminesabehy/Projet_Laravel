@@ -67,31 +67,34 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'location' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
+            'start_date'  => 'required|date',
+            'end_date'    => 'nullable|date|after_or_equal:start_date',
+            'location'    => 'nullable|string|max:255',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'is_active'   => 'nullable|boolean',
         ]);
 
-        $data = $request->except('image');
+        $validated['is_active'] = $request->boolean('is_active');
 
-        // Gestion de l'image
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('events', 'public');
-            $data['image'] = $imagePath;
+            $validated['image'] = $request->file('image')->store('events', 'public');
         }
 
-        Event::create($data);
+        \App\Models\Event::create($validated);
 
-        if (request()->ajax()) {
-            return response()->json(['success' => true, 'message' => 'Événement créé avec succès.']);
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Événement créé avec succès.',
+            ]);
         }
 
-        return redirect()->route('admin.events.index')->with('success', 'Événement créé avec succès');
+        return redirect()
+            ->route('admin.events.index')
+            ->with('success', 'Événement créé avec succès');
     }
 
     /**

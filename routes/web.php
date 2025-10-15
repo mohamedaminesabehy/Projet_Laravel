@@ -84,11 +84,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::get('/{id}', [AdminMeetingController::class, 'show'])->name('show');
     });
 
-    // route event for user  
-Route::middleware('auth')->prefix('events')->name('events.')->group(function () {
-    Route::get('/', [FrontEventController::class, 'index'])->name('index');     // /events
-    Route::get('/{event}', [FrontEventController::class, 'show'])->name('show'); // /events/{event}
-});
+
 
     
     
@@ -112,13 +108,23 @@ Route::get('/paypal/success', [App\Http\Controllers\PayPalController::class, 'su
 Route::get('/paypal/cancel', [App\Http\Controllers\PayPalController::class, 'cancel'])->name('paypal.cancel');
 
 
+    // route event for user  
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
+        Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
+    });
+
 
 
 // User-facing Events
     Route::get('/events', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
-    Route::get('/events/{event}/join', [EventController::class, 'join'])->name('events.join');
-
+    Route::middleware('auth')->group(function () {
+        Route::post('/events/{event}/join',  [EventController::class, 'join'])->name('events.join');
+        Route::delete('/events/{event}/leave', [EventController::class, 'leave'])->name('events.leave');
+    });
 
 
 
