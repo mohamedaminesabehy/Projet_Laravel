@@ -204,63 +204,25 @@ class TrustScoreController extends Controller
     }
 
     /**
-     * Exporter les données en CSV
+     * Exporter les données en PDF
      * 
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return \Illuminate\Http\Response
      */
     public function exportCsv()
     {
-        $users = UserTrustScore::with('user')->get();
-
-        $filename = 'trust_scores_' . date('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        $users = UserTrustScore::with('user')->orderBy('trust_score', 'desc')->get();
+        
+        // Calculer les statistiques
+        $stats = [
+            'total' => User::count(),
+            'verified' => UserTrustScore::where('is_verified', true)->count(),
+            'suspicious' => UserTrustScore::where('trust_score', '<', 40)
+                ->orWhereNotNull('last_suspicious_activity')->count(),
+            'average' => round(UserTrustScore::avg('trust_score'), 1),
+            'excellent' => UserTrustScore::where('trust_score', '>=', 90)->count(),
+            'good' => UserTrustScore::whereBetween('trust_score', [60, 89])->count(),
         ];
 
-        $callback = function() use ($users) {
-            $file = fopen('php://output', 'w');
-            
-            // En-têtes CSV
-            fputcsv($file, [
-                'ID',
-                'Nom',
-                'Email',
-                'Score',
-                'Niveau',
-                'Vérifié',
-                'Échanges réussis',
-                'Annulations',
-                'Messages envoyés',
-                'Messages reçus',
-                'Âge du compte (jours)',
-                'Activité suspecte',
-                'Dernière mise à jour'
-            ]);
-
-            // Données
-            foreach ($users as $trustScore) {
-                fputcsv($file, [
-                    $trustScore->user->id,
-                    $trustScore->user->first_name . ' ' . $trustScore->user->last_name,
-                    $trustScore->user->email,
-                    $trustScore->trust_score,
-                    $trustScore->trust_level,
-                    $trustScore->is_verified ? 'Oui' : 'Non',
-                    $trustScore->successful_exchanges,
-                    $trustScore->cancelled_meetings,
-                    $trustScore->messages_sent,
-                    $trustScore->messages_received,
-                    $trustScore->account_age_days,
-                    $trustScore->last_suspicious_activity ?? 'Aucune',
-                    $trustScore->last_calculated_at?->format('Y-m-d H:i:s') ?? 'Jamais'
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return view('admin.trust-scores.export-pdf', compact('users', 'stats'));
     }
 }

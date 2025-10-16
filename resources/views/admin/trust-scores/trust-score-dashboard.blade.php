@@ -9,29 +9,29 @@
         background-color: #f8f9fa;
     }
     .trust-stat-card {
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease;
         border: none;
     }
     .trust-stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
     .trust-icon {
-        width: 70px;
-        height: 70px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 28px;
-        margin-bottom: 15px;
+        font-size: 20px;
+        margin-bottom: 10px;
     }
     .trust-badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
     }
@@ -49,44 +49,53 @@
     }
     .trust-chart-container {
         position: relative;
-        height: 350px;
-        margin-bottom: 20px;
+        height: 250px;
+        margin-bottom: 15px;
     }
     .trust-user-item {
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 10px;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 8px;
         background-color: white;
         border: 1px solid #e0e0e0;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
     }
     .trust-user-item:hover {
         background-color: #f9f9f9;
-        border-color: #4e73df;
-        transform: translateX(5px);
+        border-color: #c9848f;
+        transform: translateX(3px);
     }
     .trust-score-circle {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         color: white;
     }
     .trust-score-excellent {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     }
     .trust-score-good {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #c9848f 0%, #b67680 100%);
     }
     .trust-score-medium {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
     }
     .trust-score-low {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+    h1.h3 {
+        font-size: 1.5rem;
+    }
+    .card-body h5 {
+        font-size: 1rem;
+    }
+    .card-body h2 {
+        font-size: 1.8rem;
     }
 </style>
 @endpush
@@ -104,17 +113,14 @@
             </p>
         </div>
         <div>
-            <a href="{{ route('admin.trust-scores.users') }}" class="btn btn-primary">
-                <i class="fas fa-users"></i> Voir tous les utilisateurs
-            </a>
             <form action="{{ route('admin.trust-scores.recalculate-all') }}" method="POST" style="display: inline;" onsubmit="return confirm('Recalculer les scores de TOUS les utilisateurs ? Cela peut prendre du temps.');">
                 @csrf
                 <button type="submit" class="btn btn-info">
                     <i class="fas fa-sync-alt"></i> Recalculer tout
                 </button>
             </form>
-            <a href="{{ route('admin.trust-scores.export-csv') }}" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Exporter CSV
+            <a href="{{ route('admin.trust-scores.export-csv') }}" class="btn btn-danger" target="_blank">
+                <i class="fas fa-file-pdf"></i> Exporter PDF
             </a>
         </div>
     </div>
@@ -295,15 +301,9 @@
                             </div>
                         </div>
                         <div>
-                            <a href="{{ route('admin.trust-scores.show', $trustScore->user->id) }}" class="btn btn-sm btn-outline-primary mr-2">
+                            <a href="{{ route('admin.trust-scores.show', $trustScore->user->id) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-eye"></i> Détails
                             </a>
-                            <form action="{{ route('admin.trust-scores.resolve-suspicious', $trustScore->user->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Marquer cette alerte comme résolue ?');">
-                                    <i class="fas fa-check"></i> Résoudre
-                                </button>
-                            </form>
                         </div>
                     </div>
                     @empty

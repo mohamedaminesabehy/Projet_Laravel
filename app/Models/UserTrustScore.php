@@ -45,16 +45,14 @@ class UserTrustScore extends Model
     }
 
     /**
-     * Calculer le score de confiance basé sur l'IA
+     * Calculer le score de confiance basé sur l'IA (Formule Simplifiée)
      * 
      * Algorithme de calcul :
      * - Score de base : 50 points
      * - Échanges réussis : +5 points par échange (max +30)
      * - Annulations de RDV : -10 points par annulation (max -30)
-     * - Messages actifs : +10 points si > 20 messages (max +10)
-     * - Avis reçus : +5 points par avis positif (max +20)
-     * - Ancienneté : +10 points si > 30 jours (max +10)
-     * - Pénalité activité suspecte : -20 points
+     * - Messages actifs : +10 points si > 20 messages
+     * - Ancienneté : +10 points si > 30 jours
      */
     public function calculateTrustScore()
     {
@@ -74,20 +72,11 @@ class UserTrustScore extends Model
             $score += 10;
         }
 
-        // 4. Avis reçus (+5 points par avis, max +20)
-        $reviewPoints = min($this->reviews_received * 5, 20);
-        $score += $reviewPoints;
-
-        // 5. Ancienneté du compte (+10 points si > 30 jours)
+        // 4. Ancienneté du compte (+10 points si > 30 jours)
         if ($this->account_age_days > 30) {
             $score += 10;
         } elseif ($this->account_age_days > 7) {
             $score += 5;
-        }
-
-        // 6. Pénalité pour activité suspecte
-        if ($this->last_suspicious_activity) {
-            $score -= 20;
         }
 
         // S'assurer que le score reste entre 0 et 100

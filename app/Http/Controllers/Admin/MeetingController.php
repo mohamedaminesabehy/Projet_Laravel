@@ -38,10 +38,18 @@ class MeetingController extends Controller
         // Recherche par nom d'utilisateur
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('user1', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })->orWhereHas('user2', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user1', function($subQ) use ($search) {
+                    $subQ->where('first_name', 'like', "%{$search}%")
+                         ->orWhere('last_name', 'like', "%{$search}%")
+                         ->orWhere('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+                })->orWhereHas('user2', function($subQ) use ($search) {
+                    $subQ->where('first_name', 'like', "%{$search}%")
+                         ->orWhere('last_name', 'like', "%{$search}%")
+                         ->orWhere('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+                });
             });
         }
 

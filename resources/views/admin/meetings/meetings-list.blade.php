@@ -186,11 +186,11 @@
                     </div>
                     <div class="col-md-3">
                         <label>Date de début</label>
-                        <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
+                        <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}" style="color: #000; font-size: 14px;">
                     </div>
                     <div class="col-md-3">
                         <label>Date de fin</label>
-                        <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+                        <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}" style="color: #000; font-size: 14px;">
                     </div>
                     <div class="col-md-3">
                         <label>Rechercher</label>
@@ -294,13 +294,27 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
-            <div class="mt-3">
-                {{ $meetings->links() }}
+            <!-- Pagination compacte -->
+            <div class="d-flex justify-content-center mt-2">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm mb-0" style="transform: scale(0.8);">
+                        {{ $meetings->appends(request()->query())->links('pagination::bootstrap-4') }}
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .pagination-sm .page-link {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    .pagination {
+        margin-bottom: 0;
+    }
+</style>
 
 <script>
 function cancelMeeting(meetingId) {

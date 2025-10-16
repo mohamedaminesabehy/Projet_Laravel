@@ -9,56 +9,65 @@
         background-color: #f8f9fa;
     }
     .trust-detail-card {
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         margin-bottom: 20px;
     }
     .trust-score-display {
-        width: 150px;
-        height: 150px;
+        width: 130px;
+        height: 130px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 48px;
+        font-size: 42px;
         font-weight: bold;
         color: white;
-        margin: 20px auto;
+        margin: 15px auto;
     }
     .trust-score-excellent {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        box-shadow: 0 8px 30px rgba(17, 153, 142, 0.3);
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
     }
     .trust-score-good {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+        background: linear-gradient(135deg, #c9848f 0%, #b67680 100%);
+        box-shadow: 0 4px 15px rgba(201, 132, 143, 0.3);
     }
     .trust-score-medium {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        box-shadow: 0 8px 30px rgba(240, 147, 251, 0.3);
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
     }
     .trust-score-low {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        box-shadow: 0 8px 30px rgba(250, 112, 154, 0.3);
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
     }
     .trust-metric-item {
-        padding: 20px;
-        border-radius: 10px;
+        padding: 15px;
+        border-radius: 8px;
         background: white;
-        margin-bottom: 15px;
-        border-left: 4px solid #4e73df;
-        transition: all 0.3s ease;
+        margin-bottom: 12px;
+        border-left: 4px solid #c9848f;
+        transition: all 0.2s ease;
     }
     .trust-metric-item:hover {
-        transform: translateX(5px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateX(3px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     .trust-chart-container {
-        height: 300px;
+        height: 280px;
         position: relative;
     }
     .trust-action-btn {
         margin: 5px;
+    }
+    .card-body {
+        color: #333 !important;
+    }
+    .card-body p {
+        color: #333 !important;
+    }
+    .card-body strong {
+        color: #000 !important;
     }
 </style>
 @endpush
@@ -101,7 +110,7 @@
         <div class="col-xl-4 col-lg-5 mb-4">
             <!-- Score principal -->
             <div class="card trust-detail-card">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header" style="background-color: #c9848f; color: #fff;">
                     <h6 class="m-0 font-weight-bold">
                         <i class="fas fa-star"></i> Score de Confiance IA
                     </h6>
@@ -145,7 +154,7 @@
 
             <!-- Informations utilisateur -->
             <div class="card trust-detail-card">
-                <div class="card-header bg-info text-white">
+                <div class="card-header" style="background-color: #6c757d; color: #fff;">
                     <h6 class="m-0 font-weight-bold">
                         <i class="fas fa-user"></i> Informations Utilisateur
                     </h6>
@@ -208,7 +217,7 @@
         <div class="col-xl-8 col-lg-7 mb-4">
             <!-- Métriques comportementales -->
             <div class="card trust-detail-card">
-                <div class="card-header bg-success text-white">
+                <div class="card-header" style="background-color: #28a745; color: #fff;">
                     <h6 class="m-0 font-weight-bold">
                         <i class="fas fa-chart-bar"></i> Métriques Comportementales
                     </h6>
@@ -256,13 +265,18 @@
                         <div class="col-md-6">
                             <div class="trust-metric-item" style="border-left-color: #ffc107;">
                                 <h6 class="text-muted mb-2">
-                                    <i class="fas fa-star text-warning"></i> Avis
+                                    <i class="fas fa-calendar-check text-warning"></i> Ancienneté du Compte
                                 </h6>
-                                <h3 class="mb-0">
-                                    <span class="badge badge-warning mr-2">{{ $trustScore->reviews_given }}</span> donnés
-                                    <span class="badge badge-warning ml-2">{{ $trustScore->reviews_received }}</span> reçus
-                                </h3>
-                                <small class="text-muted">Contribue: +{{ min($trustScore->reviews_received * 5, 20) }} points</small>
+                                <h3 class="mb-0">{{ $trustScore->account_age_days }} jours</h3>
+                                <small class="text-muted">
+                                    @if($trustScore->account_age_days > 30)
+                                        Contribue: +10 points (compte mature)
+                                    @elseif($trustScore->account_age_days > 7)
+                                        Contribue: +5 points (compte établi)
+                                    @else
+                                        Compte récent (0 points)
+                                    @endif
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -272,7 +286,7 @@
             <!-- Activité suspecte -->
             @if($trustScore->last_suspicious_activity)
             <div class="card trust-detail-card border-danger">
-                <div class="card-header bg-danger text-white">
+                <div class="card-header" style="background-color: #dc3545; color: #fff;">
                     <h6 class="m-0 font-weight-bold">
                         <i class="fas fa-exclamation-triangle"></i> Activité Suspecte Détectée
                     </h6>
@@ -294,7 +308,7 @@
 
             <!-- Historique des scores -->
             <div class="card trust-detail-card">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header" style="background-color: #c9848f; color: #fff;">
                     <h6 class="m-0 font-weight-bold">
                         <i class="fas fa-history"></i> Historique des Scores (30 dernières entrées)
                     </h6>
