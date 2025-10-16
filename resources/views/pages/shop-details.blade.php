@@ -17,13 +17,55 @@
             </div>
         </div>
     </div>
+    
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('assets/css/style/custom.css') }}">
+    <style>
+        /* Augmenter proportionnellement la taille de l'image du livre */
+        .vs-product-wrapper .product-slide-row .img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .vs-product-wrapper .product-slide-row .img img {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            max-height: 640px;
+            object-fit: contain;
+        }
+        @media (max-width: 767px) {
+            .vs-product-wrapper .product-slide-row .img img { max-height: 420px; }
+        }
+
+        /* Réorganisation harmonieuse des boutons et des champs de quantité */
+        .vs-product-wrapper .product-about .actions form {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .vs-product-wrapper .product-about .quantity { margin: 0; }
+        .vs-product-wrapper .product-about .qty-input { width: 88px; min-height: 44px; }
+        .vs-product-wrapper .product-about .buttons-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .vs-product-wrapper .product-about .buttons-row .vs-btn { padding: 12px 20px; }
+
+        /* Grille responsive pour les résultats IA dans le modal */
+        .ai-modal-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 992px) { .ai-modal-grid { grid-template-columns: 1fr 1fr; } }
+        .ai-section { min-height: 120px; }
+    </style>
+    @endpush
     <!-- Shop Details Area Start-->
     <div class="vs-product-wrapper space-top space-extra-bottom">
         <div class="container">
             <div class="row gx-60">
                 <div class="col-lg-6">
                     <div class="product-slide-row wow animate__fadeInUp" data-wow-delay="0.30s">
-                        <div class="img"><img src="{{ asset('assets/img/shop/product-d-1.jpg') }}" alt="Product Image"></div>
+                        <div class="img"><img src="{{ asset($book->cover_image) }}" alt="Product Image"></div>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -34,34 +76,41 @@
                             </div>
                             <span class="product-rating__total">Review (03)</span>
                         </div>
-                        <h2 class="product-title">Neglected Solitary Life</h2>
-                        <span class="product-author"><strong>By:</strong> <a href="#">Fahim Al Bashar</a></span>
-                        <p class="product-price">$155.00 <del>$23.85</del></p>
-                        <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit purus vel, of a viveirra facilisi neque
-                            quisque. Phasellus aliquam ut id rhoncus. In viverra sed vitae vivamus amet, nuncg vivamus. </p>
+                        <h2 class="product-title">{{ $book->title }}</h2>
+                        <span class="product-author"><strong>By:</strong> <a href="#">{{ $book->author }}</a></span>
+                        <p class="product-price">${{ $book->price }}</p>
+                        <p class="text">{{ $book->description }}</p>
                         <span class="product-instock">
                             <p>Availability:</p><span><i class="fas fa-check-square"></i>In Stock</span>
                         </span>
                         <div class="actions">
-                            <div class="quantity">
-                                <div class="quantity__field quantity-container">
-                                    <div class="quantity__buttons">
-                                        <button class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
-                                        <input type="number" id="quantity" class="qty-input" step="1" min="1" max="100" name="quantity" value="01" title="Qty">
-                                        <button class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
+                            <form action="{{ route('cart.add') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="book_id" value="{{ $book->id }}">
+                                <div class="quantity">
+                                    <div class="quantity__field quantity-container">
+                                        <div class="quantity__buttons">
+                                            <button type="button" class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
+                                            <input type="number" id="quantity" class="qty-input" step="1" min="1" max="100" name="quantity" value="1" title="Qty">
+                                            <button type="button" class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <a href="{{ route('cart') }}" class="vs-btn"><i class="fa-solid fa-basket-shopping"></i>Add to Cart</a>
-                            <a href="{{ route('wishlist') }}" class="icon-btn"><i class="far fa-heart"></i></a>
+                                <div class="buttons-row">
+                                    <button type="submit" class="vs-btn"><i class="fa-solid fa-basket-shopping"></i>Add to Cart</button>
+                                    <button type="button" class="vs-btn vs-btn--outline ai-encouragement-btn" data-book-id="{{ $book->id }}">
+                                        <i class="fas fa-magic"></i>Pourquoi acheter ce livre ? IA
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                         <div class="product_meta">
                             <h4 class="h5">Information:</h4>
                             <span class="sku_wrapper">
-                                <p>SKU:</p> <span class="sku">03</span>
+                                <p>SKU:</p> <span class="sku">{{ $book->id }}</span>
                             </span>
                             <span class="posted_in">
-                                <p>Category:</p> <a href="#" rel="tag">Thriller</a>
+                                <p>Category:</p> <a href="#" rel="tag">{{ $book->category->name }}</a>
                             </span>
                             <span>
                                 <p>Tags:</p> <a href="#" rel="tag">Kids</a><a href="#" rel="tag">Popular</a><a href="#" rel="tag">Gost</a>
@@ -84,19 +133,10 @@
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                         <div class="description">
-                            <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod
-                                orci.
-                                Cum
-                                sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultricies
-                                aliquam. Cum sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus mus sit am.</p>
-                            <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod
-                                orci.
-                                Cum
-                                sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultricies
-                                aliquam. Done ultricies nec, pellent, consectetur adipiscing elit. Ieuismod orci.</p>
+                            <p class="text">{{ $book->description }}</p>
                             <div class="product_meta">
                                 <span class="sku_wrapper">
-                                    <p>Categoris</p> <span class="sku">Thriller</span>
+                                    <p>Categoris</p> <span class="sku">{{ $book->category->name }}</span>
                                 </span>
                                 <span class="posted_in">
                                     <p>Color</p> <span>Lilac Purple</span>
@@ -111,13 +151,7 @@
                                     <p>Paper</p> <span>White Paper</span>
                                 </span>
                             </div>
-                            <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod
-                                orci.
-                                Cum
-                                sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultricies
-                                aliquam. Done ultricies nec, pellent, consectetur adipiscing elit. Ieuismod orci. Cum sociis natoque
-                                penatibus et magnis dis parturient montes
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ut ullamcorper leo, eget euismod orci</p>
+                            <p class="text">{{ $book->description }}</p>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
@@ -252,331 +286,83 @@
         </div>
     </div>
     <!-- Shop Details Area End -->
-    <!-- Book Of The Month End -->
-    <section class="books-layout1 style2 space-bottom">
-        <div class="container">
-            <div class="title-area2 animation-style1 title-anime">
-                <h2 class="sec-title title-anime__title">Book Of The Month</h2>
-                <div class="arraw-area">
-                    <div class="d-flex justify-content-center align-items-center gap-2">
-                        <button class="icon-btn border-none" data-slick-prev=".book-carousel">
-                            <i class="fa-solid fa-arrow-left"></i>
-                        </button>
-                        <button class="icon-btn" data-slick-next=".book-carousel">
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
+
+    <!-- AI Purchase Encouragement Modal -->
+    <div class="modal fade" id="aiEncouragementModal" tabindex="-1" aria-labelledby="aiEncouragementModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content ai-modal">
+                <div class="modal-header ai-modal-header">
+                    <h5 class="modal-title ai-modal-title" id="aiEncouragementModalLabel">
+                        <i class="fas fa-magic me-2"></i>Pourquoi acheter ce livre ?
+                    </h5>
+                    <button type="button" class="btn-close ai-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
-            <div class="row vs-carousel g-4 book-carousel wow animate__fadeInUp" data-wow-delay="0.30s" data-slide-show="4" data-autoplay="true">
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.30s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-1.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
+                <div class="modal-body ai-modal-body">
+                    <div class="ai-loading text-center" id="aiLoading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Génération en cours...</span>
+                        </div>
+                        <p class="mt-3">L'IA analyse ce livre pour vous...</p>
+                    </div>
+                    
+                    <div class="ai-content" id="aiContent" style="display: none;">
+                        <div class="ai-headline mb-4">
+                            <h4 class="ai-title" id="aiHeadline"></h4>
+                        </div>
+                        
+                        <div class="ai-persuasive-text mb-4">
+                            <p class="ai-description" id="aiPersuasiveText"></p>
+                        </div>
+                        
+                        <div class="ai-benefits mb-4">
+                            <h6 class="ai-section-title">Pourquoi ce livre est fait pour vous :</h6>
+                            <ul class="ai-benefits-list" id="aiBenefitsList"></ul>
+                        </div>
+                        
+                        <div class="ai-social-proof mb-4">
+                            <div class="social-proof-card">
+                                <i class="fas fa-users text-success me-2"></i>
+                                <span id="aiSocialProof"></span>
                             </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
                         </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
+                        
+                        <div class="ai-urgency mb-4">
+                            <div class="urgency-card">
+                                <i class="fas fa-clock text-warning me-2"></i>
+                                <span id="aiUrgencyMessage"></span>
+                            </div>
                         </div>
-                            <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                            <h2 class="product-title"><a href="{{ route('shop') }}">The Muke Guy</a></h2>
+                        
+                        <!-- Section des recommandations de livres similaires -->
+                        <div class="ai-similar-books mb-4" id="aiSimilarBooksSection" style="display: none;">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-book-open me-2"></i>Livres similaires recommandés
+                            </h6>
+                            <div class="similar-books-container" id="aiSimilarBooks">
+                                <!-- Les recommandations seront ajoutées ici par JavaScript -->
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.40s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-2.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
-                            </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
-                            </div>
-                            <span class="product-author"><strong>By:</strong> H Abdul</span>
-                            <h2 class="product-title"> <a href="{{ route('shop') }}">Levtimeline</a></h2>
+                    
+                    <div class="ai-error text-center" id="aiError" style="display: none;">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Une erreur est survenue lors de la génération du contenu. Veuillez réessayer.
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.50s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-3.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
-                            </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
-                            </div>
-                            <span class="product-author"><strong>By:</strong> D Bellingham</span>
-                            <h2 class="product-title"><a href="{{ route('shop') }}">Mick Weive Mockchapu</a></h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.60s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-4.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
-                            </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
-                            </div>
-                            <span class="product-author"><strong>By:</strong> Alex Jhon</span>
-                            <h2 class="product-title"><a href="{{ route('shop') }}">Fuarcnusk Preentine</a></h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.70s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-5.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
-                            </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
-                            </div>
-                            <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                            <h2 class="product-title"><a href="{{ route('shop') }}">L Art Du Subtiliste</a></h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.80s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-6.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
-                            </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
-                            </div>
-                            <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                            <h2 class="product-title"><a href="{{ route('shop') }}">Vqirk Teur Mocgkcup</a></h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.90s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-7.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
-                            </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
-                            </div>
-                            <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                            <h2 class="product-title"><a href="{{ route('shop') }}">Hd Pry Balir Ptonnrnle</a></h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-4 col-sm-6">
-                    <div class="product-style1 wow animate__fadeInUp" data-wow-delay="0.95s">
-                        <div class="product-img">
-                            <img src="{{ asset('assets/img/product/product-img-5-8.jpg') }}" alt="product image">
-                            <div class="product-btns">
-                                <a href="{{ route('wishlist') }}" class="icon-btn wishlist">
-                                    <i class="far fa-heart"></i>
-                                </a>
-                                <a href="{{ route('cart') }}" class="icon-btn cart">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </a>
-                            </div>
-                            <ul class="post-box">
-                                <li>Hot</li>
-                                <li>-30%</li>
-                            </ul>
-                        </div>
-                        <div class="product-content">
-                            <div class="product-rating">
-                                <span class="star"><i class="fas fa-star"></i> (4.5)</span>
-                                <ul class="price-list">
-                                    <li><del>$39.99</del></li>
-                                    <li>$30.00</li>
-                                </ul>
-                            </div>
-                            <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                            <h2 class="product-title"><a href="{{ route('shop') }}">Beuto minimal Cork</a></h2>
-                        </div>
-                    </div>
+                <div class="modal-footer ai-modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary ai-cta-btn" id="aiCallToAction">
+                        <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Book Of The Month End -->
+    </div>
 
-    @push('scripts')
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Gestion du système d'étoiles
-        const stars = document.querySelectorAll('#star-rating a');
-        const ratingInput = document.getElementById('rating-input');
-        
-        stars.forEach(star => {
-            star.addEventListener('click', function(e) {
-                e.preventDefault();
-                const rating = parseInt(this.dataset.value);
-                ratingInput.value = rating;
-                
-                // Mettre à jour l'affichage des étoiles
-                stars.forEach((s, index) => {
-                    if (index < rating) {
-                        s.style.color = '#ffc107';
-                        s.style.textDecoration = 'none';
-                    } else {
-                        s.style.color = '#ddd';
-                    }
-                });
-            });
-            
-            // Effet hover
-            star.addEventListener('mouseenter', function() {
-                const rating = parseInt(this.dataset.value);
-                stars.forEach((s, index) => {
-                    if (index < rating) {
-                        s.style.color = '#ffc107';
-                    } else {
-                        s.style.color = '#ddd';
-                    }
-                });
-            });
-        });
-        
-        // Validation du formulaire
-        const form = document.getElementById('review-form');
-        form.addEventListener('submit', function(e) {
-            const rating = ratingInput.value;
-            const comment = document.querySelector('textarea[name="comment"]').value;
-            const bookId = document.querySelector('select[name="book_id"]').value;
-            
-            if (!rating) {
-                e.preventDefault();
-                alert('Veuillez sélectionner une note en étoiles');
-                return false;
-            }
-            
-            if (!bookId) {
-                e.preventDefault();
-                alert('Veuillez sélectionner un livre');
-                return false;
-            }
-            
-            if (comment.length < 10) {
-                e.preventDefault();
-                alert('Le commentaire doit contenir au moins 10 caractères');
-                return false;
-            }
-        });
-    });
-    </script>
-    @endpush
-@endsection 
+@endsection
+
+@push('scripts')
+<script src="{{ asset('assets/js/ai-encouragement.js') }}"></script>
+@endpush

@@ -1,3 +1,6 @@
+<!-- External CSS for Authentication Buttons -->
+<link rel="stylesheet" href="{{ asset('css/auth-buttons.css') }}">
+
 <div class="preloader">
     <button class="vs-btn pre                        <li><a href="#">Page List 1</a>
                             <ul>
@@ -7,7 +10,7 @@
                                 <li><a href="{{ route('about') }}">About</a></li>
                                 <li><a href="{{ route('reviews.index') }}">Reviews</a></li>
                                 <li><a href="{{ route('ai-insights.index') }}"><i class="fas fa-brain"></i> AI Insights</a></li>
-                                <li><a href="{{ route('categories.index') }}"><i class="fas fa-heart"></i> Favorite Categories</a></li>
+                                <li><a href="{{ route('favorites') }}"><i class="fas fa-heart"></i> Favorite Categories</a></li>
                                 <li><a href="{{ route('contact') }}">Contact</a></li>
                             </ul>
                         </li>Cancel Preloader </button>
@@ -44,17 +47,49 @@
                     <ul class="sub-menu">
                         <li><a href="{{ route('shop') }}">Shop</a></li>
                         <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                        <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+                        <li><a href="{{ route('shop') }}">Shop Details</a></li>
                     </ul>
                 </li>
                 <li class="menu-item-has-children">
                     <a href="#">Pages</a>
-                    <ul class="sub-menu">
-                        <li><a href="{{ route('about') }}">About</a></li>
-                        <li><a href="{{ route('cart') }}">Cart</a></li>
-                        <li><a href="{{ route('checkout') }}">Checkout</a></li>
-                        <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
-                        <li><a href="{{ route('author') }}">Authors</a></li>
+                    <ul class="mega-menu">
+                        <li><a href="{{ route('shop') }}">Page List 1</a>
+                            <ul>
+                                <li><a href="{{ route('home') }}">Home 1</a></li>
+                                <li><a href="#">Home 2</a></li>
+                                <li><a href="#">Home 3</a></li>
+                                <li><a href="{{ route('about') }}">About</a></li>
+                                <li><a href="{{ route('contact') }}">Contact</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Page List 2</a>
+                            <ul>
+                                <li><a href="{{ route('blog') }}">Blog</a></li>
+                                <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
+                                <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
+                                <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
+                                <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Page List 3</a>
+                            <ul>
+                                <li><a href="{{ route('cart') }}">Cart</a></li>
+                                <li><a href="{{ route('shop') }}">Shop</a></li>
+                                <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
+                                <li><a href="{{ route('shop') }}">Shop Details</a></li>
+                                <li><a href="{{ route('404') }}">Error Page</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Page List 4</a>
+                            <ul>
+                                <li><a href="{{ route('wishlist') }}">wishlist</a></li>
+                                <li><a href="{{ route('checkout') }}">checkout</a></li>
+                                <li><a href="{{ route('author') }}">All Authors</a></li>
+                                <li><a href="{{ route('author-details') }}">Author Details</a></li>
+                                <li><a href="{{ route('vendor') }}">Vendor</a></li>
+                                <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li>
@@ -66,7 +101,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('categories.index') }}" class="favorite-categories-link">
+                    <a href="{{ route('favorites') }}" class="favorite-categories-link">
                         <i class="fas fa-heart"></i> Favorites
                         @auth
                             @php
@@ -130,30 +165,59 @@
                             <a href="#"><i class="fab fa-youtube"></i></a>
                         </div>
                         <div class="user-login">
-                            <div class="dropdown">
-                                <a href="#" class="d-inline-flex align-items-center" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
-                                    <i class="fa-solid fa-user"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                                    <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="fa-regular fa-id-badge me-2"></i>Profile</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('wishlist') }}"><i class="fa-regular fa-heart me-2"></i>Wishlist</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('category-favorites.index') }}">
-                                        <i class="fas fa-heart me-2" style="color: #ff6b6b;"></i>My Favorite Categories
-                                        @auth
+                            @auth
+                                <!-- User is logged in - Show dropdown with username -->
+                                <div class="dropdown">
+                                    <a href="#" class="d-inline-flex align-items-center user-menu-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
+                                        <i class="fa-solid fa-user me-2"></i>
+                                        <span class="username-display">{{ auth()->user()->name }}</span>
+                                        <i class="fa-solid fa-chevron-down ms-2"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userMenu">
+                                        <li class="dropdown-header">
+                                            <div class="user-info">
+                                                <strong>{{ auth()->user()->name }}</strong>
+                                                <small class="text-muted d-block">{{ auth()->user()->email }}</small>
+                                            </div>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ route('profile') }}">
+                                            <i class="fa-regular fa-id-badge me-2"></i>Profile
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="{{ route('wishlist') }}">
+                                            <i class="fa-regular fa-heart me-2"></i>Wishlist
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="{{ route('favorites') }}">
+                                            <i class="fas fa-heart me-2" style="color: #ff6b6b;"></i>My Favorite Categories
                                             @php
                                                 $favCount = auth()->user()->categoryFavorites()->count();
                                             @endphp
                                             @if($favCount > 0)
                                                 <span class="badge bg-danger ms-2">{{ $favCount }}</span>
                                             @endif
-                                        @endauth
-                                    </a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" href="{{ route('signin') }}"><i class="fa-regular fa-right-to-bracket me-2"></i>Sign in</a></li>
-                                </ul>
-                            </div>
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="fa-regular fa-right-from-bracket me-2"></i>Logout
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @else
+                                <!-- User is not logged in - Show Sign In and Sign Up buttons -->
+                                <div class="auth-buttons d-flex align-items-center gap-2">
+                                    <a href="{{ route('signin') }}" class="btn btn-outline-primary btn-sm auth-btn signin-btn">
+                                        <i class="fa-regular fa-right-to-bracket me-1"></i>Sign In
+                                    </a>
+                                    <a href="{{ route('signup') }}" class="btn btn-primary btn-sm auth-btn signup-btn">
+                                        <i class="fa-regular fa-user-plus me-1"></i>Sign Up
+                                    </a>
+                                </div>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -241,17 +305,49 @@
                                                 <ul class="sub-menu">
                                                     <li><a href="{{ route('shop') }}">Shop</a></li>
                                                     <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
-                                                    <li><a href="{{ route('shop-details') }}">Shop Details</a></li>
+
                                                 </ul>
                                             </li>
                                             <li class="menu-item-has-children">
                                                 <a href="#">Pages</a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="{{ route('about') }}">About</a></li>
-                                                    <li><a href="{{ route('cart') }}">Cart</a></li>
-                                                    <li><a href="{{ route('checkout') }}">Checkout</a></li>
-                                                    <li><a href="{{ route('wishlist') }}">Wishlist</a></li>
-                                                    <li><a href="{{ route('author') }}">Authors</a></li>
+                                                <ul class="mega-menu">
+                                                    <li><a href="{{ route('shop') }}">Page List 1</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('home') }}">Home 1</a></li>
+                                                            <li><a href="#">Home 2</a></li>
+                                                            <li><a href="#">Home 3</a></li>
+                                                            <li><a href="{{ route('about') }}">About</a></li>
+                                                            <li><a href="{{ route('contact') }}">Contact</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="#">Page List 2</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('blog') }}">Blog</a></li>
+                                                            <li><a href="{{ route('blog-sidebar') }}">Blog Sidebar</a></li>
+                                                            <li><a href="{{ route('blog-sidebar-2') }}">Blog Sidebar 2</a></li>
+                                                            <li><a href="{{ route('blog-standard') }}">Blog Standard</a></li>
+                                                            <li><a href="{{ route('blog-details') }}">Blog Details</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="#">Page List 3</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('cart') }}">Cart</a></li>
+                                                            <li><a href="{{ route('shop') }}">Shop</a></li>
+                                                            <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
+                                                            <li><a href="{{ route('shop') }}">Shop Details</a></li>
+                                                            <li><a href="{{ route('404') }}">Error Page</a></li>
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="#">Page List 4</a>
+                                                        <ul>
+                                                            <li><a href="{{ route('wishlist') }}">wishlist</a></li>
+                                                            <li><a href="{{ route('checkout') }}">checkout</a></li>
+                                                            <li><a href="{{ route('author') }}">All Authors</a></li>
+                                                            <li><a href="{{ route('author-details') }}">Author Details</a></li>
+                                                            <li><a href="{{ route('vendor') }}">Vendor</a></li>
+                                                            <li><a href="{{ route('vendor-details') }}">Vendor Details</a></li>
+                                                        </ul>
+                                                    </li>
                                                 </ul>
                                             </li>
                                             <li>
@@ -265,7 +361,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="{{ route('categories.index') }}" class="favorite-categories-link">
+                                                <a href="{{ route('favorites') }}" class="favorite-categories-link">
                                                     <span style="display: inline-flex; align-items: center; gap: 5px;">
                                                         <i class="fas fa-heart"></i> Favorites
                                                     </span>
@@ -290,49 +386,10 @@
                         </div>
                         <div class="col-auto d-xl-block d-none">
                             <div class="header-cart">
-                                <a href="{{ route('cart') }}" class="vs-icon has-badge"><i class="fa-solid fa-basket-shopping"></i><span class="badge">0</span></a>
-                                <div class="woocommerce widget_shopping_cart">
-                                    <div class="widget_shopping_cart_content">
-                                        <ul class="cart_list">
-                                            <li class="mini_cart_item">
-                                                <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop-details') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-1.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop-details') }}" class="product-title">Smart Watch</a>
-                                                <span class="amount">$99.00</span>
-                                                <div class="quantity">
-                                                    <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>
-                                                    <input type="number" class="qty-input" value="1" min="1" max="99">
-                                                    <button class="quantity-plus qut-btn"><i class="far fa-plus"></i></button>
-                                                </div>
-                                                <div class="subtotal">
-                                                    <span>Subtotal:</span>
-                                                    <span class="amount">$99.00</span>
-                                                </div>
-                                            </li>
-                                            <li class="mini_cart_item">
-                                                <a href="#" class="remove"><i class="far fa-times"></i></a>
-                                                <a href="{{ route('shop-details') }}" class="img"><img src="{{ asset('assets/img/cart/cat-img-2.jpg') }}" alt="Cart Image"></a>
-                                                <a href="{{ route('shop-details') }}" class="product-title">Boss Chair</a>
-                                                <span class="amount">$80.00</span>
-                                                <div class="quantity">
-                                                    <button class="quantity-minus qut-btn"><i class="far fa-minus"></i></button>
-                                                    <input type="number" class="qty-input" value="2" min="1" max="99">
-                                                    <button class="quantity-plus qut-btn"><i class="far fa-plus"></i></button>
-                                                </div>
-                                                <div class="subtotal">
-                                                    <span>Subtotal:</span>
-                                                    <span class="amount">$160.00</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <p class="total">
-                                            <strong>Subtotal:</strong>
-                                            <span class="amount">$259.00</span>
-                                        </p>
-                                        <p class="buttons">
-                                            <a href="{{ route('cart') }}" class="vs-btn">View cart</a>
-                                            <a href="{{ route('checkout') }}" class="vs-btn checkout">Checkout</a>
-                                        </p>
+                                <a href="{{ route('cart') }}" class="vs-icon cart"><i class="fal fa-shopping-bag"></i><span class="badge">{{ $cartCount }}</span></a>
+                                        
+                                        
+                            
                                     </div>
                                 </div>
                             </div>
@@ -342,4 +399,122 @@
             </div>
         </div>
     </div>
-</header> 
+</header>
+
+<style>
+/* Simplified User Menu Styles */
+.user-menu-toggle {
+    background: var(--theme-color);
+    color: var(--white-color);
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    font-family: var(--body-font);
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 6px rgba(209, 102, 85, 0.25);
+}
+
+.user-menu-toggle:hover {
+    background: var(--title-color);
+    color: var(--white-color);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(46, 74, 91, 0.3);
+}
+
+.username-display {
+    font-weight: 500;
+    font-family: var(--title-font);
+    margin: 0 8px;
+    font-size: 15px;
+}
+
+.user-dropdown-menu {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 8px 0;
+    min-width: 260px;
+    margin-top: 8px;
+}
+
+.user-dropdown-menu .dropdown-header {
+    background: var(--body-color);
+    color: var(--title-color);
+    padding: 12px 20px;
+    border-radius: 8px 8px 0 0;
+    margin: 0 0 8px 0;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-dropdown-menu .dropdown-item {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--title-color);
+    font-family: var(--body-font);
+    transition: all 0.3s ease;
+    border: none;
+    font-weight: 500;
+}
+
+.user-dropdown-menu .dropdown-item:hover {
+    background: var(--body-color);
+    color: var(--theme-color);
+}
+
+.user-dropdown-menu .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: var(--secondary-color);
+    margin-right: 8px;
+}
+
+.user-dropdown-menu .dropdown-item:hover i {
+    color: var(--theme-color);
+}
+
+.user-dropdown-menu .dropdown-divider {
+    margin: 8px 0;
+    border-color: var(--border-color);
+}
+
+.user-dropdown-menu .text-danger {
+    color: var(--error-color) !important;
+}
+
+.user-dropdown-menu .text-danger:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--error-color) !important;
+}
+
+/* Badge styling to match theme */
+.user-dropdown-menu .badge {
+    background-color: var(--theme-color) !important;
+    color: var(--white-color);
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .user-dropdown-menu {
+        min-width: 240px;
+    }
+    
+    .user-menu-toggle {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+    
+    .username-display {
+        font-size: 14px;
+    }
+}
+</style>

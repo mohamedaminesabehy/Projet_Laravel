@@ -3,7 +3,7 @@
 @section('content')
 
     <main>
-        <section class="cartoon-hero py-80">
+        <section class="cartoon-hero">
             <div class="container position-relative">
                 <div class="row justify-content-center align-items-center g-4">
                     <div class="col-lg-6 d-none d-lg-block">
@@ -62,27 +62,34 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-10">
+                    <div class="col-lg-6 col-md-8 col-12 mx-auto">
                         <div class="p-4 p-md-5 auth-card">
                             <div class="text-center mb-4">
                                 <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo" class="logo-hero">
                                 <h1 class="h3 mt-3 mb-1">Sign in</h1>
                                 <p class="text-muted mb-0">Welcome back! Please enter your details.</p>
                             </div>
-                            <form>
+                            <form action="{{ route('login') }}" method="POST">
+                                @csrf
                                 <div class="mb-3">
-                                    <label for="signinEmail" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="signinEmail" placeholder="name@example.com" required>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <label for="signinPassword" class="form-label mb-0">Password</label>
-                                        <a href="#" class="text-decoration-none small">Forgot password?</a>
-                                    </div>
-                                    <input type="password" class="form-control" id="signinPassword" placeholder="Your password" required>
-                                </div>
+                                     <label for="signinEmail" class="form-label">Email address</label>
+                                     <input type="email" class="form-control @error('email') is-invalid @enderror" id="signinEmail" name="email" placeholder="name@example.com" value="{{ old('email') }}" required>
+                                     @error('email')
+                                         <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
+                                 <div class="mb-3">
+                                     <div class="d-flex justify-content-between align-items-center">
+                                         <label for="signinPassword" class="form-label mb-0">Password</label>
+                                         <a href="{{ route('password.request') }}" class="text-decoration-none small">Forgot password?</a>
+                                     </div>
+                                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="signinPassword" name="password" placeholder="Your password" required>
+                                     @error('password')
+                                         <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                 </div>
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" value="" id="rememberMe">
+                                    <input class="form-check-input" type="checkbox" value="1" id="rememberMe" name="remember">
                                     <label class="form-check-label" for="rememberMe">
                                         Remember me
                                     </label>
@@ -107,4 +114,4 @@
         </section>
     </main>
 
-@endsection 
+@endsection

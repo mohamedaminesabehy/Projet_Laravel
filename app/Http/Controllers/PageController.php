@@ -6,20 +6,26 @@ use App\Models\Book;
 use App\Models\BookInsight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+ 
 
 class PageController extends Controller
 {
     public function home()
     {
-        // Récupérer les meilleurs livres avec insights AI (basé sur le nombre de reviews)
-        $topBooksWithInsights = Book::with(['insight', 'reviews'])
-            ->whereHas('insight') // Seulement les livres qui ont un insight
-            ->withCount('reviews')
-            ->orderBy('reviews_count', 'desc')
-            ->take(6)
-            ->get();
+        return view('pages.home');
+    }
 
-        return view('pages.index', compact('topBooksWithInsights'));
+    public function shop()
+    {
+        $books = Book::all();
+        return view('pages.shop', compact('books'));
+    }
+
+    public function bookDetails($id)
+    {
+        $book = Book::findOrFail($id);
+        return view('pages.shop-details', compact('book'));
     }
 
     public function show(string $page)
@@ -35,4 +41,4 @@ class PageController extends Controller
 
         abort(404);
     }
-} 
+}

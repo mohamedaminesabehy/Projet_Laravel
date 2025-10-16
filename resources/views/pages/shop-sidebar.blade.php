@@ -70,7 +70,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">The Muke Guy</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">The Muke Guy</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> H Abdul</span>
-                                    <h2 class="product-title"> <a href="{{ route('shop-details') }}">Levtimeline</a></h2>
+                                    <h2 class="product-title"> <a href="{{ route('shop') }}">Levtimeline</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> D Bellingham</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Mick Weive Mockchapu</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Mick Weive Mockchapu</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -160,7 +160,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Alex Jhon</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Fuarcnusk Preentine</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Fuarcnusk Preentine</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">L Art Du Subtiliste</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">L Art Du Subtiliste</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +220,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Vqirk Teur Mocgkcup</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Vqirk Teur Mocgkcup</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -250,7 +250,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Hd Pry Balir Ptonnrnle</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Hd Pry Balir Ptonnrnle</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -280,7 +280,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Beuto minimal Cork</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Beuto minimal Cork</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -310,7 +310,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">L Art Du Subtiliste</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">L Art Du Subtiliste</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -340,7 +340,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Alex Jhon</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Fuarcnusk Preentine</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Fuarcnusk Preentine</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -370,7 +370,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">L Art Du Subtiliste</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">L Art Du Subtiliste</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -400,7 +400,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Vqirk Teur Mocgkcup</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Vqirk Teur Mocgkcup</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -430,7 +430,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Hd Pry Balir Ptonnrnle</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Hd Pry Balir Ptonnrnle</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -460,7 +460,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Fahim Al Bashar</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">Beuto minimal Cork</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">Beuto minimal Cork</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -490,7 +490,7 @@
                                         </ul>
                                     </div>
                                     <span class="product-author"><strong>By:</strong> Nicola joi</span>
-                                    <h2 class="product-title"><a href="{{ route('shop-details') }}">L Art Du Subtiliste</a></h2>
+                                    <h2 class="product-title"><a href="{{ route('shop') }}">L Art Du Subtiliste</a></h2>
                                 </div>
                             </div>
                         </div>
@@ -619,4 +619,4 @@
     <!--==============================
     Shop Sidebar Area Start End
 ==============================-->
-@endsection 
+@endsection

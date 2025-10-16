@@ -113,13 +113,29 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </div>
-                    <div class="user-dropdown">
-                        <div class="user-avatar">
-                            <span>{{ Auth::user()->name[0] ?? 'A' }}</span>
+                    <div class="user-dropdown dropdown">
+                        <div class="user-info" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                            <div class="user-avatar">
+                                <span>{{ Auth::user()->name[0] ?? 'A' }}</span>
+                            </div>
+                            <div class="user-name">
+                                {{ Auth::user()->name ?? 'Admin' }}
+                            </div>
+                            <i class="fas fa-chevron-down ms-2"></i>
                         </div>
-                        <div class="user-name">
-                            {{ Auth::user()->name ?? 'Admin' }}
-                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -175,21 +191,16 @@
         };
         
         // Flash Messages
-        @if(session('success'))
-            toastr.success("{{ session('success') }}");
-        @endif
+        var successMsg = "{{ session('success') }}";
+        var errorMsg = "{{ session('error') }}";
+        var infoMsg = "{{ session('info') }}";
+        var warningMsg = "{{ session('warning') }}";
         
-        @if(session('error'))
-            toastr.error("{{ session('error') }}");
-        @endif
-        
-        @if(session('info'))
-            toastr.info("{{ session('info') }}");
-        @endif
-        
-        @if(session('warning'))
-            toastr.warning("{{ session('warning') }}");
-        @endif
+        // Afficher les messages s'ils existent
+        if (successMsg) toastr.success(successMsg);
+        if (errorMsg) toastr.error(errorMsg);
+        if (infoMsg) toastr.info(infoMsg);
+        if (warningMsg) toastr.warning(warningMsg);
     </script>
     
     <!-- Admin Scripts -->

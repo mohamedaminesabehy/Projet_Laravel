@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\BookInsight;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BookInsightsController extends Controller
 {
@@ -101,5 +102,76 @@ class BookInsightsController extends Controller
         ];
         
         return view('ai-insights.show', compact('book', 'reviewsStats'));
+    }
+    
+    /**
+     * Génère les AI Insights pour tous les livres éligibles
+     */
+    public function generateAll(Request $request)
+    {
+        try {
+            $generated = 0;
+            $skipped = 0;
+            $errors = 0;
+            
+            // Trouver tous les livres avec 3+ avis analysés qui n'ont pas encore d'insight
+            $eligibleBooks = Book::select('books.*')
+                ->join('reviews', 'books.id', '=', 'reviews.book_id')
+                ->whereNotNull('reviews.analyzed_at')
+                ->where('reviews.status', 'approved')
+                ->groupBy('books.id')
+                ->havingRaw('COUNT(reviews.id) >= 3')
+                ->doesntHave('insight')
+                ->get();
+            
+            foreach ($eligibleBooks as $book) {
+                try {
+                    // Dispatcher le job de génération
+                    \App\Jobs\GenerateBookInsightJob::dispatch($book);
+                    $generated++;
+                } catch (\Exception $e) {
+                    Log::error("Erreur lors de la génération d'insight pour le livre {$book->id}: " . $e->getMessage());
+                    $errors++;
+                }
+            }
+            
+            // Compter les livres qui ont déjà des insights
+            $existingInsights = Book::has('insight')->count();
+            
+            if ($generated > 0) {
+                $message = "✅ Génération lancée pour {$generated} livre(s). Les insights apparaîtront dans quelques instants.";
+                if ($existingInsights > 0) {
+                    $message .= " ({$existingInsights} insight(s) déjà existant(s))";
+                }
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'generated' => $generated,
+                    'existing' => $existingInsights,
+                    'errors' => $errors
+                ]);
+            } else {
+                $message = "ℹ️ Aucun nouveau livre éligible trouvé.";
+                if ($existingInsights > 0) {
+                    $message .= " {$existingInsights} insight(s) déjà généré(s).";
+                } else {
+                    $message .= " Assurez-vous que les avis sont analysés (3 avis minimum par livre).";
+                }
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'generated' => 0,
+                    'existing' => $existingInsights,
+                    'errors' => 0
+                ]);
+            }
+            
+        } catch (\Exception $e) {
+            Log::error("Erreur lors de la génération globale des insights: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => "❌ Erreur: " . $e->getMessage()
+            ], 500);
+        }
     }
 }

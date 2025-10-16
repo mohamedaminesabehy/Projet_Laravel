@@ -60,6 +60,9 @@ class AnalyzeReviewSentiment implements ShouldQueue
                 'score' => $analysis['sentiment_score'],
             ]);
 
+            // Vérifier si le livre a maintenant 3+ avis analysés pour générer automatiquement le BookInsight
+            $this->checkAndGenerateBookInsight();
+
         } catch (\Exception $e) {
             Log::error('Error analyzing review sentiment', [
                 'review_id' => $this->review->id,
@@ -83,5 +86,47 @@ class AnalyzeReviewSentiment implements ShouldQueue
             'review_id' => $this->review->id,
             'error' => $exception->getMessage(),
         ]);
+    }
+
+    /**
+     * Check if book has 3+ analyzed reviews and generate BookInsight automatically
+     */
+    protected function checkAndGenerateBookInsight(): void
+    {
+        try {
+            $book = $this->review->book;
+            
+            // Compter les avis analysés pour ce livre
+            $analyzedReviewsCount = $book->reviews()
+                ->whereNotNull('analyzed_at')
+                ->count();
+
+            Log::info('Checking BookInsight generation requirement', [
+                'book_id' => $book->id,
+                'analyzed_reviews_count' => $analyzedReviewsCount,
+            ]);
+
+            // Générer ou mettre à jour le BookInsight si on a 3+ avis analysés
+            if ($analyzedReviewsCount >= 3) {
+                // Dispatch le job de génération de BookInsight
+                \App\Jobs\GenerateBookInsightJob::dispatch($book);
+                
+                Log::info('BookInsight generation job dispatched', [
+                    'book_id' => $book->id,
+                    'analyzed_reviews_count' => $analyzedReviewsCount,
+                ]);
+            } else {
+                Log::info('Not enough analyzed reviews for BookInsight generation', [
+                    'book_id' => $book->id,
+                    'analyzed_reviews_count' => $analyzedReviewsCount,
+                    'required' => 3,
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error checking BookInsight generation', [
+                'book_id' => $this->review->book_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

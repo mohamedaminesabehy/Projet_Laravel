@@ -17,8 +17,11 @@ class AdminReviewStatisticsController extends Controller
      */
     public function index(Request $request)
     {
-        // Get date range from request or default to last 30 days
-        $startDate = $request->input('start_date', Carbon::now()->subDays(30));
+        // Get date range from request or default to ALL TIME (depuis le premier avis)
+        $firstReview = Review::orderBy('created_at', 'asc')->first();
+        $defaultStartDate = $firstReview ? $firstReview->created_at : Carbon::now()->subDays(365);
+        
+        $startDate = $request->input('start_date', $defaultStartDate);
         $endDate = $request->input('end_date', Carbon::now());
 
         // Convert to Carbon instances if strings
@@ -207,8 +210,18 @@ class AdminReviewStatisticsController extends Controller
     public function export(Request $request)
     {
         $format = $request->input('format', 'pdf');
-        $startDate = Carbon::parse($request->input('start_date', Carbon::now()->subDays(30)));
-        $endDate = Carbon::parse($request->input('end_date', Carbon::now()));
+        
+        // Get date range from request or default to ALL TIME (depuis le premier avis)
+        $firstReview = Review::orderBy('created_at', 'asc')->first();
+        $defaultStartDate = $firstReview ? $firstReview->created_at : Carbon::now()->subDays(365);
+        
+        $startDate = $request->input('start_date', $defaultStartDate);
+        $endDate = $request->input('end_date', Carbon::now());
+
+        // Convert to Carbon instances if strings and set proper time boundaries
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+        
         $filename = $request->input('filename', 'review_statistics_' . Carbon::now()->format('Y-m-d'));
         
         $includeCharts = $request->boolean('include_charts', true);

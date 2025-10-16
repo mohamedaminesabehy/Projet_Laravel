@@ -338,6 +338,26 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Generate AI Insights Button -->
+        @auth
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="text-center slide-in" style="animation-delay: 0.45s;">
+                    <button id="generateInsightsBtn" class="btn btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px 50px; border-radius: 15px; border: none; font-size: 18px; font-weight: 600; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
+                        <span class="btn-text">
+                            <i class="fas fa-magic"></i> Générer les AI Insights
+                        </span>
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                    <p class="text-muted mt-3 mb-0" style="font-size: 14px;">
+                        <i class="fas fa-info-circle"></i> Analyser tous les livres éligibles avec l'IA (minimum 3 avis par livre)
+                    </p>
+                    <div id="generateMessage" class="alert mt-3 d-none" role="alert"></div>
+                </div>
+            </div>
+        </div>
+        @endauth
     </div>
 </section>
 
@@ -833,6 +853,109 @@
 .filter-bar .input-group-text {
     border: none;
 }
+
+/* Generate Button Hover Effect */
+#generateInsightsBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6) !important;
+}
+
+#generateInsightsBtn:active {
+    transform: translateY(-1px);
+}
+
+#generateInsightsBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+#generateInsightsBtn:hover::before {
+    left: 100%;
+}
 </style>
 @endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const generateBtn = document.getElementById('generateInsightsBtn');
+    const messageDiv = document.getElementById('generateMessage');
+    const btnText = generateBtn.querySelector('.btn-text');
+    const spinner = generateBtn.querySelector('.spinner-border');
+    
+    if (generateBtn) {
+        generateBtn.addEventListener('click', async function() {
+            // Désactiver le bouton
+            generateBtn.disabled = true;
+            btnText.classList.add('d-none');
+            spinner.classList.remove('d-none');
+            messageDiv.classList.add('d-none');
+            
+            try {
+                const response = await fetch('{{ route("ai-insights.generate-all") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                // Afficher le message
+                messageDiv.classList.remove('d-none');
+                messageDiv.textContent = data.message;
+                
+                if (data.success) {
+                    messageDiv.classList.remove('alert-danger');
+                    messageDiv.classList.add('alert-success');
+                    
+                    // Si des insights ont été générés, recharger après 3 secondes
+                    if (data.generated > 0) {
+                        messageDiv.innerHTML = data.message + '<br><small><i class="fas fa-sync fa-spin"></i> Rechargement de la page dans 3 secondes...</small>';
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        // Réactiver le bouton si aucun insight à générer
+                        setTimeout(() => {
+                            generateBtn.disabled = false;
+                            btnText.classList.remove('d-none');
+                            spinner.classList.add('d-none');
+                        }, 2000);
+                    }
+                } else {
+                    messageDiv.classList.remove('alert-success');
+                    messageDiv.classList.add('alert-danger');
+                    
+                    // Réactiver le bouton en cas d'erreur
+                    generateBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    spinner.classList.add('d-none');
+                }
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                messageDiv.classList.remove('d-none', 'alert-success');
+                messageDiv.classList.add('alert-danger');
+                messageDiv.textContent = '❌ Une erreur est survenue. Veuillez réessayer.';
+                
+                // Réactiver le bouton
+                generateBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                spinner.classList.add('d-none');
+            }
+        });
+    }
+});
+</script>
+@endpush
+
 @endsection

@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Review;
 use App\Services\AI\SentimentAnalyzer;
+use App\Services\AI\BookReviewSummarizer;
 use App\Jobs\AnalyzeReviewSentiment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminSentimentController extends Controller
 {
@@ -100,11 +102,80 @@ class AdminSentimentController extends Controller
             ->limit($limit)
             ->get();
 
+        $analyzedCount = 0;
+        $analyzer = app(SentimentAnalyzer::class);
+        $bookInsightSummarizer = app(BookReviewSummarizer::class);
+        $booksToGenerateInsights = collect();
+
         foreach ($reviews as $review) {
-            AnalyzeReviewSentiment::dispatch($review);
+            try {
+                // Exécuter l'analyse directement au lieu d'utiliser la queue
+                $analysis = $analyzer->analyze($review);
+                
+                if ($analysis) {
+                    $review->update([
+                        'sentiment_score' => $analysis['sentiment_score'],
+                        'sentiment_label' => $analysis['sentiment_label'],
+                        'toxicity_score' => $analysis['toxicity_score'],
+                        'ai_summary' => $analysis['ai_summary'],
+                        'ai_topics' => json_encode($analysis['ai_topics']),
+                        'requires_manual_review' => $analysis['requires_manual_review'],
+                        'analyzed_at' => now(),
+                    ]);
+                    $analyzedCount++;
+                    
+                    // Collecter les livres qui pourraient avoir besoin d'un BookInsight
+                    if ($review->book_id && !$booksToGenerateInsights->contains($review->book_id)) {
+                        $booksToGenerateInsights->push($review->book_id);
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error('Erreur lors de l\'analyse de l\'avis #' . $review->id . ': ' . $e->getMessage());
+            }
         }
 
-        return back()->with('success', "{$reviews->count()} avis analysés avec succès !");
+        // Générer ou mettre à jour les BookInsights pour les livres affectés
+        $insightsGenerated = 0;
+        $bookIds = $booksToGenerateInsights->unique()->toArray();
+        
+        foreach ($bookIds as $bookId) {
+            try {
+                /** @var \App\Models\Book $book */
+                $book = \App\Models\Book::find($bookId);
+                
+                if (!$book) {
+                    continue;
+                }
+                
+                $analyzedReviewsCount = $book->reviews()->whereNotNull('analyzed_at')->count();
+                
+                // Générer l'insight seulement si le livre a au moins 3 avis analysés
+                if ($analyzedReviewsCount >= 3) {
+                    $insight = $bookInsightSummarizer->generateInsight($book);
+                    if ($insight) {
+                        $insightsGenerated++;
+                        Log::info('BookInsight généré pour le livre #' . $book->id);
+                    }
+                } elseif ($analyzedReviewsCount == 1) {
+                    Log::info('Livre #' . $book->id . ' a maintenant 1 avis analysé (3 requis pour AI Insight)');
+                } elseif ($analyzedReviewsCount == 2) {
+                    Log::info('Livre #' . $book->id . ' a maintenant 2 avis analysés (3 requis pour AI Insight)');
+                }
+            } catch (\Exception $e) {
+                Log::error('Erreur lors de la génération du BookInsight pour le livre #' . $bookId . ': ' . $e->getMessage());
+            }
+        }
+
+        $message = "{$analyzedCount} avis analysé(s) avec succès !";
+        if ($insightsGenerated > 0) {
+            $message .= " {$insightsGenerated} AI Insight(s) généré(s) !";
+        }
+
+        if ($analyzedCount > 0) {
+            return back()->with('success', $message);
+        } else {
+            return back()->with('error', "Aucun avis n'a pu être analysé. Vérifiez la configuration de l'IA.");
+        }
     }
 
     /**

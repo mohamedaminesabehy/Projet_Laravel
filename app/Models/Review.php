@@ -12,6 +12,29 @@ class Review extends Model
     use HasFactory;
 
     /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        // Après suppression d'un avis, vérifier si le BookInsight doit être supprimé
+        static::deleted(function (Review $review) {
+            $book = $review->book;
+            
+            if ($book) {
+                // Compter le nombre d'avis analysés restants
+                $analyzedReviewsCount = $book->reviews()
+                    ->whereNotNull('analyzed_at')
+                    ->count();
+                
+                // Si moins de 3 avis analysés, supprimer le BookInsight
+                if ($analyzedReviewsCount < 3) {
+                    BookInsight::where('book_id', $book->id)->delete();
+                }
+            }
+        });
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

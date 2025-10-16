@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Book Store' }}</title>
+    <title>@yield('title', config('app.name', 'BookStore'))</title>
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('assets/img/favicons/favicon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ asset('assets/img/favicons/favicon.png') }}" type="image/png" sizes="32x32">
     <link rel="shortcut icon" href="{{ asset('assets/img/favicons/favicon.ico') }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ asset('assets/img/favicons/favicon.png') }}">
-    
-    <!-- Base CSS -->
+
+    <!-- Base CSS (original theme) -->
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/fontawesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/magnific-popup.min.css') }}">
@@ -21,34 +21,24 @@
     <link rel="stylesheet" href="{{ asset('assets/css/animate.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/nouislider.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style/custom.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/ai-insights-widget.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/favorite-navbar.css') }}">
-    
+
     <!-- Page Specific CSS -->
     @stack('styles')
 </head>
 <body>
-    <!-- Back To Top -->
-    <button class="back-to-top" id="backToTop" aria-label="Back to Top">
-        <span class="progress-circle">
-            <svg viewBox="0 0 100 100">
-                <circle class="bg" cx="50" cy="50" r="40"></circle>
-                <circle class="progress" cx="50" cy="50" r="40"></circle>
-            </svg>
-            <span class="progress-percentage" id="progressPercentage">0%</span>
-        </span>
-    </button>
-    <!-- Header Area -->
+    <!-- Header (original) -->
     @include('partials.header')
 
     <!-- Main Content -->
-    @yield('content')
+    <main>
+        @yield('content')
+        {{ $slot ?? '' }}
+    </main>
 
-    <!-- Footer Area -->
+    <!-- Footer (original) -->
     @include('partials.footer')
 
-    <!-- Base Scripts -->
+    <!-- Base Scripts (original theme) -->
     <script src="{{ asset('assets/js/vendor/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/js/slick.min.js') }}"></script>
@@ -64,7 +54,7 @@
     <script src="{{ asset('assets/js/jquery.nice-select.min.js') }}"></script>
     <script src="{{ asset('assets/js/nouislider.min.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
-    
+
     <!-- Page Specific Scripts -->
     @stack('scripts')
 </body>
