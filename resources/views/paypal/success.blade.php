@@ -98,7 +98,7 @@
                         <tbody>
                             @foreach($cart_historique as $item)
                                 <tr>
-                                    <td>{{ $item->user ? ($item->user->first_name . ' ' . $item->user->last_name) : 'Utilisateur inconnu' }}</td>
+                                    <td>{{ $item->user ? $item->user->name : 'Utilisateur inconnu' }}</td>
                                     <td>{{ $item->book ? $item->book->title : 'Livre inconnu' }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ number_format($item->price, 2, ',', ' ') }} €</td>

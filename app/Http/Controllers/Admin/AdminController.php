@@ -112,9 +112,7 @@ class AdminController extends Controller
                 }
                 $q->orWhereHas('user', function ($uq) use ($search) {
                     $uq->where(function ($uq2) use ($search) {
-                        $uq2->where('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%")
-                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"]) 
+                        $uq2->where('name', 'like', "%{$search}%")
                             ->orWhere('email', 'like', "%{$search}%");
                     });
                 })

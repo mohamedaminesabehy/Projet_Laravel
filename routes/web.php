@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminReviewStatisticsController;
 use App\Http\Controllers\Admin\AdminReviewReactionController;
 use App\Http\Controllers\Admin\AdminSentimentController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\CategoryFavoriteController;
 use App\Http\Controllers\ReviewController;
 
 /*
@@ -42,7 +43,12 @@ Route::get('/blog-sidebar', [PageController::class, 'show'])->defaults('page', '
 Route::get('/blog-standard', [PageController::class, 'show'])->defaults('page', 'blog-standard')->name('blog-standard');
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::get('/checkout', [PageController::class, 'show'])->defaults('page', 'checkout')->name('checkout');
-Route::get('/favorites', [PageController::class, 'show'])->defaults('page', 'favorites')->name('favorites');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/favorites', [\App\Http\Controllers\CategoryFavoriteController::class, 'index'])->name('favorites');
+    Route::post('/favorites/toggle/{category}', [\App\Http\Controllers\CategoryFavoriteController::class, 'toggle'])->name('favorites.toggle');
+    Route::post('/favorites', [\App\Http\Controllers\CategoryFavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('/favorites/{category}', [\App\Http\Controllers\CategoryFavoriteController::class, 'destroy'])->name('favorites.destroy');
+});
 Route::get('/profile', [PageController::class, 'show'])->defaults('page', 'profile')->name('profile');
 // Breeze nav expects a 'dashboard' route; redirect to home to avoid 404
 Route::get('/dashboard', function () {
@@ -90,6 +96,9 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/cart/update/{cartItem}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
 });
+
+// API Routes for AI features
+Route::post('/api/purchase-encouragement', [\App\Http\Controllers\PurchaseEncouragementController::class, 'generateEncouragement'])->name('api.purchase-encouragement');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -148,6 +157,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
 });
+
+// Routes publiques pour les catégories
+Route::get('/categories', [\App\Http\Controllers\CategoryController::class, 'index'])->name('categories.index');
+Route::get('/categories/ai-recommendations', [\App\Http\Controllers\CategoryController::class, 'getRecommendations'])->name('categories.ai-recommendations');
+Route::get('/categories/{category}', [\App\Http\Controllers\CategoryController::class, 'show'])->name('categories.show');
 
 // Routes PayPal
 Route::post('/paypal/process', [\App\Http\Controllers\PayPalController::class, 'processPayment'])->name('paypal.process');

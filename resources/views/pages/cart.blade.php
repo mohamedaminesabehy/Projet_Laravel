@@ -143,4 +143,111 @@
     </div>
     <!-- Cart Area End-->
     <!-- Cta Area End -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour mettre à jour le total d'un item
+            function updateItemTotal(itemId, quantity, price) {
+                const totalCell = document.querySelector(`tr:has(#quantity-${itemId}) td[data-title="Total"] .amount bdi`);
+                if (totalCell) {
+                    const newTotal = (quantity * price).toFixed(2);
+                    totalCell.innerHTML = `<span>$</span>${newTotal}`;
+                }
+            }
+
+            // Fonction pour mettre à jour le total général du panier
+            function updateCartTotal() {
+                let cartTotal = 0;
+                const quantityInputs = document.querySelectorAll('.qty-input');
+                
+                quantityInputs.forEach(input => {
+                    const quantity = parseInt(input.value);
+                    const row = input.closest('tr');
+                    const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                    const price = parseFloat(priceText.replace('$', ''));
+                    cartTotal += quantity * price;
+                });
+
+                // Mettre à jour le sous-total et le total
+                const subtotalElements = document.querySelectorAll('td[data-title="Cart Subtotal"] .amount bdi, td[data-title="Total"] .amount bdi');
+                subtotalElements.forEach(element => {
+                    element.innerHTML = `<span>$</span>${cartTotal.toFixed(2)}`;
+                });
+            }
+
+            // Supprimer les anciens gestionnaires d'événements pour éviter les conflits
+            $('.quantity-plus, .quantity-minus').off('click');
+            
+            // Gestionnaire pour les boutons +
+            document.querySelectorAll('.quantity-plus').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const input = this.parentElement.querySelector('.qty-input');
+                    const currentValue = parseInt(input.value);
+                    const maxValue = parseInt(input.getAttribute('max')) || 100;
+                    
+                    if (currentValue < maxValue) {
+                        input.value = currentValue + 1;
+                        
+                        // Mettre à jour le total de l'item
+                        const itemId = input.id.replace('quantity-', '');
+                        const row = input.closest('tr');
+                        const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                        const price = parseFloat(priceText.replace('$', ''));
+                        
+                        updateItemTotal(itemId, currentValue + 1, price);
+                        updateCartTotal();
+                    }
+                });
+            });
+
+            // Gestionnaire pour les boutons -
+            document.querySelectorAll('.quantity-minus').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const input = this.parentElement.querySelector('.qty-input');
+                    const currentValue = parseInt(input.value);
+                    const minValue = parseInt(input.getAttribute('min')) || 1;
+                    
+                    if (currentValue > minValue) {
+                        input.value = currentValue - 1;
+                        
+                        // Mettre à jour le total de l'item
+                        const itemId = input.id.replace('quantity-', '');
+                        const row = input.closest('tr');
+                        const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                        const price = parseFloat(priceText.replace('$', ''));
+                        
+                        updateItemTotal(itemId, currentValue - 1, price);
+                        updateCartTotal();
+                    }
+                });
+            });
+
+            // Gestionnaire pour les changements directs dans l'input
+            document.querySelectorAll('.qty-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const value = parseInt(this.value);
+                    const minValue = parseInt(this.getAttribute('min')) || 1;
+                    const maxValue = parseInt(this.getAttribute('max')) || 100;
+                    
+                    // Valider la valeur
+                    if (value < minValue) {
+                        this.value = minValue;
+                    } else if (value > maxValue) {
+                        this.value = maxValue;
+                    }
+                    
+                    // Mettre à jour les totaux
+                    const itemId = this.id.replace('quantity-', '');
+                    const row = this.closest('tr');
+                    const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                    const price = parseFloat(priceText.replace('$', ''));
+                    
+                    updateItemTotal(itemId, parseInt(this.value), price);
+                    updateCartTotal();
+                });
+            });
+        });
+    </script>
 @endsection

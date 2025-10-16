@@ -98,7 +98,9 @@
                                 </div>
                                 <div class="buttons-row">
                                     <button type="submit" class="vs-btn"><i class="fa-solid fa-basket-shopping"></i>Add to Cart</button>
-                                    <button id="aiSummaryButton" type="button" class="vs-btn" data-book-id="{{ $book->id }}"><i class="fa-solid fa-brain"></i> Résumé et encouragement par l’IA</button>
+                                    <button type="button" class="vs-btn vs-btn--outline ai-encouragement-btn" data-book-id="{{ $book->id }}">
+                                        <i class="fas fa-magic"></i>Pourquoi acheter ce livre ? IA
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -285,41 +287,82 @@
     </div>
     <!-- Shop Details Area End -->
 
-    <!-- AI Summary Modal -->
-    <div class="modal fade ai-modal" id="aiSummaryModal" tabindex="-1" aria-labelledby="aiSummaryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header ai-modal__header">
-                    <div class="ai-modal__brand">
-                        <span class="ai-badge" aria-hidden="true"><i class="fa-solid fa-brain"></i></span>
-                        <div class="ai-title-wrap">
-                            <h4 class="ai-title" id="aiSummaryModalLabel">Assistant IA</h4>
-                            <p class="ai-subtitle">Résumé intelligent & encouragement personnalisé</p>
+    <!-- AI Purchase Encouragement Modal -->
+    <div class="modal fade" id="aiEncouragementModal" tabindex="-1" aria-labelledby="aiEncouragementModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content ai-modal">
+                <div class="modal-header ai-modal-header">
+                    <h5 class="modal-title ai-modal-title" id="aiEncouragementModalLabel">
+                        <i class="fas fa-magic me-2"></i>Pourquoi acheter ce livre ?
+                    </h5>
+                    <button type="button" class="btn-close ai-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body ai-modal-body">
+                    <div class="ai-loading text-center" id="aiLoading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Génération en cours...</span>
+                        </div>
+                        <p class="mt-3">L'IA analyse ce livre pour vous...</p>
+                    </div>
+                    
+                    <div class="ai-content" id="aiContent" style="display: none;">
+                        <div class="ai-headline mb-4">
+                            <h4 class="ai-title" id="aiHeadline"></h4>
+                        </div>
+                        
+                        <div class="ai-persuasive-text mb-4">
+                            <p class="ai-description" id="aiPersuasiveText"></p>
+                        </div>
+                        
+                        <div class="ai-benefits mb-4">
+                            <h6 class="ai-section-title">Pourquoi ce livre est fait pour vous :</h6>
+                            <ul class="ai-benefits-list" id="aiBenefitsList"></ul>
+                        </div>
+                        
+                        <div class="ai-social-proof mb-4">
+                            <div class="social-proof-card">
+                                <i class="fas fa-users text-success me-2"></i>
+                                <span id="aiSocialProof"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-urgency mb-4">
+                            <div class="urgency-card">
+                                <i class="fas fa-clock text-warning me-2"></i>
+                                <span id="aiUrgencyMessage"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Section des recommandations de livres similaires -->
+                        <div class="ai-similar-books mb-4" id="aiSimilarBooksSection" style="display: none;">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-book-open me-2"></i>Livres similaires recommandés
+                            </h6>
+                            <div class="similar-books-container" id="aiSimilarBooks">
+                                <!-- Les recommandations seront ajoutées ici par JavaScript -->
+                            </div>
                         </div>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="ai-modal-grid">
-                        <div id="aiSummaryContent" class="ai-section">
-                            <p>Chargement du résumé...</p>
-                        </div>
-                        <div id="aiEncouragementContent" class="ai-section">
-                            <p>Chargement de l'encouragement...</p>
+                    
+                    <div class="ai-error text-center" id="aiError" style="display: none;">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Une erreur est survenue lors de la génération du contenu. Veuillez réessayer.
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="vs-btn" data-bs-dismiss="modal">Fermer</button>
+                <div class="modal-footer ai-modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary ai-cta-btn" id="aiCallToAction">
+                        <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End AI Summary Modal -->
 
-   
 @endsection
 
 @push('scripts')
-<script src="{{ asset('assets/js/ai-summary-logic.js') }}"></script>
+<script src="{{ asset('assets/js/ai-encouragement.js') }}"></script>
 @endpush
