@@ -93,6 +93,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::get('/stats-json', [TrustScoreController::class, 'statsJson'])->name('stats-json'); // API JSON pour graphiques
         Route::get('/export-csv', [TrustScoreController::class, 'exportCsv'])->name('export-csv'); // Export CSV
     });
+    
+    // Routes pour la Détection de Spam par IA - Admin
+    Route::prefix('spam-detection')->name('spam.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SpamDetectionController::class, 'dashboard'])->name('dashboard');
+        Route::post('/analyze', [\App\Http\Controllers\SpamDetectionController::class, 'analyzeMessage'])->name('analyze');
+        Route::post('/{id}/unblock', [\App\Http\Controllers\SpamDetectionController::class, 'unblockMessage'])->name('unblock');
+        Route::delete('/{id}', [\App\Http\Controllers\SpamDetectionController::class, 'deleteMessage'])->name('delete');
+    });
 });
 
 // Routes PayPal

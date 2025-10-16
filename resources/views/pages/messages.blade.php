@@ -1,6 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
+
+<!-- Alertes de succès/erreur -->
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <i class="fas fa-check-circle"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 350px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Message Bloqué par IA :</strong><br>
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <style>
     * {
         box-sizing: border-box;
@@ -1031,6 +1048,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if(conversationMessages.children.length > 1) {
         conversationMessages.scrollTop = conversationMessages.scrollHeight;
     }
+    
+    // Auto-fermer les alertes après 10 secondes
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 10000);
 });
 </script>
 @endsection

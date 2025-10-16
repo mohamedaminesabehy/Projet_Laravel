@@ -74,6 +74,11 @@
                     <span>Scores de Confiance IA</span>
                 </a>
 
+                <a href="{{ route('admin.spam.dashboard') }}" class="menu-item {{ request()->routeIs('admin.spam.*') ? 'active' : '' }}">
+                    <i class="fas fa-robot"></i>
+                    <span>Détection Spam IA</span>
+                </a>
+
                 <a href="{{ route('admin.exchanges') }}" class="menu-item {{ request()->routeIs('admin.exchanges') ? 'active' : '' }}">
                     <i class="fas fa-exchange-alt"></i>
                     <span>Échanges</span>

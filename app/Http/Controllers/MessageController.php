@@ -5,22 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\User;
 use App\Services\TrustScoreAutoUpdateService;
+use App\Services\SpamDetectionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
     protected $trustScoreAutoUpdate;
+    protected $spamDetectionService;
 
-    public function __construct(TrustScoreAutoUpdateService $trustScoreAutoUpdate)
-    {
+    public function __construct(
+        TrustScoreAutoUpdateService $trustScoreAutoUpdate,
+        SpamDetectionService $spamDetectionService
+    ) {
         $this->trustScoreAutoUpdate = $trustScoreAutoUpdate;
+        $this->spamDetectionService = $spamDetectionService;
     }
     public function index()
     {
         $users = User::where('id', '!=', Auth::id())->get();
 
+        // Exclure les messages bloqués de l'affichage normal
         $messages = Message::with(['sender', 'receiver'])
+            ->where('is_blocked', false)
             ->where(function($q) {
                 $q->where('sender_id', Auth::id())
                   ->orWhere('receiver_id', Auth::id());
@@ -52,12 +59,43 @@ class MessageController extends Controller
             ]);
             return redirect()->back()->with('success', 'Message mis à jour avec succès !');
         } else {
+            // 🤖 DÉTECTION SPAM PAR IA - Analyser le message avant envoi
+            $spamAnalysis = $this->spamDetectionService->analyzeMessage($request->contenu);
+            
+            // Si spam détecté (score >= 70%), ENREGISTRER comme bloqué
+            if ($spamAnalysis['is_spam']) {
+                // Enregistrer le message spam dans la BDD pour traçabilité admin
+                Message::create([
+                    'sender_id' => Auth::id(),
+                    'receiver_id' => $request->receiver_id,
+                    'contenu' => $request->contenu,
+                    'lu' => false,
+                    'date_envoi' => now(),
+                    'spam_score' => $spamAnalysis['spam_score'],
+                    'spam_reasons' => json_encode($spamAnalysis['reasons']),
+                    'is_blocked' => true,
+                    'blocked_at' => now(),
+                ]);
+                
+                // Notification à l'utilisateur
+                return redirect()->back()->with('error', 
+                    '⚠️ Votre message a été bloqué par notre système de détection IA. ' .
+                    'Score de spam : ' . $spamAnalysis['spam_score'] . '%. ' .
+                    'Un administrateur sera notifié. Raisons : ' . implode(', ', array_slice($spamAnalysis['reasons'], 0, 2))
+                );
+            }
+            
+            // Message OK, enregistrer normalement avec le score spam
             Message::create([
                 'sender_id' => Auth::id(),
                 'receiver_id' => $request->receiver_id,
                 'contenu' => $request->contenu,
                 'lu' => false,
                 'date_envoi' => now(),
+                'spam_score' => $spamAnalysis['spam_score'],
+                'spam_reasons' => json_encode($spamAnalysis['reasons']),
+                'is_blocked' => false,
+                'blocked_at' => null,
             ]);
             
             // 🔥 AUTO-UPDATE: Mettre à jour le score de confiance après envoi de message
