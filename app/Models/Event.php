@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Event extends Model
 {
@@ -19,4 +20,9 @@ class Event extends Model
 {
     return $this->belongsToMany(\App\Models\User::class, 'event_user');
 }
+public function getImageUrlAttribute(): string
+    {
+        // Returns something like "/storage/events/abc123.jpg"
+        return $this->image ? Storage::url($this->image) : asset('images/placeholders/event.jpg');
+    }
 }
