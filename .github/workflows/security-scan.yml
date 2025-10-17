@@ -29,13 +29,14 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run Composer Audit
-        run: composer audit --format=json --output=composer-audit.json || true
+        run: composer audit --format=json > composer-audit.json || true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
       - name: Install Node dependencies
         run: npm ci
@@ -46,7 +47,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
-          languages: php, javascript
+          languages: javascript
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v4
