@@ -1,0 +1,238 @@
+.avatar-upload-wrapper {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.avatar-upload-wrapper .avatar {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.avatar-upload-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-upload-icon:hover {
+    background-color: #0056b3;
+}
+
+.form-control::placeholder, 
+textarea::placeholder, 
+input::placeholder {
+    color: #000000 !important;
+}
+
+.form-control:focus::placeholder, 
+textarea:focus::placeholder, 
+input:focus::placeholder {
+    color: #000000 !important; 
+}
+
+
+/* AI Summary & Encouragement Styles */
+.ai-card {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+}
+.ai-card__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px dashed rgba(0,0,0,0.12);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+.ai-card__header h5 {
+    margin: 0;
+    font-weight: 700;
+}
+.ai-icon {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6f42c1, #9b59b6);
+    color: #fff;
+}
+.ai-card__body p { margin-bottom: 8px; color: #212529;}
+
+.ai-tags { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ai-label { font-weight: 600; margin-right: 6px; }
+.ai-tag {
+    display: inline-block;
+    background: #f3f0ff;
+    color: #6f42c1;
+    border: 1px solid #e2d9ff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+}
+.ai-tag--accent { background: #eafaf1; color: #198754; border-color: #c7eed8; }
+
+.ai-quote {
+    border-left: 4px solid #6f42c1;
+    padding-left: 12px;
+    font-style: italic;
+    color: #4b4b4b;
+}
+.ai-cta {
+    margin-top: 8px;
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+/* Loading skeleton */
+.ai-skeleton { animation: pulse 1.2s ease-in-out infinite; }
+.ske-title { width: 40%; height: 16px; background: #eee; border-radius: 6px; margin-bottom: 10px; }
+.ske-line { width: 100%; height: 12px; background: #f1f1f1; border-radius: 6px; margin-bottom: 8px; }
+.ske-tags { width: 60%; height: 12px; background: #f1f1f1; border-radius: 6px; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+/* Error state */
+.ai-error { border: 1px solid #f5c2c7; background: #f8d7da; color: #842029; border-radius: 10px; padding: 10px 12px; }
+
+
+/* Micro-animation premium for AI cards */
+.ai-card { opacity: 0; transform: translateY(8px) scale(0.98); transition: opacity 280ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1); }
+.ai-card.ai-show { opacity: 1; transform: translateY(0) scale(1); }
+
+/* Card styling refinements */
+.ai-card { background: #fff; border-radius: 14px; box-shadow: 0 10px 30px rgba(20, 25, 30, 0.08); border: 1px solid rgba(0,0,0,0.06); overflow: hidden; }
+.ai-card__header { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid rgba(0,0,0,0.06); background: linear-gradient(180deg, rgba(247,249,252,1) 0%, rgba(242,245,250,1) 100%); }
+.ai-card__header h5 { margin:0; font-weight:700; letter-spacing:0.2px; color:#1b2a4e; }
+.ai-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#0d6efd1a; color:#0d6efd; }
+.ai-card__body { padding:16px; color:#334; line-height:1.6; }
+
+/* Lists and quote */
+.ai-list { padding-left:18px; margin:0; }
+.ai-list--bullets li { list-style: disc; }
+.ai-quote { margin:0; padding:14px 16px; background:#f7f9fc; border-left:4px solid #0d6efd; border-radius:8px; font-style:italic; color:#2a3b57; }
+.ai-cta { margin-top:12px; font-weight:600; color:#0d6efd; }
+
+/* Tags */
+.ai-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+.ai-label { font-weight:600; margin-right:6px; color:#2f3b56; }
+.ai-tag { display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; background:#eef3ff; color:#24467a; border:1px solid #dbe7ff; font-size:13px; }
+.ai-tag--accent { background:#ffecec; border-color:#ffd3d3; color:#8b2d2d; }
+
+/* Loading skeletons (already added by JS earlier) */
+.ai-skeleton { position:relative; overflow:hidden; background:#f0f2f5; border-radius:10px; }
+.ai-skeleton::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(240,242,245,0) 0%, rgba(255,255,255,0.6) 50%, rgba(240,242,245,0) 100%); transform:translateX(-100%); animation: shimmer 1.6s infinite; }
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* Ensure newly inserted cards animate into view */
+.ai-summary .ai-card__body, .ai-encouragement .ai-card__body { will-change: opacity, transform; }
+
+
+/* Shop Details overrides */
+.vs-product-wrapper .product-slide-row .img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px;
+}
+.vs-product-wrapper .product-slide-row .img img {
+  max-width: 100%;
+  width: 100%;
+  max-height: 520px;
+  height: auto;
+  object-fit: contain;
+}
+@media (max-width: 767px) {
+  .vs-product-wrapper .product-slide-row .img img { max-height: 360px; }
+}
+
+/* Aligner les actions sur une seule ligne */
+.vs-product-wrapper .product-about .actions {
+  flex-wrap: nowrap;
+}
+.vs-product-wrapper .product-about .actions form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.vs-product-wrapper .product-about .quantity { margin: 0; }
+.vs-product-wrapper .product-about .qty-input { width: 80px; min-height: 44px; }
+.vs-product-wrapper .product-about .actions .vs-btn { flex: 0 0 auto; }
+.vs-product-wrapper .product-about .actions .icon-btn { flex: 0 0 auto; }
+
+/* =====================
+   AI Modal header & type
+   ===================== */
+.ai-modal .modal-content {
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(6, 20, 40, 0.20);
+  border: 1px solid rgba(13,110,253,0.18);
+  overflow: hidden;
+}
+.ai-modal__header {
+    position: relative;
+    padding: 18px 20px;
+    border-bottom: none;
+    background: linear-gradient(135deg, #f36b28 0%, #d16655 100%);
+    color: #fff;
+}
+.ai-modal__header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1, #6fd6ff);
+  background-size: 200% 100%;
+  animation: slideAccent 6s linear infinite;
+}
+@keyframes slideAccent { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+.ai-modal__brand { display: flex; align-items: center; gap: 14px; }
+.ai-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255,255,255,0.16);
+  color: #fff;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.24), 0 8px 20px rgba(0,0,0,0.20);
+  animation: pulseGlow 1.8s ease-in-out infinite alternate;
+}
+@keyframes pulseGlow {
+  0% { transform: scale(1); box-shadow: inset 0 0 8px rgba(255,255,255,0.20), 0 6px 14px rgba(0,0,0,0.18); }
+  100% { transform: scale(1.05); box-shadow: inset 0 0 16px rgba(255,255,255,0.30), 0 12px 28px rgba(0,0,0,0.22); }
+}
+.ai-title-wrap { display: flex; flex-direction: column; }
+.ai-title { margin: 0; font-weight: 800; letter-spacing: 0.3px; font-size: 1.25rem; line-height: 1.2; }
+.ai-subtitle { margin: 2px 0 0; font-size: 0.95rem; opacity: 0.92; }
+.ai-modal__header .btn-close { filter: invert(1) hue-rotate(180deg); opacity: 0.85; }
+.ai-modal__header .btn-close:hover { opacity: 1; transform: scale(1.08); }
+.ai-modal .modal-body { background: #f7f9fc; }
+.ai-modal .modal-footer { background: #f7f9fc; border-top: 1px solid rgba(0,0,0,0.06); }
+.ai-modal .vs-btn { border-radius: 10px; }
+
+/* Typographic refinements inside AI cards */
+.ai-card__body { font-size: 0.96rem; }
+.ai-card__header h5 { font-size: 1rem; letter-spacing: 0.2px; }
