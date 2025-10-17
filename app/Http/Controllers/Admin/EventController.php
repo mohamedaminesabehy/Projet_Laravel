@@ -179,4 +179,41 @@ class EventController extends Controller
 
         return redirect()->route('admin.events.index')->with('success', 'Événement supprimé avec succès');
     }
+
+    public function participants(\App\Models\Event $event)
+{
+    $participants = $event->participants()
+        ->select('users.id','users.first_name','users.last_name','users.email')
+        ->orderBy('participations.joined_at','desc')
+        ->get();
+
+    if (request()->ajax()) {
+        return view('admin.events._participants_modal', compact('event','participants'))->render();
+    }
+
+    // (optional) fallback full page:
+    return view('admin.events.participants', compact('event','participants'));
+}
+
+
+public function downloadPdf(Event $event)
+{
+    $participants = $event->participants()
+        ->select('users.*')
+        ->withPivot(['joined_at','status','checked_in_at','left_at','source','notes'])
+        ->orderBy('participations.joined_at', 'desc')
+        ->get();
+
+    // If you installed barryvdh/laravel-dompdf:
+    // composer require barryvdh/laravel-dompdf
+    // php artisan vendor:publish --provider="Barryvdh\DomPDF\ServiceProvider"
+    $pdf = \PDF::loadView('admin.events.participants-pdf', [
+        'event'        => $event,
+        'participants' => $participants,
+    ])->setPaper('a4', 'portrait');
+
+    return $pdf->download('participants-event-'.$event->id.'.pdf');
+}
+
+
 }

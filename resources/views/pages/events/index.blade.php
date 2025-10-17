@@ -19,11 +19,13 @@
         <div class="row g-4">
             @foreach($events as $event)
                 @php
-                    $user = auth()->user();
-                    $alreadyJoined = $user
-                        ? $event->participants()->where('user_id', $user->id)->exists()
-                        : false;
-                @endphp
+    $alreadyJoined = auth()->check()
+        ? \App\Models\Participation::active()
+            ->where('event_id', $event->id)
+            ->where('user_id', auth()->id())
+            ->exists()
+        : false;
+@endphp
 
                 <div class="col-md-4">
                     <div class="card shadow-lg border-0 h-100 rounded-4 overflow-hidden hover-shadow">

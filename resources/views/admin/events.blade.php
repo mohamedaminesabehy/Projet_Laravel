@@ -3,17 +3,17 @@
 @push('styles')
 <style>
     body { background-color: #f8f9fa; }
-    .book-cover { width: 60px; height: 80px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,.08); }
     .book-title { font-weight: 600; margin-bottom: 2px; }
     .book-author { font-size: 13px; color: #6c757d; }
-    .filter-card { border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); }
+    .filter-card { border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); }
     .action-btn { width: 32px; height: 32px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; margin-right: 5px; }
     select, .form-control, .form-select, textarea, input {
         height: 50px; padding: 0 30px 0 28px; padding-right: 45px;
         border: 1px solid var(--border-color); color: #000; background-color: var(--white-color);
         border-radius: 9999px; font-size: 14px; width: 100%;
     }
-    .hidden { display: none; }
+    textarea { height: auto; border-radius: 16px; padding: 14px 20px; }
     .table tbody tr { border-bottom: 1px solid #e9ecef; }
     .table tbody tr:last-child { border-bottom: none; }
     .modal-content.book-detail-modal { border-radius: 12px; overflow: hidden; background-color: #fff; }
@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <!-- Filters (full page reload on every change) -->
+    <!-- Filters -->
     <div class="col-lg-12 mb-4">
         <div class="card filter-card">
             <div class="card-body">
@@ -46,10 +46,13 @@
                     <div class="col-md-4">
                         <div class="input-group">
                             <span class="input-group-text bg-light border-0 text-dark"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control border-0 bg-light text-dark filter-input"
-                                   id="search" name="search"
-                                   placeholder="Titre, description, lieu..."
-                                   value="{{ request('search') }}" autocomplete="off">
+                            <input
+                                type="text"
+                                class="form-control border-0 bg-light text-dark filter-input"
+                                id="search" name="search"
+                                placeholder="Rechercher par titre…"
+                                value="{{ request('search') }}"
+                                autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -65,7 +68,9 @@
                     <div class="col-md-2">
                         <input type="date" class="form-control border-0 bg-light text-dark filter-input" id="date_to" name="date_to" value="{{ request('date_to') }}">
                     </div>
-                    <div class="col-md-1 d-none"><button type="submit" class="btn btn-primary w-100">Filtrer</button></div>
+                    <div class="col-md-1 d-none">
+                        <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -82,17 +87,18 @@
                     <table class="table table-hover align-middle mb-0" id="eventsTable">
                         <thead class="table-light">
                             <tr>
-                                <th width="5%">
+                                <th width="4%">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="selectAllEvents">
                                     </div>
                                 </th>
-                                <th width="35%" class="text-dark">Événement</th>
-                                <th width="15%" class="text-dark">Début</th>
-                                <th width="15%" class="text-dark">Fin</th>
+                                <th width="10%" class="text-dark">Image</th>
+                                <th width="26%" class="text-dark">Événement</th>
+                                <th width="14%" class="text-dark">Début</th>
+                                <th width="14%" class="text-dark">Fin</th>
                                 <th width="10%" class="text-dark">Lieu</th>
-                                <th width="10%" class="text-dark">Statut</th>
-                                <th width="10%" class="text-dark">Actions</th>
+                                <th width="10%" class="text-dark">Participants</th>
+                                <th width="12%" class="text-dark">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,34 +110,63 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="mb-2" id="currentImageContainer" style="display: none;">
-                                            <img id="currentImagePreview" src="" alt="" class="img-thumbnail" style="max-height: 150px;">
-                                        </div>
-                                        <div>
-                                            <div class="book-title text-dark">{{ $event->title }}</div>
-                                            <div class="book-author text-dark">{{ $event->location ?? 'Lieu non spécifié' }}</div>
-                                        </div>
+                                    @php $img = $event->image_url ?? null; @endphp
+                                    @if($img)
+                                        <img src="{{ $img }}" alt="{{ $event->title }}" class="thumb">
+                                    @else
+                                        <div class="text-muted">—</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="book-title text-dark">{{ $event->title }}</div>
+                                    <div class="book-author">{{ $event->location ?? 'Lieu non spécifié' }}</div>
+                                    <div class="mt-1">
+                                        {{-- OPEN PARTICIPANTS IN MODAL (no navigation) --}}
+                                        <a href="#"
+                                           class="action-btn btn-light open-participants-modal"
+                                           data-url="{{ route('admin.events.participants', $event) }}"
+                                           data-title="Participants — {{ $event->title }}"
+                                           title="Voir les participants">
+                                            <i class="fas fa-users text-secondary"></i>
+                                        </a>
                                     </div>
                                 </td>
                                 <td class="text-dark">{{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y H:i') }}</td>
-                                <td class="text-dark">{{ $event->end_date ? \Carbon\Carbon::parse($event->end_date)->format('d/m/Y H:i') : 'N/A' }}</td>
+                                <td class="text-dark">
+                                    {{ $event->end_date ? \Carbon\Carbon::parse($event->end_date)->format('d/m/Y H:i') : 'N/A' }}
+                                </td>
                                 <td class="text-dark">{{ $event->location ?? 'N/A' }}</td>
-                                <td>
-                                    <span class="badge {{ $event->is_active ? 'bg-success' : 'bg-danger' }}">{{ $event->is_active ? 'Actif' : 'Inactif' }}</span>
+                                <td class="text-dark">
+                                    {{ $event->participations_count ?? $event->participations()->count() }}
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="#" class="action-btn btn-light open-event-modal" data-url="{{ route('admin.events.show', $event->id) }}" data-title="Détails de l'événement">
+                                        <!-- Show -->
+                                        <a href="#" class="action-btn btn-light open-event-modal"
+                                           data-url="{{ route('admin.events.show', $event) }}"
+                                           data-title="Détails de l'événement"
+                                           title="Voir">
                                             <i class="fas fa-eye text-primary"></i>
                                         </a>
-                                        <a href="#" class="action-btn btn-light open-event-modal" data-url="{{ route('admin.events.edit', $event->id) }}" data-title="Modifier l'événement">
+                                        <!-- Edit -->
+                                        <a href="#" class="action-btn btn-light open-event-modal"
+                                           data-url="{{ route('admin.events.edit', $event) }}"
+                                           data-title="Modifier l'événement"
+                                           title="Modifier">
                                             <i class="fas fa-edit text-info"></i>
                                         </a>
-                                        <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" class="d-inline delete-form">
+                                        <!-- PDF -->
+                                        <a href="{{ route('admin.events.downloadPdf', $event) }}"
+                                           class="action-btn btn-light"
+                                           title="Télécharger PDF"
+                                           target="_blank">
+                                            <i class="fas fa-file-pdf text-danger"></i>
+                                        </a>
+                                        <!-- Delete -->
+                                        <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="action-btn btn-light delete-event-btn" data-url="{{ route('admin.events.destroy', $event->id) }}">
+                                            <button type="button" class="action-btn btn-light delete-event-btn" title="Supprimer">
                                                 <i class="fas fa-trash text-danger"></i>
                                             </button>
                                         </form>
@@ -140,7 +175,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center">Aucun événement trouvé</td>
+                                <td colspan="8" class="text-center">Aucun événement trouvé</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -151,7 +186,9 @@
             <!-- Pagination -->
             <div class="card-footer bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <div>Affichage de {{ $events->firstItem() }}-{{ $events->lastItem() }} sur {{ $events->total() }} événements</div>
+                    <div>
+                        Affichage de {{ $events->firstItem() }}-{{ $events->lastItem() }} sur {{ $events->total() }} événements
+                    </div>
                     <nav>
                         {{ $events->appends(request()->query())->links() }}
                     </nav>
@@ -161,7 +198,7 @@
     </div>
 </div>
 
-<!-- Modal for create/edit/show -->
+<!-- Modal for create/edit/show/participants -->
 <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content book-detail-modal">
@@ -205,6 +242,63 @@
                 </div>
             </div>
 
+            {{-- AI block start (CREATE) --}}
+            <div class="card mb-3 mt-3">
+                <div class="card-header">AI: Générer Titre & Description</div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <label class="form-label">Mots-clés (séparés par des virgules)</label>
+                        <input id="ai_keywords" class="form-control" placeholder="ex: ia, innovation, étudiants">
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col">
+                            <label class="form-label">Audience</label>
+                            <select id="ai_audience" class="form-select">
+                                <option value="everyone">Tout le monde</option>
+                                <option value="students">Étudiants</option>
+                                <option value="developers">Développeurs</option>
+                                <option value="managers">Managers</option>
+                                <option value="designers">Designers</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Ton</label>
+                            <select id="ai_tone" class="form-select">
+                                <option value="professional">Professionnel</option>
+                                <option value="friendly">Convivial</option>
+                                <option value="exciting">Dynamique</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Langue</label>
+                            <select id="ai_lang" class="form-select">
+                                <option value="fr" selected>Français</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Longueur</label>
+                            <select id="ai_length" class="form-select">
+                                <option value="medium" selected>Moyen</option>
+                                <option value="short">Court</option>
+                                <option value="long">Long</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" id="ai_generate" class="btn btn-outline-primary mt-3">
+                        ⚡ Générer le titre & la description
+                    </button>
+
+                    <div id="ai_variants" class="mt-2" style="display:none;">
+                        <small class="text-muted">Autres variantes de titre :</small>
+                        <div id="ai_variant_list" class="mt-1"></div>
+                    </div>
+                </div>
+            </div>
+            {{-- AI block end (CREATE) --}}
+
             <div class="mt-3">
                 <label for="description" class="form-label modal-body-text">Description</label>
                 <textarea class="form-control modal-body-text @error('description') is-invalid @enderror" id="description" name="description" rows="5">{{ old('description') }}</textarea>
@@ -214,21 +308,15 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <label for="image" class="form-label modal-body-text">Image</label>
-                    <div class="mb-2" id="currentImageContainer" style="display: none;">
-                        <img id="currentImagePreview" src="" alt="" class="img-thumbnail" style="max-height: 150px;">
-                    </div>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="image" name="image">
-                        <label class="custom-file-label modal-body-text" for="image">Choisir une nouvelle image</label>
-                        @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <small class="form-text text-muted modal-body-text">Formats: JPG, PNG, GIF. Max: 2MB</small>
+                    <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
+                    @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <small class="form-text text-muted modal-body-text">Formats: JPG, PNG, GIF, WebP. Max: 4MB</small>
                 </div>
                 <div class="col-md-6">
                     <label for="is_active" class="form-label modal-body-text">Statut</label>
-                    <div class="custom-control custom-switch mt-2">
-                        <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" {{ old('is_active','1')=='1'?'checked':'' }}>
-                        <label class="custom-control-label modal-body-text" for="is_active">Actif</label>
+                    <div class="form-check form-switch mt-2">
+                        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1" {{ old('is_active','1')=='1'?'checked':'' }}>
+                        <label class="form-check-label modal-body-text" for="is_active">Actif</label>
                     </div>
                 </div>
             </div>
@@ -273,6 +361,63 @@
                 </div>
             </div>
 
+            {{-- AI block start (EDIT) --}}
+            <div class="card mb-3 mt-3">
+                <div class="card-header">AI: Générer Titre & Description</div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <label class="form-label">Mots-clés (séparés par des virgules)</label>
+                        <input id="ai_keywords" class="form-control" placeholder="ex: ia, innovation, étudiants">
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col">
+                            <label class="form-label">Audience</label>
+                            <select id="ai_audience" class="form-select">
+                                <option value="everyone">Tout le monde</option>
+                                <option value="students">Étudiants</option>
+                                <option value="developers">Développeurs</option>
+                                <option value="managers">Managers</option>
+                                <option value="designers">Designers</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Ton</label>
+                            <select id="ai_tone" class="form-select">
+                                <option value="professional">Professionnel</option>
+                                <option value="friendly">Convivial</option>
+                                <option value="exciting">Dynamique</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Langue</label>
+                            <select id="ai_lang" class="form-select">
+                                <option value="fr" selected>Français</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Longueur</label>
+                            <select id="ai_length" class="form-select">
+                                <option value="medium" selected>Moyen</option>
+                                <option value="short">Court</option>
+                                <option value="long">Long</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" id="ai_generate" class="btn btn-outline-primary mt-3">
+                        ⚡ Générer le titre & la description
+                    </button>
+
+                    <div id="ai_variants" class="mt-2" style="display:none;">
+                        <small class="text-muted">Autres variantes de titre :</small>
+                        <div id="ai_variant_list" class="mt-1"></div>
+                    </div>
+                </div>
+            </div>
+            {{-- AI block end (EDIT) --}}
+
             <div class="mt-3">
                 <label for="description" class="form-label modal-body-text">Description</label>
                 <textarea class="form-control modal-body-text @error('description') is-invalid @enderror" id="description" name="description" rows="5">{{ old('description') }}</textarea>
@@ -282,19 +427,18 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <label for="image" class="form-label modal-body-text">Image</label>
-                    <div class="mb-2" id="currentImageContainer" style="display: none;"><img id="currentImagePreview" src="" alt="" class="img-thumbnail" style="max-height: 150px;"></div>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="image" name="image">
-                        <label class="custom-file-label modal-body-text" for="image">Choisir une nouvelle image</label>
-                        @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
+                    @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <small class="form-text text-muted modal-body-text">Formats: JPG, PNG, GIF, WebP. Max: 4MB</small>
+                    <div class="mt-2" id="currentImageContainer" style="display: none;">
+                        <img id="currentImagePreview" src="" alt="" class="img-thumbnail" style="max-height: 150px;">
                     </div>
-                    <small class="form-text text-muted modal-body-text">Formats: JPG, PNG, GIF. Max: 2MB</small>
                 </div>
                 <div class="col-md-6">
                     <label for="is_active" class="form-label modal-body-text">Statut</label>
-                    <div class="custom-control custom-switch mt-2">
-                        <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1">
-                        <label class="custom-control-label modal-body-text" for="is_active">Actif</label>
+                    <div class="form-check form-switch mt-2">
+                        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1">
+                        <label class="form-check-label modal-body-text" for="is_active">Actif</label>
                     </div>
                 </div>
             </div>
@@ -347,29 +491,28 @@
         <button type="button" class="btn btn-secondary btn-custom-close" data-bs-dismiss="modal">Fermer</button>
     </div>
 </div>
-
 @endsection
 
 @push('scripts')
 <script>
-    // Auto-submit filters on change / typing (page refresh on every letter)
+    // Auto-submit filters (page refresh on input/change)
     (function () {
         const form = document.getElementById('filterForm');
-
-        // Debounce typing a tiny bit to avoid submitting every millisecond
         let timer = null;
-        document.getElementById('search').addEventListener('input', function () {
-            clearTimeout(timer);
-            timer = setTimeout(() => form.submit(), 200);
-        });
-
+        const search = document.getElementById('search');
+        if (search) {
+            search.addEventListener('input', function () {
+                clearTimeout(timer);
+                timer = setTimeout(() => form.submit(), 200);
+            });
+        }
         ['status', 'date_from', 'date_to'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.addEventListener('change', () => form.submit());
         });
     })();
 
-    // Display selected file name
+    // Display selected file name (if using custom-file inputs)
     $(document).on('change', '.custom-file-input', function() {
         var fileName = $(this).val().split('\\').pop();
         $(this).next('.custom-file-label').html(fileName);
@@ -404,13 +547,18 @@
                         $('#editEventForm #location').val(event.location || '');
                         $('#editEventForm #start_date').val(event.start_date ? new Date(event.start_date).toISOString().slice(0, 16) : '');
                         $('#editEventForm #end_date').val(event.end_date ? new Date(event.end_date).toISOString().slice(0, 16) : '');
-                        if (event.image) {
-                            $('#editEventForm #currentImagePreview').attr('src', '/storage/' + event.image);
+                        if (event.image || event.image_url) {
+                            var preview = event.image_url ? event.image_url : ('/storage/' + event.image);
+                            $('#editEventForm #currentImagePreview').attr('src', preview);
                             $('#editEventForm #currentImageContainer').show();
                         } else {
                             $('#editEventForm #currentImageContainer').hide();
                         }
                         $('#editEventForm #is_active').prop('checked', !!event.is_active);
+                        if (typeof CKEDITOR !== 'undefined') {
+                            for (var instanceName in CKEDITOR.instances) { CKEDITOR.instances[instanceName].destroy(true); }
+                            CKEDITOR.replace('description');
+                        }
                     } else {
                         $('#eventModalBody').html($('#showEventModalContent').html());
                         var event = response.event || {};
@@ -424,8 +572,8 @@
                         $('#showEventModalContent #event-created-at').text(event.created_at ? new Date(event.created_at).toLocaleString() : '');
                         $('#showEventModalContent #event-updated-at').text(event.updated_at ? new Date(event.updated_at).toLocaleString() : '');
                         $('#showEventModalContent #event-description').html(event.description || '<p class="text-muted">Aucune description disponible</p>');
-                        if (event.image) {
-                            var imageUrl = '/storage/' + event.image;
+                        if (event.image || event.image_url) {
+                            var imageUrl = event.image_url ? event.image_url : ('/storage/' + event.image);
                             $('#showEventModalContent #event-image').attr('src', imageUrl).removeClass('d-none');
                             $('#showEventModalContent #event-image-placeholder').addClass('d-none');
                         } else {
@@ -441,7 +589,7 @@
         }
     });
 
-    // Submit delete form with confirm
+    // Delete confirm
     $(document).on('click', '.delete-event-btn', function(e) {
         e.preventDefault();
         var form = $(this).closest('form');
@@ -454,6 +602,88 @@
     $(document).on('change', '#selectAllEvents', function() {
         var checked = $(this).is(':checked');
         $(this).closest('table').find('tbody input.form-check-input[type="checkbox"]').prop('checked', checked);
+    });
+
+    // Open "participants" in the same modal (AJAX-loaded partial)
+    $(document).on('click', '.open-participants-modal', function (e) {
+        e.preventDefault();
+        var url = $(this).data('url');
+        var title = $(this).data('title') || 'Participants';
+
+        $('#eventModalLabel').text(title);
+        $('#eventModalBody').html('<div class="text-center p-4"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+        $('#eventModal').modal('show');
+
+        $.get(url, function (html) {
+            $('#eventModalBody').html(html);
+        }).fail(function () {
+            $('#eventModalBody').html('<div class="alert alert-danger m-3">Impossible de charger les participants.</div>');
+        });
+    });
+
+    // =========================
+    // AI Generator (delegated)
+    // =========================
+    $(document).on('click', '#ai_generate', async function () {
+        const kw = ($('#ai_keywords').val() || '')
+            .split(',').map(s => s.trim()).filter(Boolean);
+
+        const payload = {
+            keywords: kw,
+            audience: $('#ai_audience').val(),
+            tone: $('#ai_tone').val(),
+            lang: $('#ai_lang').val(),
+            length: $('#ai_length').val(),
+            start_date: $('#eventModalBody #start_date').val() || null,
+            end_date:   $('#eventModalBody #end_date').val() || null,
+            location:   $('#eventModalBody #location').val() || null
+        };
+
+        try {
+            const res = await fetch("{{ route('admin.events.ai.generate') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error('Réponse invalide du serveur');
+            const data = await res.json();
+
+            // If CKEditor is used, update its instance; else, update textarea value
+            if (data.title) { $('#eventModalBody #title').val(data.title); }
+
+            if (data.description) {
+                if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances['description']) {
+                    CKEDITOR.instances['description'].setData(data.description);
+                } else {
+                    $('#eventModalBody #description').val(data.description);
+                }
+            }
+
+            const $box = $('#ai_variants');
+            const $list = $('#ai_variant_list');
+            $list.empty();
+            if (data.variants && data.variants.length > 1) {
+                $box.show();
+                data.variants.forEach(t => {
+                    const btn = $('<button/>', {
+                        type: 'button',
+                        class: 'btn btn-sm btn-light me-2 mb-2',
+                        text: t,
+                        click: () => $('#eventModalBody #title').val(t)
+                    });
+                    $list.append(btn);
+                });
+            } else {
+                $box.hide();
+            }
+        } catch (e) {
+            alert('Impossible de générer le titre/description. Réessayez.');
+            console.error(e);
+        }
     });
 </script>
 @endpush

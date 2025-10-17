@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\MeetingController as AdminMeetingController;
 use App\Http\Controllers\TrustScoreController;
 use App\Http\Controllers\EventController as FrontEventController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\Admin\EventAIController;
 
 
 /*
@@ -72,6 +73,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::resource('books', AdminBookController::class);
+    // routes/web.php (inside your admin group)
+    Route::get('/events/{event}/participants', [\App\Http\Controllers\Admin\EventController::class, 'participants'])
+     ->name('admin.events.participants');
+     //AI route for event title & description generator
+    Route::post('/events/ai/generate', [EventAIController::class, 'generate'])
+        ->name('events.ai.generate');
+    
+    // Participants list + PDF
+    Route::get('events/{event}/participants', [\App\Http\Controllers\Admin\EventController::class, 'participants'])
+        ->name('events.participants');
+    Route::get('events/{event}/download-pdf', [\App\Http\Controllers\Admin\EventController::class, 'downloadPdf'])
+        ->name('events.downloadPdf');
     
     // Routes pour les rendez-vous (Meetings) - Admin
     Route::prefix('meetings')->name('meetings.')->group(function () {

@@ -34,25 +34,30 @@
                             {{-- Button Section --}}
                             <div class="mt-3">
                                 @auth
-                                    @php
-                                        $alreadyJoined = $event->participants->contains(auth()->id());
-                                    @endphp
+    @php
+    $alreadyJoined = auth()->check()
+        ? \App\Models\Participation::active()
+            ->where('event_id', $event->id)
+            ->where('user_id', auth()->id())
+            ->exists()
+        : false;
+@endphp
 
-                                    @if($alreadyJoined)
-                                        <form action="{{ route('events.leave', $event) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Leave Event</button>
-                                        </form>
-                                    @else
-                                        <form action="{{ route('events.join', $event) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success btn-sm">Join Event</button>
-                                        </form>
-                                    @endif
-                                @else
-                                    <a href="{{ route('signin') }}" class="btn btn-secondary btn-sm">Sign in to join</a>
-                                @endauth
+    @if ($alreadyJoined)
+        <form action="{{ route('events.leave', $event) }}" method="POST" class="d-inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-outline-danger btn-sm">Leave Event</button>
+        </form>
+    @else
+        <form action="{{ route('events.join', $event) }}" method="POST" class="d-inline">
+            @csrf
+            <button type="submit" class="btn btn-success btn-sm">Join Event</button>
+        </form>
+    @endif
+@else
+    <a href="{{ route('signin') }}" class="btn btn-secondary btn-sm">Sign in to join</a>
+@endauth
 
                                 <a href="{{ route('events.show', $event->id) }}" class="btn btn-primary btn-sm ms-2">
                                     View Details
