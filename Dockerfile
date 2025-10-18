@@ -1,5 +1,5 @@
 # Multi-stage build for better caching and smaller final image
-FROM php:8.3-fpm as base
+FROM php:8.3-fpm AS base
 
 # Set working directory
 WORKDIR /var/www/html
@@ -28,21 +28,21 @@ RUN pecl install redis && docker-php-ext-enable redis
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Node.js stage for building assets
-FROM node:18-alpine as node-builder
+FROM node:18-alpine AS node-builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 COPY . .
 RUN npm run build
 
 # PHP dependencies stage
-FROM base as php-builder
+FROM base AS php-builder
 WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts --no-autoloader
 
 # Final stage
-FROM base as final
+FROM base AS final
 WORKDIR /var/www/html
 
 # Copy PHP dependencies from builder stage
