@@ -42,10 +42,10 @@
                 <div class="menu-divider"></div>
                 <p class="menu-title">Gestion Catalogue</p>
                 
-                <a href="{{ route('admin.books') }}" class="menu-item {{ request()->routeIs('admin.books') ? 'active' : '' }}">
-                    <i class="fas fa-book"></i>
-                    <span>Livres</span>
-                </a>
+<a href="{{ route('admin.books.index') }}" class="menu-item {{ request()->routeIs('admin.books.*') ? 'active' : '' }}">
+    <i class="fas fa-book"></i>
+    <span>Livres</span>
+</a>
                 <a href="{{ route('admin.categories.index') }}" class="menu-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
                     <i class="fas fa-layer-group"></i>
                     <span>Catégories</span>
@@ -58,6 +58,28 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span>Commandes</span>
                 </a>
+                
+                <!-- ÉVÉNEMENTS (added) -->
+                <a href="{{ route('admin.events.index') }}" class="menu-item {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Événements</span>
+                </a>
+
+                <a href="{{ route('admin.meetings.dashboard') }}" class="menu-item {{ request()->routeIs('admin.meetings.*') ? 'active' : '' }}">
+                    <i class="fas fa-handshake"></i>
+                    <span>Meetings</span>
+                </a>
+
+                <a href="{{ route('admin.trust-scores.index') }}" class="menu-item {{ request()->routeIs('admin.trust-scores.*') ? 'active' : '' }}">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Scores de Confiance IA</span>
+                </a>
+
+                <a href="{{ route('admin.spam.dashboard') }}" class="menu-item {{ request()->routeIs('admin.spam.*') ? 'active' : '' }}">
+                    <i class="fas fa-robot"></i>
+                    <span>Détection Spam IA</span>
+                </a>
+
                 <a href="{{ route('admin.exchanges') }}" class="menu-item {{ request()->routeIs('admin.exchanges') ? 'active' : '' }}">
                     <i class="fas fa-exchange-alt"></i>
                     <span>Échanges</span>
