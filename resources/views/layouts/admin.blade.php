@@ -42,10 +42,10 @@
                 <div class="menu-divider"></div>
                 <p class="menu-title">Gestion Catalogue</p>
                 
-                <a href="{{ route('admin.books') }}" class="menu-item {{ request()->routeIs('admin.books') ? 'active' : '' }}">
-                    <i class="fas fa-book"></i>
-                    <span>Livres</span>
-                </a>
+<a href="{{ route('admin.books.index') }}" class="menu-item {{ request()->routeIs('admin.books.*') ? 'active' : '' }}">
+    <i class="fas fa-book"></i>
+    <span>Livres</span>
+</a>
                 <a href="{{ route('admin.categories.index') }}" class="menu-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
                     <i class="fas fa-layer-group"></i>
                     <span>Catégories</span>
@@ -59,10 +59,7 @@
                     <span>Commandes</span>
                 </a>
                 
-                <a href="{{ route('admin.events.index') }}" class="menu-item {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Événements</span>
-                </a>
+
 
                 <a href="{{ route('admin.meetings.dashboard') }}" class="menu-item {{ request()->routeIs('admin.meetings.*') ? 'active' : '' }}">
                     <i class="fas fa-handshake"></i>
