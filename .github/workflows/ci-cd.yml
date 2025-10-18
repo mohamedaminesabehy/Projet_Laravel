@@ -80,6 +80,17 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         timeout-minutes: 5
         continue-on-error: true
+        id: sonar-quality-gate
+
+      - name: Handle Quality Gate Result
+        if: always()
+        run: |
+          if [ "${{ steps.sonar-quality-gate.outcome }}" == "failure" ]; then
+            echo "⚠️ SonarQube Quality Gate failed, but continuing pipeline..."
+            echo "📊 Check detailed results at: https://sonarcloud.io/dashboard?id=mohamedaminesabehy_Projet_Laravel&branch=${{ github.ref_name }}"
+          else
+            echo "✅ SonarQube Quality Gate passed!"
+          fi
 
   # Automated Testing
   test:
