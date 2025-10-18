@@ -1,70 +1,67 @@
-# Laravel specific
-/node_modules
-/public/hot
-/public/storage
-/storage/*.key
-/vendor
-.env
-.env.backup
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
 # Git
 .git
 .gitignore
 .gitattributes
 
-# Docker
-Dockerfile
-docker-compose.yml
-.dockerignore
-
 # Documentation
 README.md
+README-CICD.md
 *.md
 
-# Test files
-/tests
+# Development files
+.env.example
+.editorconfig
+
+# Node modules and build artifacts
+node_modules
+npm-debug.log
+yarn-error.log
+
+# PHP development
+vendor
+composer.phar
+
+# Laravel specific
+storage/app/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+
+# Tests
+tests
 phpunit.xml
 .phpunit.result.cache
 
-# Build artifacts
-/public/build
-/public/assets
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
 
-# Logs
-/storage/logs/*.log
+# OS files
+.DS_Store
+Thumbs.db
 
-# Cache
-/bootstrap/cache/*.php
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/views/*
+# CI/CD
+.github
+
+# Docker
+docker-compose.yml
+docker-setup.md
 
 # Temporary files
 *.tmp
 *.temp
+*.log
 
-# Package managers
-composer.lock
-package-lock.json
-yarn.lock
+# Build artifacts that will be generated
+public/build
+public/hot
+public/storage
+public/mix-manifest.json
+
+# Development tools
+check_*.php
+test_*.php
