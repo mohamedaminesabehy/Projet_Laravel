@@ -344,14 +344,12 @@
                                     <th width="15%" class="text-dark">Catégorie</th>
                                     <th width="10%" class="text-dark">Prix</th>
                                     <th width="10%" class="text-dark">Stock</th>
-                                    <th width="10%" class="text-dark">Utilisateur</th>
-                                    <th width="10%" class="text-dark">Statut</th>
                                     <th width="15%" class="text-dark">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($books as $book)
-                                <tr>
+                                <tr data-category-id="{{ $book->category->id }}">
                                     <td>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox">
@@ -378,13 +376,7 @@
                                             <span class="book-stock stock-low text-dark">Stock faible ({{ $book->stock }})</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        @if($book->status == 'published')
-                                            <span class="badge bg-success text-dark">Publié</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">Brouillon</span>
-                                        @endif
-                                    </td>
+                                   
                                     <td>
                                         <button type="button" class="action-btn btn-light view-book" title="Voir" data-id="{{ $book->id }}">
                                             <i class="fas fa-eye text-primary"></i>
@@ -445,15 +437,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="editBookTitle" class="form-label modal-body-text">Titre</label>
-                                <input type="text" class="form-control modal-body-text" id="editBookTitle" name="title" required>
+                                <input type="text" class="form-control modal-body-text" id="editBookTitle" name="title">
                             </div>
                             <div class="mb-3">
                                 <label for="editBookAuthor" class="form-label modal-body-text">Auteur</label>
-                                <input type="text" class="form-control modal-body-text" id="editBookAuthor" name="author" required>
+                                <input type="text" class="form-control modal-body-text" id="editBookAuthor" name="author">
                             </div>
                             <div class="mb-3">
                                 <label for="editBookCategory" class="form-label modal-body-text">Catégorie</label>
-                                <select class="form-select modal-body-text" id="editBookCategory" name="category_id" required>
+                                <select class="form-select modal-body-text" id="editBookCategory" name="category_id">
                                     <option value="">Sélectionner une catégorie</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -466,13 +458,13 @@
                             </div>
                             <div class="mb-3">
                                 <label for="editBookPrice" class="form-label modal-body-text">Prix</label>
-                                <input type="number" class="form-control modal-body-text" id="editBookPrice" name="price" step="0.01" required>
+                                <input type="number" class="form-control modal-body-text" id="editBookPrice" name="price">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="editBookStock" class="form-label modal-body-text">Stock</label>
-                                <input type="number" class="form-control modal-body-text" id="editBookStock" name="stock" required>
+                                <input type="number" class="form-control modal-body-text" id="editBookStock" name="stock">
                             </div>
                             <div class="mb-3">
                                 <label for="editBookDescription" class="form-label modal-body-text">Description</label>
@@ -511,39 +503,50 @@
                 <button type="button" class="btn-close book-detail-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('admin.books.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="addBookForm" action="{{ route('admin.books.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <div id="addBookGlobalError" class="alert alert-danger d-none"></div>
                     <div class="row">
                         <div class="col-md-8">
                             <div class="mb-3">
                                 <label for="title" class="form-label modal-body-text">Titre du livre</label>
-                                <input type="text" class="form-control modal-body-text" id="title" name="title" required>
+                                <input type="text" class="form-control modal-body-text @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title') }}">
+                                @error('title')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="invalid-feedback d-block js-error" data-field="title"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="author" class="form-label modal-body-text">Auteur</label>
-                                <select class="form-select modal-body-text" id="author" name="author">
-                                    <option value="">Sélectionner un auteur</option>
-                                    <option value="Victor Hugo">Victor Hugo</option>
-                                    <option value="J.K. Rowling">J.K. Rowling</option>
-                                    <option value="Albert Camus">Albert Camus</option>
-                                </select>
+                                <input type="text" class="form-control modal-body-text @error('author') is-invalid @enderror" id="author" name="author" value="{{ old('author') }}" placeholder="Saisir le nom de l'auteur">
+                                @error('author')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="invalid-feedback d-block js-error" data-field="author"></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="addBookCategory" class="form-label modal-body-text">Catégorie</label>
-                                        <select class="form-select modal-body-text" id="addBookCategory" name="category_id" required>
+                                        <select class="form-select modal-body-text @error('category_id') is-invalid @enderror" id="addBookCategory" name="category_id">
                                             <option value="">Sélectionner une catégorie</option>
                                             @foreach($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                             @endforeach
                                         </select>
+                                        @error('category_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <div class="invalid-feedback d-block js-error" data-field="category_id"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="isbn" class="form-label modal-body-text">ISBN</label>
-                                        <input type="text" class="form-control modal-body-text" id="isbn" name="isbn">
+                                        <input type="text" class="form-control modal-body-text @error('isbn') is-invalid @enderror" id="isbn" name="isbn" value="{{ old('isbn') }}">
+                                        @error('isbn')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -551,19 +554,30 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="price" class="form-label modal-body-text">Prix (€)</label>
-                                        <input type="number" class="form-control modal-body-text" id="price" name="price" step="0.01" min="0" required>
+                                        <input type="number" class="form-control modal-body-text @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price') }}">
+                                        @error('price')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <div class="invalid-feedback d-block js-error" data-field="price"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="stock" class="form-label modal-body-text">Stock</label>
-                                        <input type="number" class="form-control modal-body-text" id="stock" name="stock" min="0" required>
+                                        <input type="number" class="form-control modal-body-text @error('stock') is-invalid @enderror" id="stock" name="stock" value="{{ old('stock') }}">
+                                        @error('stock')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <div class="invalid-feedback d-block js-error" data-field="stock"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label modal-body-text">Description</label>
-                                <textarea class="form-control modal-body-text" id="description" name="description" rows="4"></textarea>
+                                <textarea class="form-control modal-body-text @error('description') is-invalid @enderror" id="description" name="description" rows="4">{{ old('description') }}</textarea>
+                                @error('description')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -577,10 +591,14 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label modal-body-text">Statut</label>
-                                <select class="form-select modal-body-text" id="status" name="status">
-                                    <option value="published">Publié</option>
-                                    <option value="draft">Brouillon</option>
+                                <select class="form-select modal-body-text @error('status') is-invalid @enderror" id="status" name="status">
+                                    <option value="published" {{ old('status') === 'published' ? 'selected' : '' }}>Publié</option>
+                                    <option value="draft" {{ old('status') === 'draft' ? 'selected' : '' }}>Brouillon</option>
                                 </select>
+                                @error('status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <div class="invalid-feedback d-block js-error" data-field="status"></div>
                             </div>
                         </div>
                     </div>
@@ -679,18 +697,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction de filtrage
     function applyFilters() {
         const searchValue = document.getElementById('search').value.toLowerCase();
-        const categoryValue = document.getElementById('category').value.toLowerCase();
+        const categoryValue = document.getElementById('category').value; // category ID
         const minPrice = parseFloat(document.getElementById('min_price').value) || 0;
         const maxPrice = parseFloat(document.getElementById('max_price').value) || Infinity;
 
         tableRows.forEach(row => {
             const title = row.querySelector('.book-title').textContent.toLowerCase();
-            const category = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const rowCategoryId = row.getAttribute('data-category-id');
             const priceText = row.querySelector('.book-price').textContent.replace('€', '').replace(',', '.').trim();
             const price = parseFloat(priceText);
 
             const matchesSearch = !searchValue || title.includes(searchValue);
-            const matchesCategory = !categoryValue || category.includes(categoryValue);
+            const matchesCategory = !categoryValue || rowCategoryId === categoryValue;
             const matchesPrice = price >= minPrice && price <= maxPrice;
 
             if (matchesSearch && matchesCategory && matchesPrice) {
@@ -705,15 +723,22 @@ document.addEventListener('DOMContentLoaded', function() {
     filterInputs.forEach(input => {
         input.addEventListener('input', applyFilters);
     });
+    // Assurer le déclenchement sur changement de la catégorie
+    const categorySelect = document.getElementById('category');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', applyFilters);
+    }
 
     // Réinitialiser les filtres
     resetFiltersBtn.addEventListener('click', function() {
         filterInputs.forEach(input => {
             input.value = '';
         });
+        if (categorySelect) categorySelect.value = '';
         tableRows.forEach(row => {
             row.classList.remove('hidden');
         });
+        applyFilters();
     });
 
     // Gestion de la suppression avec confirmation
@@ -822,6 +847,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 </script>
+@if ($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var addModalEl = document.getElementById('addBookModal');
+        if (addModalEl) {
+            // Assure que aria-hidden n'est pas true lorsque le modal est affiché
+            addModalEl.setAttribute('aria-hidden', 'false');
+            var addModal = new bootstrap.Modal(addModalEl);
+            addModal.show();
+        }
+    });
+</script>
+@endif
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var editBookModal = document.getElementById('editBookModal');
@@ -855,6 +893,77 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentCoverImage.style.display = 'none';
                 }
             });
+        }
+
+        // Gestion des attributs aria-hidden pour l'accessibilité des modals
+        var addBookModalEl = document.getElementById('addBookModal');
+        if (addBookModalEl) {
+            addBookModalEl.addEventListener('shown.bs.modal', function () {
+                addBookModalEl.setAttribute('aria-hidden', 'false');
+            });
+            addBookModalEl.addEventListener('hidden.bs.modal', function () {
+                addBookModalEl.setAttribute('aria-hidden', 'true');
+            });
+
+            // Soumission AJAX pour afficher les erreurs sans rafraîchissement
+            var addBookForm = document.getElementById('addBookForm');
+            if (addBookForm) {
+                addBookForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // Nettoyer les erreurs précédentes
+                    addBookForm.querySelectorAll('.is-invalid').forEach(function(el){ el.classList.remove('is-invalid'); });
+                    addBookForm.querySelectorAll('.js-error').forEach(function(el){ el.textContent = ''; });
+
+                    var formData = new FormData(addBookForm);
+
+                    fetch(addBookForm.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    }).then(async function(response){
+                        if (response.status === 422) {
+                            var data = await response.json();
+                            var errors = data.errors || {};
+                            Object.keys(errors).forEach(function(field){
+                                var input = addBookForm.querySelector('[name="' + field + '"]');
+                                if (input) { input.classList.add('is-invalid'); }
+                                var errDiv = addBookForm.querySelector('.js-error[data-field="' + field + '"]');
+                                if (errDiv) { errDiv.textContent = errors[field][0]; }
+                            });
+                            // Garder la pop-up ouverte
+                            var modalInstance = bootstrap.Modal.getInstance(addBookModalEl) || new bootstrap.Modal(addBookModalEl);
+                            modalInstance.show();
+                            return;
+                        }
+
+                        if (response.ok) {
+                            // Fermer le modal et rafraîchir la page pour voir la liste mise à jour
+                            var modalInstance = bootstrap.Modal.getInstance(addBookModalEl) || new bootstrap.Modal(addBookModalEl);
+                            modalInstance.hide();
+                            try { await response.json(); } catch(e) {}
+                            window.location.reload();
+                            return;
+                        }
+
+                        // Erreur non prévue (serveur): afficher un message global
+                        var globalErr = document.getElementById('addBookGlobalError');
+                        if (globalErr) {
+                            globalErr.textContent = 'Une erreur est survenue. Réessayez plus tard.';
+                            globalErr.classList.remove('d-none');
+                        }
+                    }).catch(function(){
+                        var globalErr = document.getElementById('addBookGlobalError');
+                        if (globalErr) {
+                            globalErr.textContent = 'Impossible de soumettre le formulaire. Vérifiez votre connexion.';
+                            globalErr.classList.remove('d-none');
+                        }
+                    });
+                });
+            }
         }
     });
 </script>

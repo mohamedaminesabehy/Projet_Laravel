@@ -3,7 +3,7 @@
 @section('content')
 
 <main>
-    <section class="cartoon-hero">
+    <section class="cartoon-hero py-80">
         <div class="container position-relative">
             <div class="row justify-content-center align-items-center g-4">
                 <div class="col-lg-6 d-none d-lg-block">
@@ -69,14 +69,14 @@
                         </svg>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-8 col-12 mx-auto">
+                <div class="col-lg-6 col-md-10">
                     <div class="p-4 p-md-5 auth-card">
                         <div class="text-center mb-4">
                             <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo" class="logo-hero">
                             <h1 class="h3 mt-3 mb-1">Create account</h1>
                             <p class="text-muted mb-0">Join us and explore the best books.</p>
                         </div>
-                        <form action="{{ route('signup') }}" method="POST">
+                        <form action="{{ route('register') }}" method="POST">
                             @csrf
                             <div class="row g-3">
                                 <div class="col-sm-6">
@@ -98,26 +98,26 @@
                              </div>
                              <div class="mt-3">
                                  <label for="signupEmail" class="form-label">Email address</label>
-                                 <input type="email" class="form-control @error('signupEmail') is-invalid @enderror" id="signupEmail" name="signupEmail"
-                                     placeholder="name@example.com" value="{{ old('signupEmail') }}" required>
-                                 @error('signupEmail')
+                                 <input type="email" class="form-control @error('email') is-invalid @enderror" id="signupEmail" name="email"
+                                     placeholder="name@example.com" value="{{ old('email') }}" required>
+                                 @error('email')
                                      <div class="invalid-feedback">{{ $message }}</div>
                                  @enderror
                              </div>
                              <div class="row g-3 mt-1">
                                  <div class="col-sm-6">
                                      <label for="signupPassword" class="form-label">Password</label>
-                                     <input type="password" class="form-control @error('signupPassword') is-invalid @enderror" id="signupPassword" name="signupPassword"
+                                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="signupPassword" name="password"
                                          placeholder="Create a password" required>
-                                     @error('signupPassword')
+                                     @error('password')
                                          <div class="invalid-feedback">{{ $message }}</div>
                                      @enderror
                                  </div>
                                  <div class="col-sm-6">
                                      <label for="confirmPassword" class="form-label">Confirm password</label>
-                                     <input type="password" class="form-control @error('signupPassword') is-invalid @enderror" id="confirmPassword" name="signupPassword_confirmation"
+                                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="confirmPassword" name="password_confirmation"
                                          placeholder="Repeat password" required>
-                                     @error('signupPassword')
+                                     @error('password')
                                          <div class="invalid-feedback">{{ $message }}</div>
                                      @enderror
                                  </div>
@@ -150,4 +150,4 @@
     </section>
 </main>
 
-@endsection
+@endsection 

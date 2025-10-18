@@ -23,7 +23,8 @@
             <div class="woocommerce-notices-wrapper">
                 <div class="woocommerce-message">Shipping costs updated.</div>
             </div>
-            <form action="#" class="woocommerce-cart-form">
+            <form id="bulk-form" action="{{ route('cart.bulkUpdate') }}" method="POST" class="woocommerce-cart-form">
+                @csrf
                 <table class="cart_table">
                     <thead>
                     <tr>
@@ -43,27 +44,19 @@
                             <td data-title="Name"><a class="cart-productname" href="{{ route('shop-details', $item->book->id) }}">{{ $item->book->title }}</a></td>
                             <td data-title="Price"><span class="amount"><bdi><span>$</span>{{ number_format($item->price, 2) }}</bdi></span></td>
                             <td data-title="Quantity">
-                                <form action="{{ route('cart.update', $item->id) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <div class="quantity style2">
-                                        <div class="quantity__field quantity-container">
-                                            <div class="quantity__buttons">
-                                                <button type="button" class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
-                                                <input type="number" id="quantity-{{ $item->id }}" class="qty-input" step="1" min="1" max="100" name="quantity" value="{{ $item->quantity }}" title="Qty" onchange="this.form.submit()">
-                                                <button type="button" class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
-                                            </div>
+                                <div class="quantity style2">
+                                    <div class="quantity__field quantity-container">
+                                        <div class="quantity__buttons">
+                                            <button type="button" class="quantity-plus qty-btn"><i class="fal fa-plus"></i></button>
+                                            <input type="number" id="quantity-{{ $item->id }}" class="qty-input" step="1" min="1" max="100" name="quantities[{{ $item->id }}]" value="{{ $item->quantity }}" title="Qty">
+                                            <button type="button" class="quantity-minus qty-btn"><i class="fal fa-minus"></i></button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </td>
                             <td data-title="Total"><span class="amount"><bdi><span>$</span>{{ number_format($item->price * $item->quantity, 2) }}</bdi></span></td>
                             <td data-title="Remove">
-                                <form action="{{ route('cart.remove', $item->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="remove"><i class="fal fa-trash-alt"></i></button>
-                                </form>
+                                <button type="submit" class="remove" form="remove-{{ $item->id }}"><i class="fal fa-trash-alt"></i></button>
                             </td>
                         </tr>
                         @php $total += $item->price * $item->quantity; @endphp
@@ -81,6 +74,20 @@
                     </tbody>
                 </table>
             </form>
+-+            {{-- Hidden standalone forms for item removal to avoid nested forms inside the bulk update form --}}
+-+            @foreach($cartItems as $item)
+-+                <form id="remove-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}" method="POST" style="display:none;">
+-+                    @csrf
+-+                    @method('DELETE')
+-+                </form>
+-+            @endforeach
++            {{-- Hidden standalone forms for item removal to avoid nested forms inside the bulk update form --}}
++            @foreach($cartItems as $item)
++                <form id="remove-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}" method="POST" style="display:none;">
++                    @csrf
++                    @method('DELETE')
++                </form>
++            @endforeach
             <div class="row justify-content-end">
                 <div class="col-md-8 col-lg-7 col-xl-6">
                     <h2 class="h4 summary-title">Cart Totals</h2>
@@ -89,41 +96,6 @@
                         <tr>
                             <td>Cart Subtotal</td>
                             <td data-title="Cart Subtotal"><span class="amount"><bdi><span>$</span>{{ number_format($total, 2) }}</bdi></span>
-                            </td>
-                        </tr>
-                        <tr class="shipping">
-                            <th>Shipping and Handling</th>
-                            <td data-title="Shipping and Handling">
-                                <ul class="woocommerce-shipping-methods list-unstyled">
-                                    <li>
-                                        <input type="radio" id="free_shipping" name="shipping_method" class="shipping_method"> <label for="free_shipping">Free shipping</label>
-                                    </li>
-                                    <li><input type="radio" id="flat_rate" name="shipping_method" class="shipping_method" checked="checked"> <label for="flat_rate">Flat rate</label></li>
-                                </ul>
-                                <p class="woocommerce-shipping-destination">Shipping options will be updated during checkout.</p>
-                                <form action="#" method="post"><a href="#" class="shipping-calculator-button">Change address</a>
-                                    <div class="shipping-calculator-form">
-                                        <p class="form-row">
-                                            <select class="form-select">
-                                                <option value="AR">Argentina</option>
-                                                <option value="AM">Armenia</option>
-                                                <option value="BD" selected="selected">Bangladesh</option>
-                                            </select>
-                                        </p>
-                                        <p>
-                                            <select class="form-select">
-                                                <option value="">Select an option…</option>
-                                                <option value="BD-05">Bagerhat</option>
-                                                <option value="BD-01">Bandarban</option>
-                                                <option value="BD-02">Barguna</option>
-                                                <option value="BD-06">Barishal</option>
-                                            </select>
-                                        </p>
-                                        <p class="form-row"><input type="text" class="form-control" placeholder="Town / City"></p>
-                                        <p class="form-row"><input type="text" class="form-control" placeholder="Postcode / ZIP"></p>
-                                        <p><button class="vs-btn">Update</button></p>
-                                    </div>
-                                </form>
                             </td>
                         </tr>
                         </tbody>
@@ -142,24 +114,140 @@
                     </div>
                     
                     <!-- PayPal SDK Integration -->
-                    <script>
-                        // Afficher le Client ID pour débogage
-                        console.log('Client ID utilisé:', '{{ config('paypal.sandbox.client_id') }}');
-                    </script>
-                    <script 
-                        src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.sandbox.client_id') }}" 
-                        data-namespace="paypal_sdk">
-                    </script>
-                    <script>
-                        // Simple initialization to confirm SDK loading
-                        document.addEventListener('DOMContentLoaded', function() {
-                            console.log('PayPal SDK initialized');
-                        });
-                    </script>
+                    @if(config('paypal.sandbox.client_id'))
+                        <div id="paypal-config" data-client-id="{{ config('paypal.sandbox.client_id') }}" style="display:none;"></div>
+                        <script>
+                            // Afficher le Client ID pour débogage sans insérer de Blade dans le JS
+                            var cfgEl = document.getElementById('paypal-config');
+                            var paypalClientId = cfgEl ? cfgEl.getAttribute('data-client-id') : '';
+                            console.log('Client ID utilisé:', paypalClientId);
+                        </script>
+                        <script 
+                            src="https://www.paypal.com/sdk/js?client-id={{ config('paypal.sandbox.client_id') }}" 
+                            data-namespace="paypal_sdk">
+                        </script>
+                        <script>
+                            // Simple initialization to confirm SDK loading
+                            document.addEventListener('DOMContentLoaded', function() {
+                                console.log('PayPal SDK initialized');
+                            });
+                        </script>
+                    @else
+                        <div class="alert alert-warning">
+                            PayPal configuration is missing. Please configure your PayPal credentials in the .env file.
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
     <!-- Cart Area End-->
     <!-- Cta Area End -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour mettre à jour le total d'un item
+            function updateItemTotal(itemId, quantity, price) {
+                const totalCell = document.querySelector(`tr:has(#quantity-${itemId}) td[data-title="Total"] .amount bdi`);
+                if (totalCell) {
+                    const newTotal = (quantity * price).toFixed(2);
+                    totalCell.innerHTML = `<span>$</span>${newTotal}`;
+                }
+            }
+
+            // Fonction pour mettre à jour le total général du panier
+            function updateCartTotal() {
+                let cartTotal = 0;
+                const quantityInputs = document.querySelectorAll('.qty-input');
+                
+                quantityInputs.forEach(input => {
+                    const quantity = parseInt(input.value);
+                    const row = input.closest('tr');
+                    const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                    const price = parseFloat(priceText.replace('$', ''));
+                    cartTotal += quantity * price;
+                });
+
+                // Mettre à jour le sous-total et le total
+                const subtotalElements = document.querySelectorAll('td[data-title="Cart Subtotal"] .amount bdi, td[data-title="Total"] .amount bdi');
+                subtotalElements.forEach(element => {
+                    element.innerHTML = `<span>$</span>${cartTotal.toFixed(2)}`;
+                });
+            }
+
+            // Supprimer les anciens gestionnaires d'événements pour éviter les conflits
+            $('.quantity-plus, .quantity-minus').off('click');
+            
+            // Gestionnaire pour les boutons +
+            document.querySelectorAll('.quantity-plus').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const input = this.parentElement.querySelector('.qty-input');
+                    const currentValue = parseInt(input.value);
+                    const maxValue = parseInt(input.getAttribute('max')) || 100;
+                    
+                    if (currentValue < maxValue) {
+                        input.value = currentValue + 1;
+                        
+                        // Mettre à jour le total de l'item
+                        const itemId = input.id.replace('quantity-', '');
+                        const row = input.closest('tr');
+                        const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                        const price = parseFloat(priceText.replace('$', ''));
+                        
+                        updateItemTotal(itemId, currentValue + 1, price);
+                        updateCartTotal();
+                    }
+                });
+            });
+
+            // Gestionnaire pour les boutons -
+            document.querySelectorAll('.quantity-minus').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const input = this.parentElement.querySelector('.qty-input');
+                    const currentValue = parseInt(input.value);
+                    const minValue = parseInt(input.getAttribute('min')) || 1;
+                    
+                    if (currentValue > minValue) {
+                        input.value = currentValue - 1;
+                        
+                        // Mettre à jour le total de l'item
+                        const itemId = input.id.replace('quantity-', '');
+                        const row = input.closest('tr');
+                        const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                        const price = parseFloat(priceText.replace('$', ''));
+                        
+                        updateItemTotal(itemId, currentValue - 1, price);
+                        updateCartTotal();
+                    }
+                });
+            });
+
+            // Gestionnaire pour les changements directs dans l'input
+            document.querySelectorAll('.qty-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const value = parseInt(this.value);
+                    const minValue = parseInt(this.getAttribute('min')) || 1;
+                    const maxValue = parseInt(this.getAttribute('max')) || 100;
+                    
+                    // Valider la valeur
+                    if (value < minValue) {
+                        this.value = minValue;
+                    } else if (value > maxValue) {
+                        this.value = maxValue;
+                    }
+                    
+                    // Mettre à jour les totaux
+                    const itemId = this.id.replace('quantity-', '');
+                    const row = this.closest('tr');
+                    const priceText = row.querySelector('td[data-title="Price"] .amount bdi').textContent;
+                    const price = parseFloat(priceText.replace('$', ''));
+                    
+                    updateItemTotal(itemId, parseInt(this.value), price);
+                    updateCartTotal();
+                });
+            });
+        });
+    </script>
 @endsection

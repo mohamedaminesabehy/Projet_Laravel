@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
+use App\Models\BookInsight;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Book;
+ 
 
 class PageController extends Controller
 {
@@ -30,10 +32,6 @@ class PageController extends Controller
     {
         $viewName = 'pages.' . $page;
         if (View::exists($viewName)) {
-            if ($page === 'profile') {
-                $user = Auth::user();
-                return view($viewName, compact('user'));
-            }
             return view($viewName);
         }
 

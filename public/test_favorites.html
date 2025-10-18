@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="test-token-123">
+    <title>Test Simple - Boutons Favoris</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .category-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            background: #fff;
+        }
+        
+        .favorite-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: 2px solid red; /* Debug border */
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            pointer-events: auto !important;
+        }
+        
+        .favorite-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .heart-icon {
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            color: #ddd;
+            pointer-events: none; /* Important! */
+        }
+        
+        .favorite-btn.is-favorited .heart-icon {
+            color: #ff6b6b;
+        }
+        
+        .console-output {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 30px;
+        }
+        
+        .console-output div {
+            margin: 5px 0;
+        }
+        
+        .success { color: #00ff00; }
+        .error { color: #ff6b6b; }
+        .info { color: #64b5f6; }
+        .warning { color: #ffa726; }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            flex: 1;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Simple - Boutons Favoris</h1>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="clickCount">0</div>
+                <div class="stat-label">Clics Détectés</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="favoriteCount">0</div>
+                <div class="stat-label">Favoris Actifs</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="ajaxCount">0</div>
+                <div class="stat-label">Requêtes AJAX</div>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 30px;">Catégories de Test</h2>
+        
+        <!-- Catégorie 1 -->
+        <div class="category-card">
+            <button type="button" 
+                    class="favorite-btn" 
+                    data-category-id="1"
+                    data-favorited="false"
+                    onclick="console.log('✅ ONCLICK FONCTIONNE! ID: 1');">
+                <i class="heart-icon far fa-heart"></i>
+            </button>
+            
+            <h3>Romance</h3>
+            <p>Histoires d'amour passionnantes</p>
+            <div style="color: #666;">
+                <i class="fas fa-book"></i> 15 livres | 
+                <i class="fas fa-heart"></i> <span class="favorites-count">0</span> favoris
+            </div>
+        </div>
+        
+        <!-- Catégorie 2 -->
+        <div class="category-card">
+            <button type="button" 
+                    class="favorite-btn is-favorited" 
+                    data-category-id="2"
+                    data-favorited="true"
+                    onclick="console.log('✅ ONCLICK FONCTIONNE! ID: 2');">
+                <i class="heart-icon fas fa-heart"></i>
+            </button>
+            
+            <h3>Science-Fiction</h3>
+            <p>Voyages dans le futur et l'espace</p>
+            <div style="color: #666;">
+                <i class="fas fa-book"></i> 22 livres | 
+                <i class="fas fa-heart"></i> <span class="favorites-count">5</span> favoris
+            </div>
+        </div>
+        
+        <!-- Catégorie 3 -->
+        <div class="category-card">
+            <button type="button" 
+                    class="favorite-btn" 
+                    data-category-id="3"
+                    data-favorited="false"
+                    onclick="console.log('✅ ONCLICK FONCTIONNE! ID: 3');">
+                <i class="heart-icon far fa-heart"></i>
+            </button>
+            
+            <h3>Thriller</h3>
+            <p>Suspense et mystères captivants</p>
+            <div style="color: #666;">
+                <i class="fas fa-book"></i> 18 livres | 
+                <i class="fas fa-heart"></i> <span class="favorites-count">3</span> favoris
+            </div>
+        </div>
+        
+        <div class="console-output" id="consoleOutput">
+            <div class="info">📺 Console de débogage - Les messages apparaîtront ici...</div>
+        </div>
+    </div>
+    
+    <script>
+        let clickCount = 0;
+        let favoriteCount = 0;
+        let ajaxCount = 0;
+        
+        function log(message, type = 'success') {
+            const output = document.getElementById('consoleOutput');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = message;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+            
+            // Also log to real console
+            console.log(message);
+        }
+        
+        function updateStats() {
+            document.getElementById('clickCount').textContent = clickCount;
+            document.getElementById('favoriteCount').textContent = favoriteCount;
+            document.getElementById('ajaxCount').textContent = ajaxCount;
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔥 Script chargé avec succès!', 'success');
+            
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) {
+                log('❌ CSRF Token non trouvé!', 'error');
+                return;
+            }
+            const csrfTokenValue = csrfToken.getAttribute('content');
+            log('✅ CSRF Token trouvé: ' + csrfTokenValue, 'success');
+            
+            const favoriteButtons = document.querySelectorAll('.favorite-btn');
+            log(`✅ ${favoriteButtons.length} boutons trouvés`, 'success');
+            
+            // Add red borders for visibility
+            favoriteButtons.forEach(btn => {
+                btn.style.border = '2px solid red';
+                log(`🎨 Bordure rouge ajoutée au bouton ID: ${btn.dataset.categoryId}`, 'info');
+                
+                if (btn.classList.contains('is-favorited')) {
+                    favoriteCount++;
+                }
+            });
+            
+            updateStats();
+            
+            favoriteButtons.forEach(button => {
+                log(`➕ Ajout listener sur bouton ID: ${button.dataset.categoryId}`, 'info');
+                
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    clickCount++;
+                    updateStats();
+                    
+                    log('🖱️ CLIC DÉTECTÉ SUR LE BOUTON!', 'success');
+                    log(`   Élément cliqué: ${e.target.tagName}`, 'info');
+                    log(`   Bouton ID: ${this.dataset.categoryId}`, 'info');
+                    
+                    const categoryId = this.getAttribute('data-category-id');
+                    const isFavorited = this.getAttribute('data-favorited') === 'true';
+                    
+                    log(`   État actuel: ${isFavorited ? 'FAVORISÉ' : 'NON FAVORISÉ'}`, 'warning');
+                    
+                    // Simulate AJAX call
+                    this.classList.add('loading');
+                    log('📡 Simulation envoi AJAX...', 'info');
+                    
+                    try {
+                        ajaxCount++;
+                        updateStats();
+                        
+                        // Simulate network delay
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                        // Simulate successful response
+                        const newState = !isFavorited;
+                        log('📥 Réponse simulée reçue!', 'success');
+                        log(`   Nouveau état: ${newState ? 'FAVORISÉ' : 'NON FAVORISÉ'}`, 'success');
+                        
+                        // Update button state
+                        const heartIcon = this.querySelector('.heart-icon');
+                        
+                        if (newState) {
+                            this.classList.add('is-favorited');
+                            this.setAttribute('data-favorited', 'true');
+                            heartIcon.classList.remove('far');
+                            heartIcon.classList.add('fas');
+                            favoriteCount++;
+                            log('❤️ Cœur ROUGE activé!', 'success');
+                        } else {
+                            this.classList.remove('is-favorited');
+                            this.setAttribute('data-favorited', 'false');
+                            heartIcon.classList.remove('fas');
+                            heartIcon.classList.add('far');
+                            favoriteCount--;
+                            log('🤍 Cœur VIDE activé!', 'info');
+                        }
+                        
+                        // Update counter in card
+                        const card = this.closest('.category-card');
+                        const favCountElement = card.querySelector('.favorites-count');
+                        if (favCountElement) {
+                            const currentCount = parseInt(favCountElement.textContent);
+                            const newCount = currentCount + (newState ? 1 : -1);
+                            favCountElement.textContent = newCount;
+                            log(`📊 Compteur mis à jour: ${currentCount} → ${newCount}`, 'success');
+                        }
+                        
+                        updateStats();
+                        log('✅ Mise à jour terminée avec succès!', 'success');
+                        log('─────────────────────────────────────', 'info');
+                        
+                    } catch (error) {
+                        log('❌ ERREUR: ' + error.message, 'error');
+                    } finally {
+                        this.classList.remove('loading');
+                    }
+                });
+            });
+            
+            log('✅ Tous les listeners attachés!', 'success');
+            log('─────────────────────────────────────', 'info');
+            log('🎯 Cliquez sur un cœur pour tester!', 'warning');
+        });
+    </script>
+</body>
+</html>

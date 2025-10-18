@@ -42,11 +42,11 @@
                 <div class="menu-divider"></div>
                 <p class="menu-title">Gestion Catalogue</p>
                 
-                <a href="{{ route('admin.books.index') }}" class="menu-item {{ request()->routeIs('admin.books.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.books') }}" class="menu-item {{ request()->routeIs('admin.books') ? 'active' : '' }}">
                     <i class="fas fa-book"></i>
                     <span>Livres</span>
                 </a>
-                <a href="{{ route('admin.categories') }}" class="menu-item {{ request()->routeIs('admin.categories') ? 'active' : '' }}">
+                <a href="{{ route('admin.categories.index') }}" class="menu-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
                     <i class="fas fa-layer-group"></i>
                     <span>Catégories</span>
                 </a>
@@ -89,6 +89,28 @@
                 </a>
                 
                 <div class="menu-divider"></div>
+                <p class="menu-title">Analytics & Reports</p>
+                
+                <a href="{{ route('admin.statistics.reviews') }}" class="menu-item {{ request()->routeIs('admin.statistics.reviews*') ? 'active' : '' }}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Review Statistics</span>
+                </a>
+                <a href="{{ route('admin.categories.statistics') }}" class="menu-item {{ request()->routeIs('admin.categories.statistics*') ? 'active' : '' }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Category Statistics</span>
+                    <span class="badge bg-gradient-success ms-2">NEW</span>
+                </a>
+                <a href="{{ route('admin.review-reactions.index') }}" class="menu-item {{ request()->routeIs('admin.review-reactions*') ? 'active' : '' }}">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Réactions</span>
+                </a>
+                <a href="{{ route('admin.sentiment.index') }}" class="menu-item {{ request()->routeIs('admin.sentiment*') ? 'active' : '' }}">
+                    <i class="fas fa-brain"></i>
+                    <span>Analyse Sentiment AI</span>
+                    <span class="badge bg-primary ms-2">AI</span>
+                </a>
+                
+                <div class="menu-divider"></div>
                 <p class="menu-title">Configuration</p>
                 
                 <a href="#" class="menu-item">
@@ -112,21 +134,29 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </div>
-                    <div class="user-dropdown" id="user-dropdown-toggle">
-                        <div class="user-avatar">
-                            <span>{{ Auth::user()->first_name[0] ?? 'A' }}</span>
+                    <div class="user-dropdown dropdown">
+                        <div class="user-info" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                            <div class="user-avatar">
+                                <span>{{ Auth::user()->name[0] ?? 'A' }}</span>
+                            </div>
+                            <div class="user-name">
+                                {{ Auth::user()->name ?? 'Admin' }}
+                            </div>
+                            <i class="fas fa-chevron-down ms-2"></i>
                         </div>
-                        <div class="user-name">
-                            {{ Auth::user()->first_name . ' ' . Auth::user()->last_name ?? 'Admin' }}
-                        </div>
-                        <div class="user-menu" id="user-menu-dropdown">
-                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="fas fa-sign-out-alt"></i> Déconnexion
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -149,14 +179,6 @@
     <!-- Base Scripts from app.blade.php -->
     <script src="{{ asset('assets/js/vendor/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/js/wow.min.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
-    <script src="{{ asset('assets/js/gsap.min.js') }}"></script>
-    <script src="{{ asset('assets/js/gsap-scroll-to-plugin.js') }}"></script>
-    <script src="{{ asset('assets/js/ScrollTrigger.min.js') }}"></script>
-    <script src="{{ asset('assets/js/SplitText.js') }}"></script>
-    <script src="{{ asset('assets/js/lenis.min.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
     
     <!-- Admin Specific Scripts -->
@@ -205,31 +227,8 @@
     <!-- Admin Scripts -->
     <script src="{{ asset('js/admin-scripts.js') }}"></script>
     
-    <!-- CKEDITOR Script -->
-    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-
     <!-- Page Specific Scripts -->
     @yield('scripts')
     @stack('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const userDropdownToggle = document.getElementById('user-dropdown-toggle');
-            const userMenuDropdown = document.getElementById('user-menu-dropdown');
-
-            if (userDropdownToggle && userMenuDropdown) {
-                userDropdownToggle.addEventListener('click', function(event) {
-                    event.stopPropagation(); // Prevent the click from immediately closing the dropdown
-                    userMenuDropdown.classList.toggle('show');
-                });
-
-                // Close the dropdown if the user clicks outside of it
-                window.addEventListener('click', function(event) {
-                    if (!userDropdownToggle.contains(event.target) && !userMenuDropdown.contains(event.target)) {
-                        userMenuDropdown.classList.remove('show');
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>

@@ -18,7 +18,10 @@ class CartController extends Controller
     public function add(Request $request)
     {
         if (!Auth::check()) {
-            return response()->json(['message' => 'Please log in to add items to your cart.', 'redirect' => route('signin')], 401);
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Please log in to add items to your cart.', 'redirect' => route('signin')], 401);
+            }
+            return redirect()->route('signin')->with('error', 'Please log in to add items to your cart.');
         }
 
         $book = Book::findOrFail($request->book_id);
@@ -39,12 +42,36 @@ class CartController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Book added to cart successfully!', 'redirect' => route('cart')], 200);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Book added to cart successfully!', 'redirect' => route('cart')], 200);
+        }
+        return redirect()->route('cart')->with('success', 'Book added to cart successfully!');
     }
 
-    public function update(Request $request, Cart $cartItem)
+    public function bulkUpdate(Request $request)
     {
-        $cartItem->update(['quantity' => $request->quantity]);
+        $quantities = $request->input('quantities', []);
+        if (!is_array($quantities)) {
+            $quantities = [];
+        }
+
+        // Récupérer uniquement les items du panier de l'utilisateur connecté
+        $itemIds = array_map('intval', array_keys($quantities));
+        if (!empty($itemIds)) {
+            $cartItems = Cart::where('user_id', Auth::id())
+                ->whereIn('id', $itemIds)
+                ->get();
+
+            foreach ($cartItems as $item) {
+                $newQty = (int)($quantities[$item->id] ?? $item->quantity);
+                $newQty = max(1, $newQty); // minimum 1
+                $item->update(['quantity' => $newQty]);
+            }
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Cart updated!'], 200);
+        }
         return redirect()->route('cart')->with('success', 'Cart updated!');
     }
 
@@ -60,5 +87,11 @@ class CartController extends Controller
             return Cart::where('user_id', Auth::id())->sum('quantity');
         }
         return 0;
+    }
+
+    public function update(Request $request, Cart $cartItem)
+    {
+        $cartItem->update(['quantity' => $request->quantity]);
+        return redirect()->route('cart')->with('success', 'Cart updated!');
     }
 }

@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\CartHistory;
+use App\Models\Book;
+use App\Models\Category;
+use Illuminate\Support\Carbon;
 
 class AdminController extends Controller
 {
@@ -21,7 +25,9 @@ class AdminController extends Controller
 
     public function books()
     {
-        return view('admin.books');
+        $books = Book::with('category')->get();
+        $categories = Category::all();
+        return view('admin.books', compact('books', 'categories'));
     }
 
     public function categories()
@@ -93,9 +99,73 @@ class AdminController extends Controller
         return view('admin.admin-add-category');
     }
 
-    public function orders()
+    public function orders(Request $request)
     {
-        return view('admin.orders');
+        $query = CartHistory::with(['user', 'book']);
+
+        // Recherche
+        if ($request->filled('search')) {
+            $search = trim($request->input('search'));
+            $query->where(function ($q) use ($search) {
+                if (is_numeric($search)) {
+                    $q->orWhere('id', (int)$search);
+                }
+                $q->orWhereHas('user', function ($uq) use ($search) {
+                    $uq->where(function ($uq2) use ($search) {
+                        $uq2->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+                })
+                ->orWhereHas('book', function ($bq) use ($search) {
+                    $bq->where('title', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Statut
+        if ($request->filled('status')) {
+            $query->where('payment_status', $request->input('status'));
+        }
+
+        // Méthode de paiement (approximation: PayPal => completed)
+        if ($request->filled('payment')) {
+            $payment = $request->input('payment');
+            if ($payment === 'paypal') {
+                $query->where('payment_status', 'completed');
+            } else {
+                // Aucun autre moyen de paiement n'est stocké actuellement
+                // Retourner un ensemble vide pour les autres options
+                $query->whereRaw('1 = 0');
+            }
+        }
+
+        // Date spécifique
+        if ($request->filled('date')) {
+            $query->whereDate('transaction_date', $request->input('date'));
+        }
+
+        // Période
+        if ($request->filled('period')) {
+            $period = $request->input('period');
+            switch ($period) {
+                case 'today':
+                    $query->whereDate('transaction_date', Carbon::today());
+                    break;
+                case 'week':
+                    $query->whereBetween('transaction_date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'month':
+                    $query->whereMonth('transaction_date', Carbon::now()->month)
+                          ->whereYear('transaction_date', Carbon::now()->year);
+                    break;
+                case 'year':
+                    $query->whereYear('transaction_date', Carbon::now()->year);
+                    break;
+            }
+        }
+
+        $orders = $query->orderBy('transaction_date', 'desc')->get();
+        return view('admin.orders', compact('orders'));
     }
 
     public function users()

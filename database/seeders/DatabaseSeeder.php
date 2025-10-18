@@ -13,12 +13,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create categories first (predefined ones to avoid duplicates)
+        $this->call([
+            CategorySeeder::class,
+        ]);
 
+        // Create test users
+        User::factory(20)->create();
+
+        // Create test user
         User::factory()->create([
-            'first_name' => 'Test',
-            'last_name' => 'User',
+            'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        // Seed reviews with all related data
+        $this->call([
+            ReviewSeeder::class,
         ]);
     }
 }

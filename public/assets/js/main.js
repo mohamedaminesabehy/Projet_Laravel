@@ -673,7 +673,26 @@
     "show"
   );
 
-  
+  /*---------- 15. Lenis Library Support ----------*/
+   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText);
+
+   const lenis = new Lenis({
+     lerp: 0.1,
+     touchMultiplier: 0,
+     smoothWheel: true, 
+     smoothTouch: false,
+     mouseWheel: false, 
+     autoResize: true,
+     smooth: true,
+     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+     syncTouch: true,
+   });
+ 
+   lenis.on('scroll', ScrollTrigger.update);
+ 
+   gsap.ticker.add((time) => {
+     lenis.raf(time * 1200);
+   });
 
 
 
@@ -812,14 +831,11 @@
   const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
   // Set initial styles for the circle
-  if (progressCircle) {
-    progressCircle.style.strokeDasharray = CIRCUMFERENCE;
-    progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
-  }
+  progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+  progressCircle.style.strokeDashoffset = CIRCUMFERENCE;
 
   // Update progress based on scroll position
   const updateProgress = () => {
-    if (!progressCircle || !progressPercentage) return;
     const scrollPosition = window.scrollY;
     const totalHeight =
       document.documentElement.scrollHeight - window.innerHeight;
@@ -836,11 +852,7 @@
 
   // Scroll to top using smooth animation
   const scrollToTop = () => {
-    if (typeof gsap !== 'undefined') {
-      gsap.to(window, { duration: 1, scrollTo: 0 });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    gsap.to(window, { duration: 1, scrollTo: 0 });
   };
 
   // Throttle function to limit function execution frequency
@@ -864,16 +876,12 @@
     };
   };
 
-  // Only bind events if elements exist
-  if (backToTopBtn) {
-    backToTopBtn.addEventListener('click', scrollToTop);
-  }
-  if (progressCircle && progressPercentage) {
-    window.addEventListener('scroll', throttle(updateProgress, 100));
-    window.addEventListener('resize', throttle(updateProgress, 100));
-    // Initialize on load
-    updateProgress();
-  }
+  // Attach event listeners
+  window.addEventListener('scroll', throttle(updateProgress, 50));
+  backToTopBtn.addEventListener('click', scrollToTop);
+
+  // Initial update to set the correct progress on page load
+  updateProgress();
 
 
 

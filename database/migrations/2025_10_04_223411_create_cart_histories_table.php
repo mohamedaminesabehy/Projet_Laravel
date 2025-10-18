@@ -11,17 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('book', function (Blueprint $table) {
+        Schema::create('cart_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('author');
-
-            $table->string('isbn')->unique()->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('book_id')->constrained()->onDelete('cascade');
+            $table->integer('quantity');
             $table->decimal('price', 8, 2);
-            $table->integer('stock');
-            $table->text('description')->nullable();
-            $table->string('cover_image')->nullable();
-            $table->string('status')->default('draft');
+            $table->timestamp('transaction_date')->useCurrent();
+            $table->string('payment_status');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('book');
+        Schema::dropIfExists('cart_histories');
     }
 };
