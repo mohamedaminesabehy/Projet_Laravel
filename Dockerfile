@@ -1,5 +1,5 @@
 # Multi-stage build for better caching and smaller final image
-FROM php:8.3-fpm AS base
+FROM php:8.4-fpm AS base
 
 # Set working directory
 WORKDIR /var/www/html
