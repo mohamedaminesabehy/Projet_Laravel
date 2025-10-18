@@ -121,6 +121,11 @@
                     <a href="{{ route('pages.messages') }}">messages</a>
                 </li>
 
+                <!-- EVENTS (mobile) -->
+                <li class="{{ request()->routeIs('events.*') ? 'active' : '' }}">
+                    <a href="{{ route('events.index') }}">Events</a>
+                </li>
+
 
             </ul>
         </div>
@@ -313,6 +318,10 @@
                                                     <li><a href="{{ route('shop-sidebar') }}">Shop Sidebar</a></li>
 
                                                 </ul>
+                                            </li>
+                                            <!-- EVENTS (desktop) -->
+                                            <li class="{{ request()->routeIs('events.*') ? 'active' : '' }}">
+                                                <a href="{{ route('events.index') }}">Events</a>
                                             </li>
                                             <li class="menu-item-has-children">
                                                 <a href="#">Pages</a>

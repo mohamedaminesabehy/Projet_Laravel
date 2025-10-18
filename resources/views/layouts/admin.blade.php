@@ -59,7 +59,11 @@
                     <span>Commandes</span>
                 </a>
                 
-
+                <!-- ÉVÉNEMENTS (added) -->
+                <a href="{{ route('admin.events.index') }}" class="menu-item {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Événements</span>
+                </a>
 
                 <a href="{{ route('admin.meetings.dashboard') }}" class="menu-item {{ request()->routeIs('admin.meetings.*') ? 'active' : '' }}">
                     <i class="fas fa-handshake"></i>
