@@ -28,6 +28,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_banned',
+        'banned_at',
+        'ban_reason',
     ];
 
     /**
@@ -50,6 +53,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_banned' => 'boolean',
+            'banned_at' => 'datetime',
         ];
     }
 
@@ -117,4 +122,54 @@ class User extends Authenticatable
     {
         return $this->reviewReactions()->where('reaction_type', 'dislike')->count();
     }
+
+    /**
+     * Relation : Un utilisateur a un score de confiance
+     */
+    public function trustScore()
+    {
+        return $this->hasOne(UserTrustScore::class);
+    }
+
+    /**
+     * Obtenir ou créer le score de confiance
+     */
+    public function getOrCreateTrustScore()
+    {
+        if (!$this->trustScore) {
+            $trustScore = UserTrustScore::create([
+                'user_id' => $this->id,
+                'account_age_days' => now()->diffInDays($this->created_at),
+            ]);
+            $trustScore->calculateTrustScore();
+            return $trustScore;
+        }
+        return $this->trustScore;
+    }
+
+    /**
+     * Vérifier si l'utilisateur est vérifié
+     */
+    public function isVerified()
+    {
+        $trustScore = $this->getOrCreateTrustScore();
+        return $trustScore->is_verified;
+    }
+
+    /**
+     * Obtenir le score de confiance (0-100)
+     */
+    public function getTrustScoreValue()
+    {
+        $trustScore = $this->getOrCreateTrustScore();
+        return $trustScore->trust_score;
+    }
+
+public function joinedEvents()
+{
+    // was: 'event_user'
+    return $this->belongsToMany(\App\Models\Event::class, 'participations')
+                ->withTimestamps()
+                ->withPivot(['joined_at','left_at','checked_in_at','status','source','notes']);
+}
 }
