@@ -1,10 +1,10 @@
-# Use PHP 8.3 FPM as base image
-FROM php:8.3-fpm
+# Multi-stage build for better caching and smaller final image
+FROM php:8.3-fpm as base
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Install system dependencies in a single layer
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -13,8 +13,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    nodejs \
-    npm \
     supervisor \
     nginx \
     && apt-get clean \
@@ -29,36 +27,48 @@ RUN pecl install redis && docker-php-ext-enable redis
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy existing application directory contents
-COPY . /var/www/html
+# Node.js stage for building assets
+FROM node:18-alpine as node-builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
 
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
+# PHP dependencies stage
+FROM base as php-builder
+WORKDIR /var/www/html
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-autoloader
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Final stage
+FROM base as final
+WORKDIR /var/www/html
 
-# Install Node.js dependencies and build assets
-RUN npm install && npm run build
+# Copy PHP dependencies from builder stage
+COPY --from=php-builder /var/www/html/vendor ./vendor
+
+# Copy built assets from node builder
+COPY --from=node-builder /app/public/build ./public/build
+
+# Copy application code
+COPY --chown=www-data:www-data . .
+
+# Generate optimized autoloader
+RUN composer dump-autoload --optimize
 
 # Create necessary directories and set permissions
-RUN mkdir -p /var/www/html/storage/logs \
-    && mkdir -p /var/www/html/storage/framework/cache \
-    && mkdir -p /var/www/html/storage/framework/sessions \
-    && mkdir -p /var/www/html/storage/framework/views \
-    && mkdir -p /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/storage \
-    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+RUN mkdir -p storage/logs \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-# Copy nginx configuration
+# Copy configuration files
 COPY docker/nginx/default.conf /etc/nginx/sites-available/default
-
-# Copy supervisor configuration
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Copy PHP configuration
 COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
 
 # Expose port 80
