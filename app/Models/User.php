@@ -164,4 +164,12 @@ class User extends Authenticatable
         $trustScore = $this->getOrCreateTrustScore();
         return $trustScore->trust_score;
     }
+
+public function joinedEvents()
+{
+    // was: 'event_user'
+    return $this->belongsToMany(\App\Models\Event::class, 'participations')
+                ->withTimestamps()
+                ->withPivot(['joined_at','left_at','checked_in_at','status','source','notes']);
+}
 }

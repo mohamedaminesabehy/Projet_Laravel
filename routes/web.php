@@ -21,6 +21,10 @@ use App\Http\Controllers\Admin\AdminSentimentController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\CategoryFavoriteController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\EventController as FrontEventController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\Admin\EventAIController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -162,9 +166,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/exchanges', [AdminController::class, 'exchanges'])->name('exchanges');
     Route::get('/authors/add', [AdminController::class, 'addAuthor'])->name('add-author');
     Route::get('/books/add', [AdminController::class, 'addBook'])->name('add-book');
+    Route::get('/categories/add', [AdminController::class, 'addCategory'])->name('add-category');
+    
+    // Routes pour les événements pour admin 
+    Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::resource('books', AdminBookController::class);
+    // routes/web.php (inside your admin group)
+    Route::get('/events/{event}/participants', [\App\Http\Controllers\Admin\EventController::class, 'participants'])
+     ->name('admin.events.participants');
+     //AI route for event title & description generator
+    Route::post('/events/ai/generate', [EventAIController::class, 'generate'])
+        ->name('events.ai.generate');
+    
+    // Participants list + PDF
+    Route::get('events/{event}/participants', [\App\Http\Controllers\Admin\EventController::class, 'participants'])
+        ->name('events.participants');
+    Route::get('events/{event}/download-pdf', [\App\Http\Controllers\Admin\EventController::class, 'downloadPdf'])
+        ->name('events.downloadPdf');
     
     // Routes pour les rendez-vous (Meetings) - Admin
     Route::prefix('meetings')->name('meetings.')->group(function () {
@@ -176,6 +196,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::delete('/{id}', [AdminMeetingController::class, 'destroy'])->name('destroy');
         Route::get('/{id}', [AdminMeetingController::class, 'show'])->name('show');
     });
+
+
+
+    
     
     // Routes pour les Scores de Confiance IA (Trust Scores) - Admin
     Route::prefix('trust-scores')->name('trust-scores.')->group(function () {
@@ -208,6 +232,26 @@ Route::get('/categories/{category}', [\App\Http\Controllers\CategoryController::
 Route::post('/paypal/process', [App\Http\Controllers\PayPalController::class, 'processPayment'])->name('paypal.process');
 Route::get('/paypal/success', [App\Http\Controllers\PayPalController::class, 'success'])->name('paypal.success');
 Route::get('/paypal/cancel', [App\Http\Controllers\PayPalController::class, 'cancel'])->name('paypal.cancel');
+
+
+    // route event for user  
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
+        Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
+    });
+
+
+
+// User-facing Events
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+    Route::middleware('auth')->group(function () {
+        Route::post('/events/{event}/join',  [EventController::class, 'join'])->name('events.join');
+        Route::delete('/events/{event}/leave', [EventController::class, 'leave'])->name('events.leave');
+    });
+
 
 
 
@@ -251,3 +295,9 @@ Route::get('/paypal/cancel', [\App\Http\Controllers\PayPalController::class, 'ca
 
 // Routes Breeze (login, register, logout, etc.)
 require __DIR__.'/auth.php';
+
+
+
+    
+
+// });
