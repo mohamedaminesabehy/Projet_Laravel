@@ -152,7 +152,7 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
-      - name: Configure database
+      - name: Clear configuration cache
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -160,9 +160,7 @@ jobs:
           DB_DATABASE: laravel_test
           DB_USERNAME: root
           DB_PASSWORD: password
-        run: |
-          php artisan config:clear
-          php artisan cache:clear
+        run: php artisan config:clear
 
       - name: Run database migrations
         env:
@@ -173,6 +171,16 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: password
         run: php artisan migrate --force
+
+      - name: Clear application cache
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: laravel_test
+          DB_USERNAME: root
+          DB_PASSWORD: password
+        run: php artisan cache:clear
 
       - name: Run database seeders
         env:
