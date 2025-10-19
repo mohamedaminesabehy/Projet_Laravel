@@ -312,15 +312,15 @@ jobs:
                 - "6379:6379"
           EOF
           
-          # Start containers in detached mode (background)
-          docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+          # Start containers in detached mode (background) using Docker Compose V2
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d
           
           # Wait for services to be ready
           echo "⏳ Waiting for services to start..."
           sleep 30
           
           # Check container status
-          docker-compose ps
+          docker compose ps
           echo "✅ Containers started successfully in background!"
 
       - name: Build and push Docker image (Enhanced)
