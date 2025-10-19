@@ -272,11 +272,62 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Build and push Docker image
+      - name: Build Docker image with docker build
+        run: |
+          echo "🐳 Building Docker image using docker build command..."
+          docker build \
+            --build-arg PHP_VERSION=${{ env.PHP_VERSION }} \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --tag ${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel:${{ github.ref_name }}-${{ github.sha }} \
+            --tag ${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel:latest \
+            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}-${{ github.sha }} \
+            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            .
+          echo "✅ Docker image built successfully!"
+
+      - name: Start containers with Docker Compose (Windows compatible)
+        run: |
+          echo "🚀 Starting containers with Docker Compose for Windows environment..."
+          # Create a temporary docker-compose override for CI/CD
+          cat > docker-compose.ci.yml << 'EOF'
+          version: '3.8'
+          services:
+            app:
+              image: ${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel:latest
+              ports:
+                - "8000:80"
+              environment:
+                - APP_ENV=production
+                - APP_DEBUG=false
+            mysql:
+              image: mysql:8.0
+              environment:
+                MYSQL_ROOT_PASSWORD: password
+                MYSQL_DATABASE: laravel
+              ports:
+                - "3306:3306"
+            redis:
+              image: redis:7-alpine
+              ports:
+                - "6379:6379"
+          EOF
+          
+          # Start containers in detached mode (background)
+          docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+          
+          # Wait for services to be ready
+          echo "⏳ Waiting for services to start..."
+          sleep 30
+          
+          # Check container status
+          docker-compose ps
+          echo "✅ Containers started successfully in background!"
+
+      - name: Build and push Docker image (Enhanced)
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64  # Removed arm64 to speed up build
+          platforms: linux/amd64  # Optimized for Windows Docker Desktop
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -289,6 +340,36 @@ jobs:
           build-args: |
             PHP_VERSION=${{ env.PHP_VERSION }}
             BUILDKIT_INLINE_CACHE=1
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo "📤 Publishing Docker image to Docker Hub..."
+          
+          # Push all tagged images to Docker Hub
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel:${{ github.ref_name }}-${{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel:latest
+          
+          echo "✅ Docker image successfully published to Docker Hub!"
+          echo "🔗 Image available at: https://hub.docker.com/r/${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel"
+
+      - name: Verify Docker Hub publication
+        run: |
+          echo "🔍 Verifying Docker Hub publication..."
+          
+          # Pull the image to verify it's available
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel:latest
+          
+          # Display image information
+          docker images ${{ secrets.DOCKER_HUB_USERNAME }}/projet-laravel
+          
+          echo "✅ Docker Hub publication verified successfully!"
+
+      - name: Clean up local images (Optional)
+        if: always()
+        run: |
+          echo "🧹 Cleaning up local Docker images..."
+          docker image prune -f
+          echo "✅ Local cleanup completed!"
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
