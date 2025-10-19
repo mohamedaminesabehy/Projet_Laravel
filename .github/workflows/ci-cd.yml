@@ -17,7 +17,7 @@ on:
         - local
       
       docker_hub_username:
-        description: 'Nom d\'utilisateur Docker Hub (pour exécution locale)'
+        description: "Nom d'utilisateur Docker Hub (pour exécution locale)"
         required: false
         default: 'yassineroube'
       
