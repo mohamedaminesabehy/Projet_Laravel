@@ -112,6 +112,7 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     needs: security-scan
+    if: always() && (needs.security-scan.result == 'success' || needs.security-scan.result == 'skipped')
     
     services:
       mysql:
@@ -254,7 +255,7 @@ jobs:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push'
+    if: always() && github.event_name == 'push' && (needs.test.result == 'success' || needs.test.result == 'skipped')
     
     permissions:
       contents: read
@@ -462,7 +463,7 @@ jobs:
     name: Deploy Application
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    if: always() && github.event_name == 'push' && (needs.build-and-push.result == 'success' || needs.build-and-push.result == 'skipped') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     environment: 
       name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     
