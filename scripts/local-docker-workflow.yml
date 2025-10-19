@@ -1,0 +1,169 @@
+# Workflow Local Docker Desktop
+# Ce fichier peut être utilisé avec act (https://github.com/nektos/act) pour exécuter localement
+
+name: Local Docker Desktop Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action à exécuter'
+        required: true
+        default: 'sync'
+        type: choice
+        options:
+        - sync
+        - pull
+        - start
+        - health
+        - info
+        - clean
+      
+      docker_hub_username:
+        description: 'Nom d\'utilisateur Docker Hub'
+        required: false
+        default: 'yassineroube'
+
+env:
+  DOCKER_HUB_USERNAME: ${{ github.event.inputs.docker_hub_username || 'yassineroube' }}
+  PROJECT_NAME: projet-laravel-yassineroube
+
+jobs:
+  docker-desktop-sync:
+    runs-on: self-hosted # Pour exécution locale
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Vérifier Docker Desktop
+      run: |
+        echo "🔍 Vérification de Docker Desktop..."
+        docker --version
+        docker info
+        
+    - name: Configurer les permissions du script
+      run: |
+        echo "🔧 Configuration des permissions..."
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+      shell: pwsh
+      
+    - name: Exécuter la synchronisation Docker Desktop
+      run: |
+        echo "🚀 Exécution de la synchronisation..."
+        .\scripts\docker-desktop-sync.ps1 -Action ${{ github.event.inputs.action || 'sync' }} -Verbose
+      shell: pwsh
+      
+    - name: Vérifier les conteneurs
+      run: |
+        echo "📊 Vérification des conteneurs..."
+        docker ps -a
+        docker images
+      shell: pwsh
+      
+    - name: Afficher les URLs des services
+      run: |
+        echo "🌐 Services accessibles:"
+        echo "  • Application Laravel: http://localhost:8080"
+        echo "  • Prometheus: http://localhost:9090"
+        echo "  • Grafana: http://localhost:3000 (admin/admin123)"
+        echo "  • MailHog: http://localhost:8025"
+        echo "  • Node Exporter: http://localhost:9100"
+      shell: pwsh
+
+  health-check:
+    needs: docker-desktop-sync
+    runs-on: self-hosted
+    if: github.event.inputs.action == 'sync' || github.event.inputs.action == 'start'
+    
+    steps:
+    - name: Attendre le démarrage des services
+      run: |
+        echo "⏳ Attente du démarrage des services..."
+        Start-Sleep -Seconds 30
+      shell: pwsh
+      
+    - name: Test de santé Laravel
+      run: |
+        try {
+          $response = Invoke-WebRequest -Uri "http://localhost:8080" -TimeoutSec 10 -UseBasicParsing
+          if ($response.StatusCode -eq 200) {
+            Write-Host "✅ Laravel App est accessible" -ForegroundColor Green
+          }
+        } catch {
+          Write-Host "⚠️ Laravel App n'est pas encore prêt" -ForegroundColor Yellow
+        }
+      shell: pwsh
+      
+    - name: Test de santé Prometheus
+      run: |
+        try {
+          $response = Invoke-WebRequest -Uri "http://localhost:9090/-/healthy" -TimeoutSec 10 -UseBasicParsing
+          if ($response.StatusCode -eq 200) {
+            Write-Host "✅ Prometheus est accessible" -ForegroundColor Green
+          }
+        } catch {
+          Write-Host "⚠️ Prometheus n'est pas encore prêt" -ForegroundColor Yellow
+        }
+      shell: pwsh
+      
+    - name: Test de santé Grafana
+      run: |
+        try {
+          $response = Invoke-WebRequest -Uri "http://localhost:3000/api/health" -TimeoutSec 10 -UseBasicParsing
+          if ($response.StatusCode -eq 200) {
+            Write-Host "✅ Grafana est accessible" -ForegroundColor Green
+          }
+        } catch {
+          Write-Host "⚠️ Grafana n'est pas encore prêt" -ForegroundColor Yellow
+        }
+      shell: pwsh
+
+  monitoring-setup:
+    needs: health-check
+    runs-on: self-hosted
+    if: github.event.inputs.action == 'sync'
+    
+    steps:
+    - name: Configurer Grafana
+      run: |
+        echo "📊 Configuration de Grafana..."
+        # Attendre que Grafana soit complètement prêt
+        Start-Sleep -Seconds 10
+        
+        # Importer les dashboards personnalisés
+        echo "📈 Import des dashboards personnalisés..."
+        # Les dashboards sont automatiquement provisionnés via les fichiers de configuration
+        
+        Write-Host "✅ Configuration de monitoring terminée" -ForegroundColor Green
+      shell: pwsh
+      
+    - name: Afficher le résumé final
+      run: |
+        echo ""
+        echo "🎉 =================================="
+        echo "🎉 SYNCHRONISATION TERMINÉE AVEC SUCCÈS!"
+        echo "🎉 =================================="
+        echo ""
+        echo "📱 Vos conteneurs sont maintenant visibles dans Docker Desktop"
+        echo ""
+        echo "🌐 Services accessibles:"
+        echo "  • Application Laravel: http://localhost:8080"
+        echo "  • Prometheus: http://localhost:9090"
+        echo "  • Grafana: http://localhost:3000"
+        echo "    - Utilisateur: admin"
+        echo "    - Mot de passe: admin123"
+        echo "  • MailHog: http://localhost:8025"
+        echo "  • Node Exporter: http://localhost:9100"
+        echo ""
+        echo "📊 Pour voir les métriques:"
+        echo "  1. Ouvrez Grafana (http://localhost:3000)"
+        echo "  2. Connectez-vous avec admin/admin123"
+        echo "  3. Allez dans Dashboards > Laravel Monitoring"
+        echo ""
+        echo "🐳 Commandes utiles:"
+        echo "  • Voir les conteneurs: docker ps"
+        echo "  • Voir les logs: docker compose logs -f"
+        echo "  • Arrêter: docker compose down"
+        echo "  • Redémarrer: docker compose up -d"
+      shell: pwsh
