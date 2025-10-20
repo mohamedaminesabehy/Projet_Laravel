@@ -28,7 +28,7 @@ RUN pecl install redis && docker-php-ext-enable redis
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Node.js stage for building assets
-FROM node:18-alpine AS node-builder
+FROM node:25-alpine AS node-builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
