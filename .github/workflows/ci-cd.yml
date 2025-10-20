@@ -63,7 +63,7 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -148,7 +148,7 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
