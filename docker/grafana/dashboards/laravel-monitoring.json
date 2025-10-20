@@ -67,7 +67,7 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "reqps"
         },
         "overrides": []
       },
@@ -90,13 +90,13 @@
       },
       "targets": [
         {
-          "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "expr": "laravel_app_laravel_memory_usage_bytes",
           "interval": "",
-          "legendFormat": "CPU Usage",
+          "legendFormat": "Memory Usage (bytes)",
           "refId": "A"
         }
       ],
-      "title": "CPU Usage",
+      "title": "Laravel Memory Usage",
       "type": "timeseries"
     },
     {
@@ -144,11 +144,11 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "s"
         },
         "overrides": []
       },
@@ -171,13 +171,13 @@
       },
       "targets": [
         {
-          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+          "expr": "laravel_app_laravel_memory_peak_bytes",
           "interval": "",
-          "legendFormat": "Memory Used",
+          "legendFormat": "Memory Peak (bytes)",
           "refId": "A"
         }
       ],
-      "title": "Memory Usage",
+      "title": "Laravel Memory Peak Usage",
       "type": "timeseries"
     },
     {
@@ -207,7 +207,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 6,
         "x": 0,
         "y": 8
       },
@@ -218,24 +218,230 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
+          "values": false,
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
+          "fields": ""
         },
         "textMode": "auto"
       },
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "up{job=\"laravel-app\"}",
+          "expr": "laravel_app_laravel_queue_status",
           "interval": "",
-          "legendFormat": "Laravel App Status",
+          "legendFormat": "Queue Status",
           "refId": "A"
         }
       ],
-      "title": "Application Status",
+      "title": "Laravel Queue Status",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "expr": "laravel_app_laravel_database_queries_current_request",
+          "interval": "",
+          "legendFormat": "Database Queries",
+          "refId": "A"
+        }
+      ],
+      "title": "Laravel Database Queries",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "expr": "laravel_app_laravel_database_connection_status",
+          "interval": "",
+          "legendFormat": "Database Status",
+          "refId": "A"
+        }
+      ],
+      "title": "Laravel Database Status",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.0.0",
+      "targets": [
+        {
+          "expr": "laravel_app_laravel_cache_status",
+          "interval": "",
+          "legendFormat": "Cache Status",
+          "refId": "A"
+        }
+      ],
+      "title": "Laravel Cache Status",
       "type": "stat"
     },
     {
@@ -294,10 +500,10 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 8
+        "x": 0,
+        "y": 16
       },
-      "id": 4,
+      "id": 7,
       "options": {
         "legend": {
           "calcs": [],
@@ -310,19 +516,94 @@
       },
       "targets": [
         {
-          "expr": "irate(node_disk_read_bytes_total[5m])",
+          "expr": "laravel_app_laravel_memory_usage_bytes",
           "interval": "",
-          "legendFormat": "Disk Read",
+          "legendFormat": "Laravel Memory Usage",
           "refId": "A"
-        },
-        {
-          "expr": "irate(node_disk_written_bytes_total[5m])",
-          "interval": "",
-          "legendFormat": "Disk Write",
-          "refId": "B"
         }
       ],
-      "title": "Disk I/O",
+      "title": "Laravel Memory Usage",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "laravel_app_laravel_debug_mode",
+          "interval": "",
+          "legendFormat": "Debug Mode Status",
+          "refId": "A"
+        }
+      ],
+      "title": "Laravel Debug Mode Status",
       "type": "timeseries"
     }
   ],
@@ -343,5 +624,5 @@
   "timezone": "",
   "title": "Laravel Application Monitoring",
   "uid": "laravel-monitoring",
-  "version": 1
+  "version": 2
 }

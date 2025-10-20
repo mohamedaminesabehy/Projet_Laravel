@@ -70,6 +70,12 @@ RUN mkdir -p storage/logs \
 COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
+COPY docker/php/php-fpm.conf /usr/local/etc/php-fpm.conf
+
+# Create log directories
+RUN mkdir -p /var/log/nginx /var/log/supervisor \
+    && touch /var/log/php-fpm.log \
+    && chown www-data:www-data /var/log/php-fpm.log
 
 # Expose port 80
 EXPOSE 80

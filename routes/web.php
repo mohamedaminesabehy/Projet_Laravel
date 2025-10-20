@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\BookInsightsController;
+use App\Http\Controllers\PrometheusController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BookController as AdminBookController;
 use App\Http\Controllers\AuthController;
@@ -292,6 +293,9 @@ Route::middleware('auth')->prefix('meetings')->name('meetings.')->group(function
 Route::post('/paypal/process', [\App\Http\Controllers\PayPalController::class, 'processPayment'])->name('paypal.process');
 Route::get('/paypal/success', [\App\Http\Controllers\PayPalController::class, 'success'])->name('paypal.success');
 Route::get('/paypal/cancel', [\App\Http\Controllers\PayPalController::class, 'cancel'])->name('paypal.cancel');
+
+// Route pour les métriques Prometheus
+Route::get('/metrics', [PrometheusController::class, 'metrics'])->name('prometheus.metrics');
 
 // Routes Breeze (login, register, logout, etc.)
 require __DIR__.'/auth.php';

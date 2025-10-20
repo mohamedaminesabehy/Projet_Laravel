@@ -18,6 +18,7 @@ scrape_configs:
       - targets: ['app:80']
     metrics_path: '/metrics'
     scrape_interval: 30s
+    scrape_timeout: 10s
 
   # MySQL Database Monitoring
   - job_name: 'mysql'
